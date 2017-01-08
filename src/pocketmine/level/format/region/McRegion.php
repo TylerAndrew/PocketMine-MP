@@ -184,6 +184,8 @@ class McRegion extends BaseLevelProvider{
 				$biomeIds = "";
 			}
 
+			assert(!isset($chunk->HeightMap) or $chunk->HeightMap instanceof IntArrayTag, "Chunk HeightMap is present and not of type IntArray");
+
 			$result = new GenericChunk(
 				$this,
 				$chunk["xPos"],
