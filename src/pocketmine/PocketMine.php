@@ -145,16 +145,6 @@ namespace pocketmine {
 	define('pocketmine\DATA', isset($opts["data"]) ? $opts["data"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR);
 	define('pocketmine\PLUGIN_PATH', isset($opts["plugins"]) ? $opts["plugins"] . DIRECTORY_SEPARATOR : \getcwd() . DIRECTORY_SEPARATOR . "plugins" . DIRECTORY_SEPARATOR);
 
-	/**
-	 * @deprecated This constant has moved to {@link \pocketmine\network\protocol\Info} and will be removed from here in the future.
-	 */
-	const MINECRAFT_VERSION = ProtocolInfo::MINECRAFT_VERSION;
-	/**
-	 * @deprecated This constant has moved to {@link \pocketmine\network\protocol\Info} and will be removed from here in the future.
-	 */
-	const MINECRAFT_VERSION_NETWORK = ProtocolInfo::MINECRAFT_VERSION_NETWORK;
-
-
 	Terminal::init();
 
 	define('pocketmine\ANSI', Terminal::hasFormattingCodes());
@@ -489,9 +479,16 @@ namespace pocketmine {
 	@define("INT32_MASK", is_int(0xffffffff) ? 0xffffffff : -1);
 	@ini_set("opcache.mmap_base", bin2hex(random_bytes(8))); //Fix OPCache address errors
 
+
 	if(!file_exists(\pocketmine\DATA . "server.properties") and !isset($opts["no-wizard"])){
-		new Installer();
+		$installer = new Installer();
+		if(!$installer->run()){
+			$logger->shutdown();
+			$logger->join();
+			exit(-1);
+		}
 	}
+
 
 	if(\Phar::running(true) === ""){
 		$logger->warning("Non-packaged PocketMine-MP installation detected, do not use on production.");
@@ -506,7 +503,6 @@ namespace pocketmine {
 	$killer->start();
 
 	$erroredThreads = 0;
-
 	foreach(ThreadManager::getInstance()->getAll() as $id => $thread){
 		$logger->debug("Stopping " . $thread->getThreadName() . " thread");
 		try{
