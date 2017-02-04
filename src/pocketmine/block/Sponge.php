@@ -53,7 +53,7 @@ class Sponge extends Solid{
 				for($iz = ($this->getZ() - 2); $iz <= ($this->getZ() + 2); $iz++){
 					$b = $this->getLevel()->getBlock(new Vector3($ix, $iy, $iz));
 					if($b instanceof Water){
-						$this->getLevel()->setBlock($b, new Air(), null, false);
+						$this->getLevel()->setBlock($b, new Air());
 						$wet = clone $this;
 						$wet->setDamage(1);
 						$this->getLevel()->setBlock($this, $wet);
