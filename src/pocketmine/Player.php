@@ -1040,7 +1040,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->address = $ev->getAddress();
 		$pk->port = $ev->getPort();
 		$this->dataPacket($pk);
-		$this->getServer()->getLogger()->info('Transferring player "' . $this->getName() . '" to ' . $ev->getAddress() . ':' . $ev->getPort());
+		Command::broadcastCommandMessage($this, new TranslationContainer("Transferred to {%0}:{%1}", [$ev->getAddress(), $ev->getPort()]));
 
 		return true;
 	}
@@ -1945,9 +1945,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$this->onPlayerPreLogin();
 
-				break;
-			case ProtocolInfo::MAP_INFO_REQUEST_PACKET:
-				var_dump($packet);
 				break;
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
