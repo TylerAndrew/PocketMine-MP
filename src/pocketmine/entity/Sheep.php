@@ -3,9 +3,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\Player;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Sheep extends Animal implements Colorable{
 	const NETWORK_ID = 13;

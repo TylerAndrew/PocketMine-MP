@@ -4,12 +4,8 @@ namespace pocketmine\entity;
 
 use pocketmine\level\format\Chunk;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\Player;
-use pocketmine\nbt\tag\ListTag;
-use pocketmine\nbt\tag\DoubleTag;
-use pocketmine\nbt\tag\FloatTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Egg extends Projectile{
 	const NETWORK_ID = 82;

@@ -6,15 +6,11 @@ use pocketmine\item\Item as ItemItem;
 use pocketmine\item\Potion;
 use pocketmine\level\format\Chunk;
 use pocketmine\level\particle\DestroyBlockParticle;
-use pocketmine\level\particle\GenericParticle;
 use pocketmine\level\particle\ItemBreakParticle;
-use pocketmine\level\particle\Particle;
 use pocketmine\level\particle\SpellParticle;
-use pocketmine\level\sound\GenericSound;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ShortTag;
 use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\LevelEventPacket;
 use pocketmine\Player;
 
 class ThrownPotion extends Projectile {

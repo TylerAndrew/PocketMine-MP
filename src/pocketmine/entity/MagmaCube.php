@@ -2,9 +2,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\Player;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class MagmaCube extends Living{
 	const NETWORK_ID = 42;

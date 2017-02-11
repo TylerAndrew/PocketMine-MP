@@ -2,8 +2,8 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\Player;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class SnowGolem extends Animal{
     const NETWORK_ID = 21;

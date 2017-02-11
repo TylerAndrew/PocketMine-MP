@@ -1,8 +1,8 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Lightning extends Entity{
 	const NETWORK_ID = 93;

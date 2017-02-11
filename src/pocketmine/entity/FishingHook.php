@@ -4,11 +4,8 @@ namespace pocketmine\entity;
 
 use pocketmine\level\format\Chunk;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\Player;
-use pocketmine\item\Item as ItemItem;
-use pocketmine\network\protocol\EntityEventPacket;
-use pocketmine\Server;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class FishingHook extends Projectile{
 	const NETWORK_ID = 77;

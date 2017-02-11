@@ -1,8 +1,8 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Silverfish extends Monster{
     const NETWORK_ID = 39;

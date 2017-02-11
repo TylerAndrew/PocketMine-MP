@@ -1,10 +1,9 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
-use pocketmine\item\Item as ItemItem;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Enderman extends Monster{
 	const NETWORK_ID = 38;

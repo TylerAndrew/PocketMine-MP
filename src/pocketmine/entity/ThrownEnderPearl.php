@@ -1,18 +1,16 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
-use pocketmine\entity\{Entity, Projectile};
-use pocketmine\level\format\Chunk;
-use pocketmine\level\particle\Particle;
-use pocketmine\level\particle\GenericParticle;
-use pocketmine\level\sound\GenericSound;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\Network;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\LevelEventPacket;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
+use pocketmine\level\format\Chunk;
+use pocketmine\level\particle\GenericParticle;
+use pocketmine\level\particle\Particle;
+use pocketmine\level\sound\GenericSound;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\protocol\LevelEventPacket;
+use pocketmine\Player;
 
 class ThrownEnderPearl extends Projectile{
 	const NETWORK_ID = 87;

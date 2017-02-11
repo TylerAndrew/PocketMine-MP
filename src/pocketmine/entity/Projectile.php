@@ -41,6 +41,7 @@ abstract class Projectile extends Entity{
 	/** @var Entity */
 	public $shootingEntity = null;
 	protected $damage = 0;
+	protected $isCritical;
 
 	public $hadCollision = false;
 
@@ -194,4 +195,7 @@ abstract class Projectile extends Entity{
 		return $hasUpdate;
 	}
 
+	public function isCritical(){
+		return $this->isCritical;
+	}
 }

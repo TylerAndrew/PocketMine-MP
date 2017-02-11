@@ -21,12 +21,12 @@ namespace pocketmine\entity;
  *
 */
 
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageByChildEntityEvent;
-use pocketmine\network\protocol\EntityEventPacket;
-use pocketmine\Server;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\network\protocol\AnimatePacket;
+use pocketmine\network\protocol\EntityEventPacket;
+use pocketmine\Server;
 
 class Snake extends Entity{
 	// Have fun guessing why

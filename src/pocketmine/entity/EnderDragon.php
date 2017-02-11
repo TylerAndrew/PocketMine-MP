@@ -1,8 +1,8 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class EnderDragon extends Monster implements ProjectileSource{
     const NETWORK_ID = 53;

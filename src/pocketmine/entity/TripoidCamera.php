@@ -2,11 +2,10 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\Player;
-use pocketmine\nbt\tag\IntTag;
 use pocketmine\level\format\Chunk;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class TripoidCamera extends Snake{
     const NETWORK_ID = 62;
