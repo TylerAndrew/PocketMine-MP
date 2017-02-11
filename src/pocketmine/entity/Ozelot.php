@@ -1,9 +1,9 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Ozelot extends Animal implements Tameable{
 	const NETWORK_ID = 22;

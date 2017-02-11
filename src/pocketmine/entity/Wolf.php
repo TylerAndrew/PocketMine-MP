@@ -1,8 +1,8 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Wolf extends Animal implements Tameable,Colorable{
 	const NETWORK_ID = 14;

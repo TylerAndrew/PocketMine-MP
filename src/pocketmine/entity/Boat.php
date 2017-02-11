@@ -1,13 +1,12 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\level\format\Chunk;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ByteTag;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Boat extends Vehicle{
 	const NETWORK_ID = 90;

@@ -1,9 +1,9 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class LeashKnot extends Entity{
 	const NETWORK_ID = 88;

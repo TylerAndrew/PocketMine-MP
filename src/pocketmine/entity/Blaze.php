@@ -1,9 +1,9 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\Player;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Blaze extends Monster{
 	const NETWORK_ID = 43;

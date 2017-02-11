@@ -1,13 +1,13 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\math\Vector3;
-use pocketmine\Player;
-use pocketmine\level\format\Chunk;
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\event\entity\ExplosionPrimeEvent;
 use pocketmine\level\Explosion;
+use pocketmine\level\format\Chunk;
+use pocketmine\math\Vector3;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class EnderCrystal extends Living implements Explosive{
 	const NETWORK_ID = 71;

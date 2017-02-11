@@ -5,8 +5,8 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\Player;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class Creeper extends Monster implements Explosive{
     const NETWORK_ID = 33;

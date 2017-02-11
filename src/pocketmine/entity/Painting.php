@@ -2,12 +2,12 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\Player;
-use pocketmine\item\Item as ItemItem;
-use pocketmine\network\protocol\AddPaintingPacket;
-use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\block\Block;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\level\particle\DestroyBlockParticle;
+use pocketmine\network\protocol\AddPaintingPacket;
+use pocketmine\Player;
 
 class Painting extends Hanging{
 	const NETWORK_ID = 83;

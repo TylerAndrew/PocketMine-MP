@@ -1,10 +1,10 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\item\Item as ItemItem;
-use pocketmine\Player;
 use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\item\Item as ItemItem;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\Player;
 
 class ElderGuardian extends Guardian{
 	const NETWORK_ID = 50;
