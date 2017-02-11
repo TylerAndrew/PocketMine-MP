@@ -37,6 +37,7 @@ use pocketmine\event\entity\EntityDamageByBlockEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityShootBowEvent;
+use pocketmine\event\player\PlayerTransferEvent;
 use pocketmine\event\entity\ProjectileLaunchEvent;
 use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
@@ -132,6 +133,7 @@ use pocketmine\network\protocol\SetTimePacket;
 use pocketmine\network\protocol\StartGamePacket;
 use pocketmine\network\protocol\TakeItemEntityPacket;
 use pocketmine\network\protocol\TextPacket;
+use pocketmine\network\protocol\TransferPacket;
 use pocketmine\network\protocol\UpdateAttributesPacket;
 use pocketmine\network\protocol\UpdateBlockPacket;
 use pocketmine\network\SourceInterface;
@@ -1021,6 +1023,25 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 
 		$timings->stopTiming();
+		return true;
+	}
+
+	/**
+	 * @param string $address
+	 * @param int $port
+	 * @return bool transferred
+	 */
+	public function transferTo(string $address, int $port = 19132) {
+		$this->server->getPluginManager()->callEvent($ev = new PlayerTransferEvent($this, $address, $port));
+		if ($ev->isCancelled()) {
+			return false;
+		}
+		$pk = new TransferPacket();
+		$pk->address = $ev->getAddress();
+		$pk->port = $ev->getPort();
+		$this->dataPacket($pk);
+		Command::broadcastCommandMessage($this, new TranslationContainer("Transferred to {%0}:{%1}", [$ev->getAddress(), $ev->getPort()]));
+
 		return true;
 	}
 
