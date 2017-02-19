@@ -125,9 +125,9 @@ class MobHead extends Flowable {
 		return false;
 	}
 
-	public function getDrops(Item $item) {
-		/** @var SkullTile $tile */
-		if (($tile = $this->level->getTile($this)) instanceof SkullTile) {
+	public function getDrops(Item $item){
+		$tile = $this->level->getTile($this);
+		if($tile instanceof SkullTile){
 			return [
 				[Item::MOB_HEAD, $tile->getType(), 1]
 			];

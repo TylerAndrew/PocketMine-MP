@@ -37,7 +37,6 @@ use pocketmine\event\entity\EntityDamageByBlockEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityShootBowEvent;
-use pocketmine\event\player\PlayerTransferEvent;
 use pocketmine\event\entity\ProjectileLaunchEvent;
 use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\inventory\InventoryCloseEvent;
@@ -67,6 +66,7 @@ use pocketmine\event\player\PlayerToggleFlightEvent;
 use pocketmine\event\player\PlayerToggleGlideEvent;
 use pocketmine\event\player\PlayerToggleSneakEvent;
 use pocketmine\event\player\PlayerToggleSprintEvent;
+use pocketmine\event\player\PlayerTransferEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\TextContainer;
@@ -1949,7 +1949,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			case ProtocolInfo::MOVE_PLAYER_PACKET:
 				$newPos = new Vector3($packet->x, $packet->y - $this->getEyeHeight(), $packet->z);
 
-				if($newPos->distanceSquared($this) < 0.01 and ($packet->yaw % 360) === $this->yaw and ($packet->pitch % 360) === $this->pitch){ //player hasn't moved, just client spamming packets
+				if($newPos->distanceSquared($this) < 0.0001 and ($packet->yaw % 360) === $this->yaw and ($packet->pitch % 360) === $this->pitch){ //player hasn't moved, just client spamming packets
 					break;
 				}
 
@@ -2512,7 +2512,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				$oldItem = clone $item;
 
-				if($this->canInteract($vector->add(0.5, 0.5, 0.5), $this->isCreative() ? 13 : 6) and $this->level->useBreakOn($vector, $item, $this)){
+				if($this->canInteract($vector->add(0.5, 0.5, 0.5), $this->isCreative() ? 13 : 6) and $this->level->useBreakOn($vector, $item, $this, true)){
 					if($this->isSurvival()){
 						if(!$item->deepEquals($oldItem) or $item->getCount() !== $oldItem->getCount()){
 							$this->inventory->setItemInHand($item);
@@ -2847,6 +2847,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				if($recipe instanceof ShapedRecipe){
 					for($x = 0; $x < 3 and $canCraft; ++$x){
 						for($y = 0; $y < 3; ++$y){
+							/** @var Item $item */
 							$item = $packet->input[$y * 3 + $x];
 							$ingredient = $recipe->getIngredient($x, $y);
 							if($item->getCount() > 0){
@@ -2862,6 +2863,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 					for($x = 0; $x < 3 and $canCraft; ++$x){
 						for($y = 0; $y < 3; ++$y){
+							/** @var Item $item */
 							$item = clone $packet->input[$y * 3 + $x];
 
 							foreach($needed as $k => $n){
@@ -3109,7 +3111,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 				break;
 			case ProtocolInfo::ITEM_FRAME_DROP_ITEM_PACKET:
-				if($this->spawned === false or !$this->isAlive()){
+				if ($this->spawned === false or !$this->isAlive()) {
 					break;
 				}
 				$tile = $this->level->getTile($this->temporalVector->setComponents($packet->x, $packet->y, $packet->z));
@@ -3121,11 +3123,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					$this->getServer()->getPluginManager()->callEvent($ev = new ItemFrameDropItemEvent($this->getLevel()->getBlock($tile), $this, $tile->getItem(), $tile->getItemDropChance()));
 					if (!$ev->isCancelled()) {
 						if (lcg_value() <= $ev->getItemDropChance() && $packet->item->getId() !== Item::AIR) {
-							if($this->getGamemode() !== self::CREATIVE && $this->getGamemode() !== self::SPECTATOR)
+							if ($this->getGamemode() !== self::CREATIVE && $this->getGamemode() !== self::SPECTATOR)
 								$this->level->dropItem($tile, $ev->getDropItem());
 						}
 						$tile->setItem();
-						//$tile->setItemRotation(0); //This actually doesn't happen.
+						//$tile->setItemRotation(0); #blamedktapps
 					}
 				}
 				break;

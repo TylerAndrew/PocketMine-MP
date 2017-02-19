@@ -65,13 +65,12 @@ namespace {
 }
 
 namespace pocketmine {
-	use pocketmine\network\protocol\Info as ProtocolInfo;
 	use pocketmine\utils\Binary;
 	use pocketmine\utils\MainLogger;
 	use pocketmine\utils\ServerKiller;
 	use pocketmine\utils\Terminal;
 	use pocketmine\utils\Utils;
-	use pocketmine\wizard\Installer;
+	use pocketmine\wizard\SetupWizard;
 	use raklib\RakLib;
 
 	const VERSION = "1.6.2dev";
@@ -442,11 +441,6 @@ namespace pocketmine {
 		++$errors;
 	}
 
-	if(!extension_loaded("sqlite3")){
-		$logger->critical("Unable to find the SQLite3 extension.");
-		++$errors;
-	}
-
 	if(!extension_loaded("zlib")){
 		$logger->critical("Unable to find the Zlib extension.");
 		++$errors;
@@ -480,7 +474,7 @@ namespace pocketmine {
 
 
 	if(!file_exists(\pocketmine\DATA . "server.properties") and !isset($opts["no-wizard"])){
-		$installer = new Installer();
+		$installer = new SetupWizard();
 		if(!$installer->run()){
 			$logger->shutdown();
 			$logger->join();
