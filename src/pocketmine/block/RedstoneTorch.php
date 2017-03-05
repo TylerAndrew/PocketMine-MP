@@ -21,7 +21,9 @@
 
 namespace pocketmine\block;
 
-class RedstoneTorch extends LitRedstoneTorch {
+use pocketmine\item\Item;
+
+class RedstoneTorch extends Torch{
 
 	protected $id = self::REDSTONE_TORCH;
 
@@ -35,5 +37,11 @@ class RedstoneTorch extends LitRedstoneTorch {
 
 	public function getName(){
 		return "Redstone Torch";
+	}
+
+	public function getDrops(Item $item){
+		return [
+			[self::REDSTONE_TORCH, 0, 1],
+		];
 	}
 }
