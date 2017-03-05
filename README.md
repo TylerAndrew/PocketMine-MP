@@ -1,5 +1,5 @@
 ![ClearSky](https://github.com/ClearSkyTeam/ClearSky/blob/master/images/CSbanner.png)
-__A highly customizable, open source server software for Minecraft: Pocket Edition written in PHP__
+__We are not dead. We are just dktapps-proof.__
 
 # ClearSky - A fast Minecraft PE server software based on [PocketMine-MP](https://github.com/pmmp/PocketMine-MP)
 ClearSky is a fast Minecraft: Pocket Edition server software, finally back as a real FORK of [PocketMine-MP](https://github.com/pmmp/PocketMine-MP)
@@ -8,7 +8,7 @@ ClearSky is a fast Minecraft: Pocket Edition server software, finally back as a 
 - It has most of the blocks, items and entities that pmmp doesn't have yet. See [Issue #2](https://github.com/ClearSkyTeam/PocketMine-MP/issues/2) for further information.
 - The projects we sometimes clone code from are [Genisys](https://github.com/iTXTech/Genisys), [Nukkit](https://github.com/Nukkit/Nukkit) and [IM](https://github.com/ImagicalCorp/ImagicalMine) (last one is dead). Everytime we take code from other projects we reference the commit in the commit title or description! We may also just cherry-pick the commit.
 
-### Remember: The mcpe-1.0 branch is still in development and has constant changes. cs-1.0 is our branch, features will be added there.
+### Remember: Please only use the cs-1.0 branch or a release in [releases](https://github.com/ClearSkyTeam/PocketMine-MP/releases) for production servers.
 
 **TravisCI Build Status** [![TravisCI](https://travis-ci.org/ClearSkyTeam/ClearSky.svg?branch=master)](https://travis-ci.org/ClearSkyTeam/ClearSky "TravisCI Build Status")
 **CircleCI Build Status** [![Build Status](https://circleci.com/gh/ClearSkyTeam/ClearSky.svg?style=shield&branch=master)](https://circleci.com/gh/ClearSkyTeam/ClearSky "CircleCI Build Status")
