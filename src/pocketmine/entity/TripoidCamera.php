@@ -2,7 +2,7 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
@@ -15,8 +15,8 @@ class TripoidCamera extends Snake{
     public $lenght = 1;//TODO: Size
 	protected $maxHealth = 1;
 	
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		parent::__construct($chunk, $nbt);
+	public function __construct(Level $level, CompoundTag $nbt){
+		parent::__construct($level, $nbt);
 	}
 
     public function initEntity(){

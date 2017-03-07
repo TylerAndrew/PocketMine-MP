@@ -100,7 +100,7 @@ class EnderChest extends Transparent{
             $nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
         }
 
-        Tile::createTile(Tile::ENDER_CHEST, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+        Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), $nbt);
 
         return true;
     }
@@ -123,7 +123,7 @@ class EnderChest extends Transparent{
                     new IntTag("y", $this->y),
                     new IntTag("z", $this->z)
                 ]);
-                $chest = Tile::createTile(Tile::ENDER_CHEST, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+                $chest = Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), $nbt);
             }
 
             if($chest instanceof TileEnderChest){

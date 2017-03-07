@@ -21,7 +21,7 @@
 
 namespace pocketmine\tile;
 
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -29,8 +29,8 @@ use pocketmine\nbt\tag\StringTag;
 
 class EndPortal extends Spawnable{
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		parent::__construct($chunk, $nbt);
+	public function __construct(Level $level, CompoundTag $nbt){
+		parent::__construct($level, $nbt);
 	}
 
 	public function getSpawnCompound(){

@@ -24,7 +24,7 @@ namespace pocketmine\tile;
 use pocketmine\inventory\BrewingInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
@@ -58,8 +58,8 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 		Item::GUNPOWDER => 0,
 	];
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		parent::__construct($chunk, $nbt);
+	public function __construct(Level $level, CompoundTag $nbt){
+		parent::__construct($level, $nbt);
 		$this->inventory = new BrewingInventory($this);
 
 		if(!isset($this->namedtag->Items) or !($this->namedtag->Items instanceof ListTag)){

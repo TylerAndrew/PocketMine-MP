@@ -4,7 +4,7 @@ namespace pocketmine\entity;
 use pocketmine\block\Block;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\item\Potion;
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\level\particle\DestroyBlockParticle;
 use pocketmine\level\particle\ItemBreakParticle;
 use pocketmine\level\particle\SpellParticle;
@@ -26,11 +26,11 @@ class LingeringPotion extends Projectile {
 	protected $gravity = 0.1;
 	protected $drag = 0.05;
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt, Entity $shootingEntity = null) {
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null) {
 		if (!isset($nbt->PotionId)) {
 			$nbt->PotionId = new ShortTag("PotionId", Potion::AWKWARD);
 		}
-		parent::__construct($chunk, $nbt, $shootingEntity);
+		parent::__construct($level, $nbt, $shootingEntity);
 		unset($this->dataProperties[self::DATA_SHOOTER_ID]);
 		$this->setDataProperty(self::DATA_VARIANT, self::DATA_TYPE_SHORT, $this->getPotionId());
 	}
@@ -47,9 +47,9 @@ class LingeringPotion extends Projectile {
 			#$this->getLevel()->addParticle(new GenericParticle($this, Particle::TYPE_MOB_SPELL_INSTANTANEOUS, ((255 & 0xff) << 24) | (($color[0] & 0xff) << 16) | (($color[1] & 0xff) << 8) | ($color[2] & 0xff)));
 
 			$aec = null;
-			$chunk = $this->chunk;
+			$level = $this->chunk;
 
-			if (!($chunk instanceof Chunk)) {
+			if (!($level instanceof Level)) {
 				return false;
 			}
 
@@ -81,7 +81,7 @@ class LingeringPotion extends Projectile {
 			$nbt->Duration = new IntTag("Duration", 600);
 			$nbt->DurationOnUse = new IntTag("DurationOnUse", 0);
 
-			$aec = Entity::createEntity("AreaEffectCloud", $chunk, $nbt);
+			$aec = Entity::createEntity("AreaEffectCloud", $level, $nbt);
 			if ($aec instanceof Entity) {
 				$aec->spawnToAll();
 			}

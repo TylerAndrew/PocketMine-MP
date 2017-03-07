@@ -3,7 +3,7 @@ namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\level\particle\GenericParticle;
 use pocketmine\level\particle\Particle;
 use pocketmine\level\sound\GenericSound;
@@ -22,8 +22,8 @@ class ThrownEnderPearl extends Projectile{
 	protected $gravity = 0.03;
 	protected $drag = 0.01;
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt, Entity $shootingEntity = null){
-		parent::__construct($chunk, $nbt, $shootingEntity);
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null){
+		parent::__construct($level, $nbt, $shootingEntity);
 	}
 
 	public function onUpdate($currentTick){

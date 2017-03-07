@@ -3,7 +3,7 @@ namespace pocketmine\entity;
 
 use pocketmine\event\entity\ExplosionPrimeEvent;
 use pocketmine\level\Explosion;
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
@@ -17,8 +17,8 @@ class EnderCrystal extends Living implements Explosive{
 	public $lenght = 1;//TODO: Size
 	protected $maxHealth = 1;
 	
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		parent::__construct($chunk, $nbt);
+	public function __construct(Level $level, CompoundTag $nbt){
+		parent::__construct($level, $nbt);
 	}
 
 	public function initEntity(){

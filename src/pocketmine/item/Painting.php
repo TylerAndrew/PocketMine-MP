@@ -125,7 +125,7 @@ class Painting extends Item{
 				]),
 			]);
 			
-			$painting = new PaintingEntity($player->getLevel()->getChunk($block->getX() >> 4, $block->getZ() >> 4), $nbt);
+			$painting = new PaintingEntity($player->getLevel(), $nbt);
 			$painting->spawnToAll();
 			unset($player->getLevel()->updateEntities[$painting->getId()]);
 			

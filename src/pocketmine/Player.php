@@ -2202,7 +2202,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 							]),
 						]);
 						$f = 1.5;
-						$enderpearl = Entity::createEntity("ThrownEnderPearl", $this->chunk, $nbt, $this);
+						$enderpearl = Entity::createEntity("ThrownEnderPearl", $this->getLevel(), $nbt, $this);
 						$enderpearl->setMotion($enderpearl->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
@@ -2238,7 +2238,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						]);
 						$nbt->PotionId = new ShortTag("PotionId", $item->getDamage());
 						$f = 1.1;
-						$thrownpotion = Entity::createEntity("ThrownPotion", $this->chunk, $nbt, $this);
+						$thrownpotion = Entity::createEntity("ThrownPotion", $this->getLevel(), $nbt, $this);
 						$thrownpotion->setMotion($thrownpotion->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);
@@ -2274,7 +2274,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						]);
 						$nbt->PotionId = new ShortTag("PotionId", $item->getDamage());
 						$f = 1.1;
-						$thrownpotion = Entity::createEntity("LingeringPotion", $this->chunk, $nbt, $this);
+						$thrownpotion = Entity::createEntity("LingeringPotion", $this->getLevel(), $nbt, $this);
 						$thrownpotion->setMotion($thrownpotion->getMotion()->multiply($f));
 						if($this->isSurvival()){
 							$item->setCount($item->getCount() - 1);

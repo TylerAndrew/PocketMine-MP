@@ -27,7 +27,7 @@ use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\DoubleEnderChestInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -38,8 +38,8 @@ use pocketmine\Server;
 
 class EnderChest extends Spawnable implements Nameable{
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
-		parent::__construct($chunk, $nbt);
+	public function __construct(Level $level, CompoundTag $nbt){
+		parent::__construct($level, $nbt);
 	}
 
 	public function getName(){

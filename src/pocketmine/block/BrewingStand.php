@@ -60,7 +60,7 @@ class BrewingStand extends Transparent{
 				$nbt->{$key} = $v;
 			}
 		}
-		Tile::createTile(Tile::BREWING_STAND, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+		Tile::createTile(Tile::BREWING_STAND, $this->getLevel(), $nbt);
 		return true;
 	}
 
@@ -100,7 +100,7 @@ class BrewingStand extends Transparent{
 					new IntTag("z", $this->z)
 				]);
 				$nbt->Items->setTagType(NBT::TAG_Compound);
-				$brewingStand = Tile::createTile(Tile::BREWING_STAND, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+				$brewingStand = Tile::createTile(Tile::BREWING_STAND, $this->getLevel(), $nbt);
 			}
 			$player->addWindow($brewingStand->getInventory());
 		}

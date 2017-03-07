@@ -80,7 +80,7 @@ class Piston extends Transparent{
             new CompoundTag("AttachedBlocks", [])
         ]);
 
-        Tile::createTile(Tile::PISTON, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+        Tile::createTile(Tile::PISTON, $this->getLevel(), $nbt);
 
         return true;
     }

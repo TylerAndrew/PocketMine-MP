@@ -2,7 +2,7 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
@@ -17,11 +17,11 @@ class Boat extends Vehicle{
 	public $drag = 0.1;
 	protected $maxHealth = 4;
     
-	public function __construct(Chunk $chunk, CompoundTag $nbt){
+	public function __construct(Level $level, CompoundTag $nbt){
 		if(!isset($nbt->woodID)){
 			$nbt->woodID = new ByteTag("woodID", 0);
 		}
-		parent::__construct($chunk, $nbt);
+		parent::__construct($level, $nbt);
 	}
 	
 	public function initEntity(){

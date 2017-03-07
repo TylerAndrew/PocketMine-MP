@@ -53,7 +53,7 @@ class UnpoweredComparator extends Transparent {
 			new IntTag("z", $this->z),
 			new IntTag("OutputSignal", 0)
 		]);
-		Tile::createTile(Tile::COMPARATOR, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+		Tile::createTile(Tile::COMPARATOR, $this->getLevel(), $nbt);
 		return true;
 	}
 

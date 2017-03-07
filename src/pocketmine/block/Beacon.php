@@ -50,7 +50,7 @@ class Beacon extends Solid {
 			new IntTag("y", $block->y),
 			new IntTag("z", $block->z)
 		]);
-		Tile::createTile(Tile::BEACON, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+		Tile::createTile(Tile::BEACON, $this->getLevel(), $nbt);
 		return true;
 	}
 
@@ -75,7 +75,7 @@ class Beacon extends Solid {
 					new IntTag("y", $this->y),
 					new IntTag("z", $this->z)
 				]);
-				Tile::createTile(Tile::BEACON, $this->getLevel()->getChunk($this->x >> 4, $this->z >> 4), $nbt);
+				Tile::createTile(Tile::BEACON, $this->getLevel(), $nbt);
 			}
 
 			if($beacon instanceof TileBeacon){

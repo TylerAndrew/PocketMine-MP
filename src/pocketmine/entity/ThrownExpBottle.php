@@ -1,7 +1,7 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\level\format\Chunk;
+use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
@@ -16,8 +16,8 @@ class ThrownExpBottle extends Projectile{
 	protected $gravity = 0.1;
 	protected $drag = 0.05;
 
-	public function __construct(Chunk $chunk, CompoundTag $nbt, Entity $shootingEntity = null){
-		parent::__construct($chunk, $nbt, $shootingEntity);
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null){
+		parent::__construct($level, $nbt, $shootingEntity);
 	}
 
 	public function getName(){
