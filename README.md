@@ -1,5 +1,4 @@
 ![ClearSky](https://github.com/ClearSkyTeam/ClearSky/blob/master/images/CSbanner.png)
-__We are not dead. We are just dktapps-proof.__
 
 # ClearSky - A fast Minecraft PE server software based on [PocketMine-MP](https://github.com/pmmp/PocketMine-MP)
 ClearSky is a fast Minecraft: Pocket Edition server software, finally back as a real FORK of [PocketMine-MP](https://github.com/pmmp/PocketMine-MP)
