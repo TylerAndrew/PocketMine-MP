@@ -1052,25 +1052,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	}
 
 	/**
-	 * @param string $address
-	 * @param int $port
-	 * @return bool transferred
-	 */
-	public function transferTo(string $address, int $port = 19132) {
-		$this->server->getPluginManager()->callEvent($ev = new PlayerTransferEvent($this, $address, $port));
-		if ($ev->isCancelled()) {
-			return false;
-		}
-		$pk = new TransferPacket();
-		$pk->address = $ev->getAddress();
-		$pk->port = $ev->getPort();
-		$this->dataPacket($pk);
-		Command::broadcastCommandMessage($this, new TranslationContainer("Transferred to {%0}:{%1}", [$ev->getAddress(), $ev->getPort()]));
-
-		return true;
-	}
-
-	/**
 	 * @param Vector3 $pos
 	 *
 	 * @return boolean
@@ -3111,20 +3092,17 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 *
 	 * @return bool if transfer was successful.
 	 */
-	public function transfer(string $address, int $port = 19132, string $message = "transfer") : bool{
-		$this->server->getPluginManager()->callEvent($ev = new PlayerTransferEvent($this, $address, $port, $message));
-
-		if(!$ev->isCancelled()){
-			$pk = new TransferPacket();
-			$pk->address = $ev->getAddress();
-			$pk->port = $ev->getPort();
-			$this->dataPacket($pk);
-			$this->close("", $ev->getMessage(), false);
-
-			return true;
+	public function transfer(string $address, int $port = 19132) {
+		$this->server->getPluginManager()->callEvent($ev = new PlayerTransferEvent($this, $address, $port));
+		if ($ev->isCancelled()) {
+			return false;
 		}
-
-		return false;
+		$pk = new TransferPacket();
+		$pk->address = $ev->getAddress();
+		$pk->port = $ev->getPort();
+		$this->dataPacket($pk);
+		Command::broadcastCommandMessage($this, new TranslationContainer("Transferred to {%0}:{%1}", [$ev->getAddress(), $ev->getPort()]));
+		return true;
 	}
 
 	/**
