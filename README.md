@@ -10,7 +10,7 @@ ClearSky is a fast Minecraft: Pocket Edition server software, finally back as a 
 ### Remember: Please only use the cs-1.0 branch or a release in [releases](https://github.com/ClearSkyTeam/PocketMine-MP/releases) for production servers.
 
 **TravisCI Build Status** [![TravisCI](https://travis-ci.org/ClearSkyTeam/ClearSky.svg?branch=master)](https://travis-ci.org/ClearSkyTeam/ClearSky "TravisCI Build Status")
-**CircleCI Build Status** [![Build Status](https://circleci.com/gh/ClearSkyTeam/PocketMine-MP.svg?style=shield&branch=master)](https://circleci.com/gh/ClearSkyTeam/PocketMine-MP "CircleCI Build Status")
+**CircleCI Build Status** [![Build Status](https://circleci.com/gh/ClearSkyTeam/PocketMine-MP/tree/cs-1.0.svg?style=shield)](https://circleci.com/gh/ClearSkyTeam/PocketMine-MP "CircleCI Build Status")
 
 ### Setup, help & support, FAQs
 Head over to the [documentation site](http://pmmp.readthedocs.org/).
