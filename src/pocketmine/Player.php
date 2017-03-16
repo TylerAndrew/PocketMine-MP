@@ -3063,7 +3063,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					if (!$ev->isCancelled()) {
 						if (lcg_value() <= $ev->getItemDropChance()) {
 							if ($this->getGamemode() !== self::CREATIVE && $this->getGamemode() !== self::SPECTATOR)
-								$this->getLevel()->dropItem($tile, $ev->getDropItem());
+								$this->getLevel()->dropItem($tile->add(0.5,0.5, 0.5), $ev->getDropItem());
 						}
 						$tile->setItem();
 					}
