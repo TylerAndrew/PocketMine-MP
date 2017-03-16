@@ -49,7 +49,7 @@ class ThrownEnderPearl extends Projectile {
 				$this->getLevel()->addParticle(new GenericParticle($ev->getTo(), Particle::TYPE_PORTAL));
 			}
 		}
-		if ($this->age > 1200) {
+		if ($this->age > 1200 || $this->isCollided) {
 			$this->close();
 			$hasUpdate = true;
 		}
