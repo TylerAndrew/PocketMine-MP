@@ -3059,18 +3059,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				}
 				$tile = $this->level->getTile($this->temporalVector->setComponents($packet->x, $packet->y, $packet->z));
 				if ($tile instanceof ItemFrame) {
-					if (!$tile->getItem()->equals($packet->item)) {
-						$tile->spawnTo($this);
-						break;
-					}
 					$this->getServer()->getPluginManager()->callEvent($ev = new ItemFrameDropItemEvent($this->getLevel()->getBlock($tile), $this, $tile->getItem(), $tile->getItemDropChance()));
 					if (!$ev->isCancelled()) {
-						if (lcg_value() <= $ev->getItemDropChance() && $packet->item->getId() !== Item::AIR) {
+						if (lcg_value() <= $ev->getItemDropChance()) {
 							if ($this->getGamemode() !== self::CREATIVE && $this->getGamemode() !== self::SPECTATOR)
-								$this->level->dropItem($tile, $ev->getDropItem());
+								$this->getLevel()->dropItem($tile, $ev->getDropItem());
 						}
 						$tile->setItem();
-						//$tile->setItemRotation(0); #blamedktapps
 					}
 				}
 				break;

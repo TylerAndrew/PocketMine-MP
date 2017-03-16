@@ -12,7 +12,7 @@ use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\network\protocol\LevelEventPacket;
 use pocketmine\Player;
 
-class ThrownEnderPearl extends Projectile{
+class ThrownEnderPearl extends Projectile {
 	const NETWORK_ID = 87;
 
 	public $width = 0.25;
@@ -22,12 +22,12 @@ class ThrownEnderPearl extends Projectile{
 	protected $gravity = 0.03;
 	protected $drag = 0.01;
 
-	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null){
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null) {
 		parent::__construct($level, $nbt, $shootingEntity);
 	}
 
-	public function onUpdate($currentTick){
-		if($this->closed){
+	public function onUpdate($currentTick) {
+		if ($this->closed) {
 			return false;
 		}
 
@@ -35,23 +35,21 @@ class ThrownEnderPearl extends Projectile{
 
 		$hasUpdate = parent::onUpdate($currentTick);
 
-		if($this->age > 1200 or $this->isCollided){
-			if($this->isCollided && $this->shootingEntity !== null && $this->shootingEntity instanceof Player){
-				if($this->getLevel()->getServer()->getPlayer($this->shootingEntity->getName())->isOnline()){
-					$this->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityTeleportEvent($this->shootingEntity, $this->shootingEntity->getPosition(), $this->getPosition()));
-					if(!$ev->isCancelled()){
-						$this->getLevel()->getServer()->getPluginManager()->callEvent($dev = new EntityDamageEvent($this->shootingEntity, EntityDamageEvent::CAUSE_FALL, 5));
-						if(!$dev->isCancelled()){
-							$this->shootingEntity->attack($dev->getFinalDamage(), $dev);
-						}
-						$this->shootingEntity->teleport($ev->getTo(), $this->shootingEntity->getYaw(), $this->shootingEntity->getPitch());
-						$this->getLevel()->addSound(new GenericSound($ev->getFrom(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
-						$this->getLevel()->addSound(new GenericSound($ev->getTo(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
-						$this->getLevel()->addParticle(new GenericParticle($ev->getFrom(), Particle::TYPE_PORTAL));
-						$this->getLevel()->addParticle(new GenericParticle($ev->getTo(), Particle::TYPE_PORTAL));
-					}
+		if ($this->isCollided && $this->shootingEntity !== null && $this->shootingEntity instanceof Player) {
+			$this->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityTeleportEvent($this->shootingEntity, $this->shootingEntity->getPosition(), $this->getPosition()));
+			if (!$ev->isCancelled()) {
+				$this->getLevel()->getServer()->getPluginManager()->callEvent($dev = new EntityDamageEvent($this->shootingEntity, EntityDamageEvent::CAUSE_FALL, 5));
+				if (!$dev->isCancelled()) {
+					$this->shootingEntity->attack($dev->getFinalDamage(), $dev);
 				}
+				$this->shootingEntity->teleport($ev->getTo(), $this->shootingEntity->getYaw(), $this->shootingEntity->getPitch());
+				$this->getLevel()->addSound(new GenericSound($ev->getFrom(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
+				$this->getLevel()->addSound(new GenericSound($ev->getTo(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
+				$this->getLevel()->addParticle(new GenericParticle($ev->getFrom(), Particle::TYPE_PORTAL));
+				$this->getLevel()->addParticle(new GenericParticle($ev->getTo(), Particle::TYPE_PORTAL));
 			}
+		}
+		if ($this->age > 1200) {
 			$this->close();
 			$hasUpdate = true;
 		}
@@ -61,7 +59,7 @@ class ThrownEnderPearl extends Projectile{
 		return $hasUpdate;
 	}
 
-	public function spawnTo(Player $player){
+	public function spawnTo(Player $player) {
 		$pk = new AddEntityPacket();
 		$pk->type = self::NETWORK_ID;
 		$pk->eid = $this->getId();
