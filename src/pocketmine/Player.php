@@ -3239,6 +3239,9 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			foreach($this->usedChunks as $index => $d){
 				Level::getXZ($index, $chunkX, $chunkZ);
 				$this->level->unregisterChunkLoader($this, $chunkX, $chunkZ);
+				foreach($this->level->getChunkEntities($chunkX, $chunkZ) as $entity){
+					$entity->despawnFrom($this, false);
+				}
 				unset($this->usedChunks[$index]);
 			}
 
@@ -3272,6 +3275,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->loadQueue = [];
 			$this->hasSpawned = [];
 			$this->spawnPosition = null;
+			$this->forceMovement = null;
 		}
 
 		if($this->perm !== null){
@@ -3477,15 +3481,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->y = $pos->y;
 		$pk->z = $pos->z;
 		$this->dataPacket($pk);
-	}
-
-	public function setHealth($amount){
-		parent::setHealth($amount);
-		if($this->spawned === true){
-			$pk = new SetHealthPacket();
-			$pk->health = $this->getHealth();
-			$this->dataPacket($pk);
-		}
 	}
 
 	public function attack($damage, EntityDamageEvent $source){
