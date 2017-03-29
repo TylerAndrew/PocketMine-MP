@@ -46,12 +46,22 @@ class Item implements ItemIds, \JsonSerializable{
 	private static $cachedParser = null;
 
 	private static function parseCompoundTag(string $tag) : CompoundTag{
+		if(strlen($tag) === 0){
+			throw new \InvalidArgumentException("No NBT data found in supplied string");
+		}
+
 		if(self::$cachedParser === null){
 			self::$cachedParser = new NBT(NBT::LITTLE_ENDIAN);
 		}
 
 		self::$cachedParser->read($tag);
-		return self::$cachedParser->getData();
+		$data = self::$cachedParser->getData();
+
+		if(!($data instanceof CompoundTag)){
+			throw new \InvalidArgumentException("Invalid item NBT string given, it could not be deserialized");
+		}
+
+		return $data;
 	}
 
 	private static function writeCompoundTag(CompoundTag $tag) : string{
@@ -65,13 +75,19 @@ class Item implements ItemIds, \JsonSerializable{
 
 	/** @var \SplFixedArray */
 	public static $list = null;
+	/** @var Block|null */
 	protected $block;
+	/** @var int */
 	protected $id;
+	/** @var int */
 	protected $meta;
+	/** @var string */
 	private $tags = "";
+	/** @var CompoundTag|null */
 	private $cachedNBT = null;
+	/** @var int */
 	public $count;
-	protected $durability = 0;
+	/** @var string */
 	protected $name;
 
 	public function canBeActivated(){
@@ -1005,6 +1021,14 @@ class Item implements ItemIds, \JsonSerializable{
 		}
 
 		return $item;
+	}
+
+	public function __clone(){
+		if($this->block !== null){
+			$this->block = clone $this->block;
+		}
+
+		$this->cachedNBT = null;
 	}
 
 }
