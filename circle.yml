@@ -18,7 +18,7 @@ dependencies:
   - wget -O PHP7.tar.gz https://dl.bintray.com/pocketmine/PocketMine/PHP_7.0.6_x86-64_Linux.tar.gz --no-check-certificate
   - tar -xf PHP7.tar.gz
   - wget https://raw.githubusercontent.com/pmmp/PocketMine-MP/master/start.sh
-#  - wget -O plugins/DevTools.phar https://github.com/PocketMine/DevTools/releases/download/v1.11.0/DevTools_v1.11.0.phar
+  - wget -O plugins/DevTools.phar https://github.com/ClearSkyTeam/DevTools/releases/download/v1.12.0/DevTools_v1.12.0.phar
 
 test:
  override:
