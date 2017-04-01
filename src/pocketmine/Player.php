@@ -148,7 +148,7 @@ use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
 use pocketmine\network\mcpe\protocol\MoveEntityPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\PlayerActionPacket;
-use pocketmine\network\mcpe\protocol\PlayerFallPacket;
+use pocketmine\network\mcpe\protocol\EntityFallPacket;
 use pocketmine\network\mcpe\protocol\PlayerInputPacket;
 use pocketmine\network\mcpe\protocol\PlayerListPacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
@@ -184,6 +184,7 @@ use pocketmine\network\mcpe\protocol\StopSoundPacket;
 use pocketmine\network\mcpe\protocol\TakeItemEntityPacket;
 use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\network\mcpe\protocol\TransferPacket;
+use pocketmine\network\mcpe\protocol\UnknownPacket;
 use pocketmine\network\mcpe\protocol\UpdateAttributesPacket;
 use pocketmine\network\mcpe\protocol\UpdateBlockPacket;
 use pocketmine\network\mcpe\protocol\UpdateTradePacket;
@@ -2786,8 +2787,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		return true;
 	}
 
-	public function handlePlayerFall(PlayerFallPacket $packet) : bool{
-		return true; //not used
+	public function handleEntityFall(EntityFallPacket $packet) : bool{
+		return false;
 	}
 
 	public function handleHurtArmor(HurtArmorPacket $packet) : bool{
@@ -3379,6 +3380,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		return false;
 	}
 
+	public function handleUnknown(UnknownPacket $packet) : bool{
+		$this->server->getLogger()->debug("Received unknown packet from " . $this->getName() . ": 0x" . bin2hex($packet->buffer));
+		return true;
+	}
+	
 	/**
 	 * Called when a packet is received from the client. This method will call DataPacketReceiveEvent.
 	 *
