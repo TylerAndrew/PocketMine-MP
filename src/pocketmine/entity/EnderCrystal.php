@@ -44,7 +44,6 @@ class EnderCrystal extends Living implements Explosive{
 	}
 
 	public function explode(){
-		$this->close();
 		$this->server->getPluginManager()->callEvent($ev = new ExplosionPrimeEvent($this, 6));
 
 		if(!$ev->isCancelled()){
@@ -54,6 +53,7 @@ class EnderCrystal extends Living implements Explosive{
 			}
 			$explosion->explodeB();
 		}
+		$this->close();
 	}
 
 	public function spawnTo(Player $player){
