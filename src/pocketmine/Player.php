@@ -2672,15 +2672,21 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				break;
 			case ProtocolInfo::DROP_ITEM_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
-					break;
+					return true;
 				}
 
-				if($packet->item->getId() === Item::AIR){
+				/** @var Item $item */
+				$item = $packet->item; // Sometimes these items don't stack in the inventory anymore!
+
+				if($item->getId() === Item::AIR){
 					// Windows 10 Edition drops the contents of the crafting grid on container close - including air.
 					break;
 				}
+				if(!$this->inventory->contains($item)){
+					assert(false, "Player ".$this->getName()." tried to drop an item that he does not have: " . $item); // Also happens on spam drop, when stack just got empty - blame lag
+					break;
+				}
 
-				$item = $this->inventory->getItemInHand();
 				$ev = new PlayerDropItemEvent($this, $item);
 				$this->server->getPluginManager()->callEvent($ev);
 				if($ev->isCancelled()){
@@ -2688,12 +2694,13 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					break;
 				}
 
-				$this->inventory->setItemInHand(Item::get(Item::AIR, 0, 1));
 				$motion = $this->getDirectionVector()->multiply(0.4);
 
-				$this->level->dropItem($this->add(0, 1.3, 0), $item, $motion, 40);
+				$this->level->dropItem($this->add(0, 1.3, 0), $ev->getItem(), $motion, 40);
+				$this->inventory->removeItem($item);
 
 				$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, false);
+
 				break;
 			case ProtocolInfo::COMMAND_STEP_PACKET:
 				if($this->spawned === false or !$this->isAlive()){
