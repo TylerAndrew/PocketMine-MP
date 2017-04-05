@@ -61,7 +61,6 @@ abstract class Living extends Entity implements Damageable{
 		}
 
 		$this->setHealth($this->getAttributeMap()->getAttribute(Attribute::HEALTH)->setMaxValue($this->namedtag["MaxHealth"])->setValue($this->namedtag["Health"])->getValue());
-		print $this->getHealth().'/'.$this->getMaxHealth().PHP_EOL;
 	}
 
 	protected function addAttributes(){
