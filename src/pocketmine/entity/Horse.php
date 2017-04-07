@@ -5,7 +5,7 @@ use pocketmine\item\Item as ItemItem;
 use pocketmine\network\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Horse extends Animal implements Rideable{
+class Horse extends Animal implements Rideable, Ageable {
     const NETWORK_ID = 23;
 
     public $width = 0.75;
@@ -41,10 +41,6 @@ class Horse extends Animal implements Rideable{
 
 		parent::spawnTo($player);
 	}
-
-    public function isBaby(){
-        return $this->getDataFlag(self::DATA_AGEABLE_FLAGS, self::DATA_FLAG_BABY);
-    }
 
     public function getDrops(){
         $drops = [

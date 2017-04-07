@@ -244,7 +244,7 @@ class Effect{
 		}
 	}
 
-	public function getColor(){
+	public function getColor(){ //Todo return Color class
 		return [$this->color >> 16, ($this->color >> 8) & 0xff, $this->color & 0xff];
 	}
 

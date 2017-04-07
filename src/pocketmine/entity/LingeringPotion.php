@@ -41,17 +41,9 @@ class LingeringPotion extends Projectile {
 
 	public function kill() {
 		if ($this->isAlive()) {
-			#$color = Potion::getColor($this->getPotionId());
 			$this->getLevel()->addParticle(new ItemBreakParticle($this, ItemItem::get(ItemItem::LINGERING_POTION)));
-			$this->getLevel()->addParticle(new DestroyBlockParticle($this, Block::get(Block::GLASS)));//hack
-			#$this->getLevel()->addParticle(new GenericParticle($this, Particle::TYPE_MOB_SPELL_INSTANTANEOUS, ((255 & 0xff) << 24) | (($color[0] & 0xff) << 16) | (($color[1] & 0xff) << 8) | ($color[2] & 0xff)));
 
 			$aec = null;
-			$level = $this->chunk;
-
-			if (!($level instanceof Level)) {
-				return false;
-			}
 
 			$nbt = new CompoundTag("", [
 				"Pos" => new ListTag("Pos", [
@@ -81,7 +73,7 @@ class LingeringPotion extends Projectile {
 			$nbt->Duration = new IntTag("Duration", 600);
 			$nbt->DurationOnUse = new IntTag("DurationOnUse", 0);
 
-			$aec = Entity::createEntity("AreaEffectCloud", $level, $nbt);
+			$aec = Entity::createEntity("AreaEffectCloud", $this->getLevel(), $nbt);
 			if ($aec instanceof Entity) {
 				$aec->spawnToAll();
 			}

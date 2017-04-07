@@ -1,8 +1,10 @@
 <?php
+
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
 use pocketmine\item\Potion;
+use pocketmine\level\particle\Particle;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\IntTag;
@@ -81,8 +83,12 @@ class AreaEffectCloud extends Entity {
 		}
 		$this->DurationOnUse = $this->namedtag->DurationOnUse->getValue();
 
-		$this->setDataProperty(self::DATA_POTION_AMBIENT, self::DATA_TYPE_SHORT, $this->PotionId);
-		$this->setDataFlag(self::DATA_BOUNDING_BOX_HEIGHT, self::DATA_TYPE_FLOAT, $this->height);
+		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_PARTICLE_ID, self::DATA_TYPE_INT, Particle::TYPE_HEART);//todo
+		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_RADIUS, self::DATA_TYPE_FLOAT, $this->Radius);
+		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_WAITING, self::DATA_TYPE_INT, $this->WaitTime);
+		$this->setDataProperty(self::DATA_BOUNDING_BOX_HEIGHT, self::DATA_TYPE_FLOAT, 1);
+		$this->setDataProperty(self::DATA_BOUNDING_BOX_WIDTH, self::DATA_TYPE_FLOAT, $this->Radius * 2);
+		$this->setDataProperty(self::DATA_POTION_AMBIENT, self::DATA_TYPE_BYTE, 1);
 	}
 
 	public function onUpdate($currentTick) {
@@ -98,18 +104,19 @@ class AreaEffectCloud extends Entity {
 			$this->close();
 			$hasUpdate = true;
 		} else {
+			/** @var Potion $potion */
 			$potion = ItemItem::get(ItemItem::POTION, $this->PotionId);
-			if ($potion instanceof Potion) ;//blamephpstorm
 			$effects = $potion->getAdditionalEffects();
 			if (empty($effects) || !$effects[0] instanceof Effect) {
 				$this->close();
 				$this->timings->stopTiming();
 				return true;
 			}
-			$effect = $effects[0];
-			if ($effect instanceof Effect) ;//blamephpstorm
+			/** @var Effect $effect */
+			$effect = $effects[0]; //Todo multiple effects
+			$this->setDataProperty(self::DATA_POTION_COLOR, self::DATA_TYPE_INT, ($effect->getColor()[0] << 16) + ($effect->getColor()[1] << 8) + $effect->getColor()[2]);
 			$this->Radius += $this->RadiusPerTick;
-			$this->setDataFlag(self::DATA_BOUNDING_BOX_WIDTH, self::DATA_TYPE_FLOAT, $this->Radius * 2);
+			$this->setDataProperty(self::DATA_BOUNDING_BOX_WIDTH, self::DATA_TYPE_FLOAT, $this->Radius * 2);
 			if ($this->WaitTime > 0) {
 				$this->WaitTime--;
 				$this->timings->stopTiming();
@@ -119,16 +126,20 @@ class AreaEffectCloud extends Entity {
 			$bb = new AxisAlignedBB($this->x - $this->Radius, $this->y, $this->z - $this->Radius, $this->x + $this->Radius, $this->y + $this->height, $this->z + $this->Radius);
 			$used = false;
 			foreach ($this->getLevel()->getCollidingEntities($bb, $this) as $collidingEntity) {
-				if ($collidingEntity instanceof Living && $collidingEntity->distance($this) <= $this->Radius) {
+				if ($collidingEntity instanceof Living && $collidingEntity->distanceSquared($this) <= $this->Radius ** 2) {
 					$used = true;
 					$collidingEntity->addEffect($effect);
 				}
 			}
 			if ($used) {
 				$this->Duration -= $this->DurationOnUse;
+				$this->Radius += $this->RadiusOnUse;
 				$this->WaitTime = 10;
 			}
 		}
+
+		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_RADIUS, self::DATA_TYPE_FLOAT, $this->Radius);
+		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_WAITING, self::DATA_TYPE_INT, $this->WaitTime);
 
 		$this->timings->stopTiming();
 
@@ -149,7 +160,7 @@ class AreaEffectCloud extends Entity {
 		$pk->speedX = $this->motionX;
 		$pk->speedY = $this->motionY;
 		$pk->speedZ = $this->motionZ;
-		$pk->metadata = $this->dataProperties;//data color
+		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
