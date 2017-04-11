@@ -1,12 +1,9 @@
 <?php
+
 namespace pocketmine\entity;
 
-use pocketmine\block\Block;
-use pocketmine\item\Item as ItemItem;
 use pocketmine\item\Potion;
 use pocketmine\level\Level;
-use pocketmine\level\particle\DestroyBlockParticle;
-use pocketmine\level\particle\ItemBreakParticle;
 use pocketmine\level\particle\SpellParticle;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ShortTag;
@@ -28,17 +25,33 @@ class ThrownPotion extends Projectile {
 		}
 		parent::__construct($level, $nbt, $shootingEntity);
 		unset($this->dataProperties[self::DATA_SHOOTER_ID]);
-		$this->setDataProperty(self::DATA_MARK_VARIANT, self::DATA_TYPE_SHORT, $this->getPotionId());
+		$this->setDataProperty(self::DATA_POTION_ID, self::DATA_TYPE_SHORT, $this->getPotionId());
 	}
 
 	public function getPotionId() {
-		return (int)$this->namedtag["PotionId"];
+		return $this->namedtag["PotionId"];
+	}
+
+	public function onUpdate($currentTick) {
+		if ($this->closed) {
+			return false;
+		}
+		$this->timings->startTiming();
+		$hasUpdate = parent::onUpdate($currentTick);
+		$this->age++;
+		if ($this->age > 1200 or $this->isCollided) {
+			$this->kill();
+			$this->close();
+			$hasUpdate = true;
+		}
+		$this->timings->stopTiming();
+		return $hasUpdate;
 	}
 
 	public function kill() {
 		if ($this->isAlive()) {
-			$this->getLevel()->addParticle(new ItemBreakParticle($this, ItemItem::get(ItemItem::SPLASH_POTION)));
-			$this->getLevel()->addParticle(new DestroyBlockParticle($this, Block::get(Block::GLASS)));//hack
+			$color = Potion::getColor($this->getPotionId());
+			$this->getLevel()->addParticle(new SpellParticle($this, $color[0], $color[1], $color[2]));
 			$players = $this->getViewers();
 			foreach ($players as $p) {
 				if ($p->distance($this) <= 6) {
@@ -161,22 +174,6 @@ class ThrownPotion extends Projectile {
 			}
 			parent::kill();
 		}
-	}
-
-	public function onUpdate($currentTick) {
-		if ($this->closed) {
-			return false;
-		}
-		$this->timings->startTiming();
-		$hasUpdate = parent::onUpdate($currentTick);
-		$this->age++;
-		if ($this->age > 1200 or $this->isCollided) {
-			$this->kill();
-			$this->close();
-			$hasUpdate = true;
-		}
-		$this->timings->stopTiming();
-		return $hasUpdate;
 	}
 
 	public function spawnTo(Player $player) {

@@ -83,7 +83,7 @@ class AreaEffectCloud extends Entity {
 		}
 		$this->DurationOnUse = $this->namedtag->DurationOnUse->getValue();
 
-		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_PARTICLE_ID, self::DATA_TYPE_INT, Particle::TYPE_HEART);//todo
+		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_PARTICLE_ID, self::DATA_TYPE_INT, Particle::TYPE_MOB_SPELL);//todo
 		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_RADIUS, self::DATA_TYPE_FLOAT, $this->Radius);
 		$this->setDataProperty(self::DATA_AREA_EFFECT_CLOUD_WAITING, self::DATA_TYPE_INT, $this->WaitTime);
 		$this->setDataProperty(self::DATA_BOUNDING_BOX_HEIGHT, self::DATA_TYPE_FLOAT, 1);
@@ -114,7 +114,8 @@ class AreaEffectCloud extends Entity {
 			}
 			/** @var Effect $effect */
 			$effect = $effects[0]; //Todo multiple effects
-			$this->setDataProperty(self::DATA_POTION_COLOR, self::DATA_TYPE_INT, ($effect->getColor()[0] << 16) + ($effect->getColor()[1] << 8) + $effect->getColor()[2]);
+			#$this->setDataProperty(self::DATA_POTION_COLOR, self::DATA_TYPE_INT, ($effect->getColor()[0] << 16) + ($effect->getColor()[1] << 8) + $effect->getColor()[2]);
+			$this->setDataProperty(self::DATA_POTION_COLOR, self::DATA_TYPE_INT, ((255 & 0xff) << 24) | (($effect->getColor()[0] & 0xff) << 16) | (($effect->getColor()[1] & 0xff) << 8) | ($effect->getColor()[2] & 0xff));
 			$this->Radius += $this->RadiusPerTick;
 			$this->setDataProperty(self::DATA_BOUNDING_BOX_WIDTH, self::DATA_TYPE_FLOAT, $this->Radius * 2);
 			if ($this->WaitTime > 0) {
