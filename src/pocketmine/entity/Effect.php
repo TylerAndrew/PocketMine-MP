@@ -448,7 +448,7 @@ class Effect{
 				$attr->setMaxValue($max);
 				break;
 			case Effect::ABSORPTION:
-				$new = (4 * $this->getEffectLevel());
+				$new = (4 * ($this->amplifier + 1));
 				if($new > $entity->getAbsorption()){
 					$entity->setAbsorption($new);
 				}

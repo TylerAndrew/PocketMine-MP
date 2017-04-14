@@ -38,8 +38,8 @@ interface ProtocolInfo{
 	 * Actual Minecraft: PE protocol version
 	 */
 	const CURRENT_PROTOCOL = 110;
-	const MINECRAFT_VERSION = "v1.1.0.0 beta";
-	const MINECRAFT_VERSION_NETWORK = "1.1.0.0";
+	const MINECRAFT_VERSION = 'v1.1.0.3 beta';
+	const MINECRAFT_VERSION_NETWORK = '1.1.0.3';
 
 	const LOGIN_PACKET = 0x01;
 	const PLAY_STATUS_PACKET = 0x02;
@@ -47,7 +47,7 @@ interface ProtocolInfo{
 	const CLIENT_TO_SERVER_HANDSHAKE_PACKET = 0x04;
 	const DISCONNECT_PACKET = 0x05;
 	const RESOURCE_PACKS_INFO_PACKET = 0x06;
-	const RESOURCE_PACK_STACK_PACKET = 0x07; //ResourcePacksStackPacket
+	const RESOURCE_PACK_STACK_PACKET = 0x07;
 	const RESOURCE_PACK_CLIENT_RESPONSE_PACKET = 0x08;
 	const TEXT_PACKET = 0x09;
 	const SET_TIME_PACKET = 0x0a;
@@ -77,7 +77,7 @@ interface ProtocolInfo{
 	const BLOCK_PICK_REQUEST_PACKET = 0x22;
 	const USE_ITEM_PACKET = 0x23;
 	const PLAYER_ACTION_PACKET = 0x24;
-	const ENTITY_FALL_PACKET = 0x25; //PlayerFallPacket
+	const ENTITY_FALL_PACKET = 0x25;
 	const HURT_ARMOR_PACKET = 0x26;
 	const SET_ENTITY_DATA_PACKET = 0x27;
 	const SET_ENTITY_MOTION_PACKET = 0x28;
@@ -105,7 +105,7 @@ interface ProtocolInfo{
 	const SET_PLAYER_GAME_TYPE_PACKET = 0x3e;
 	const PLAYER_LIST_PACKET = 0x3f;
 	const SIMPLE_EVENT_PACKET = 0x40;
-	const EVENT_PACKET = 0x41; //TelemetryEventPacket
+	const EVENT_PACKET = 0x41;
 	const SPAWN_EXPERIENCE_ORB_PACKET = 0x42;
 	const CLIENTBOUND_MAP_ITEM_DATA_PACKET = 0x43;
 	const MAP_INFO_REQUEST_PACKET = 0x44;
@@ -132,5 +132,7 @@ interface ProtocolInfo{
 	const SET_TITLE_PACKET = 0x59;
 	const ADD_BEHAVIOR_TREE_PACKET = 0x5a;
 	const STRUCTURE_BLOCK_UPDATE_PACKET = 0x5b;
+	const SHOW_STORE_OFFER_PACKET = 0x5c;
+	const PURCHASE_RECEIPT_PACKET = 0x5d;
 
 }
