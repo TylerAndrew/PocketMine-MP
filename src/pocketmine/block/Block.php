@@ -507,6 +507,14 @@ class Block extends Position implements BlockIds, Metadatable{
 	}
 
 	/**
+	 * Returns whether entities can climb up this block.
+	 * @return bool
+	 */
+	public function canClimb() : bool{
+		return false;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getName(){
