@@ -29,9 +29,7 @@ class SlimeBlock extends Transparent { //Partial (does not block light, mob spaw
 
 	protected $id = self::SLIME_BLOCK;
 
-	public function __construct() {
-
-	}
+	public function __construct() {	}
 
 	public function getName() {
 		return "Slime Block";
@@ -45,11 +43,19 @@ class SlimeBlock extends Transparent { //Partial (does not block light, mob spaw
 		return 0;
 	}
 
+	public function hasEntityCollision() {
+		return true;
+	}
+
+	public function isSolid(){
+		return false; //todo check
+	}
+
 	public function onEntityCollide(Entity $entity) {
 		if (!$entity->isSneaking()) {
 			$entity->resetFallDistance();
-		}
-		parent::onEntityCollide($entity);
+			$entity->onGround = true;
+		} else parent::onEntityCollide($entity);
 	}
 
 	/**
@@ -61,7 +67,7 @@ class SlimeBlock extends Transparent { //Partial (does not block light, mob spaw
 			$this->y,
 			$this->z,
 			$this->x + 1,
-			$this->y + 1.5,
+			$this->y + 0.99,
 			$this->z + 1
 		);
 	}
