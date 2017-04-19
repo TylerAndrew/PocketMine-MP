@@ -23,6 +23,7 @@ namespace pocketmine\item;
 
 use pocketmine\level\Level;
 use pocketmine\block\Block;
+use pocketmine\nbt\tag\IntTag;
 use pocketmine\Player;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
@@ -72,7 +73,7 @@ class Boat extends Item{
 				new FloatTag("", 0),
 				new FloatTag("", 0)
 			]),
-			"woodID" => new ByteTag("woodID",$this->getDamage()),
+			"WoodID" => new IntTag("WoodID",$this->getDamage()),
 		]));
 		$boat->spawnToAll();
 		if($player->isSurvival()){
