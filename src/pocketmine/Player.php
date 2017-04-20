@@ -114,6 +114,7 @@ use pocketmine\network\protocol\BatchPacket;
 use pocketmine\network\protocol\ChunkRadiusUpdatedPacket;
 use pocketmine\network\protocol\ContainerClosePacket;
 use pocketmine\network\protocol\ContainerSetContentPacket;
+use pocketmine\network\protocol\CraftingEventPacket;
 use pocketmine\network\protocol\DataPacket;
 use pocketmine\network\protocol\DisconnectPacket;
 use pocketmine\network\protocol\EntityEventPacket;
@@ -2682,7 +2683,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					// Windows 10 Edition drops the contents of the crafting grid on container close - including air.
 					break;
 				}
-				if(!$this->inventory->contains($item)){
+				if(!$this->inventory->contains($item) && !$this->isCreative(true)){
 					assert(false, "Player ".$this->getName()." tried to drop an item that he does not have: " . $item); // Also happens on spam drop, when stack just got empty - blame lag
 					break;
 				}
@@ -2775,6 +2776,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				break;
 
 			case ProtocolInfo::CRAFTING_EVENT_PACKET:
+				/** @var CraftingEventPacket $packet */
 				if($this->spawned === false or !$this->isAlive()){
 					break;
 				}elseif(!isset($this->windowIndex[$packet->windowId])){
@@ -2790,6 +2792,28 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				if($recipe === null or (($recipe instanceof BigShapelessRecipe or $recipe instanceof BigShapedRecipe) and $this->craftingType === 0)){
 					$this->inventory->sendContents($this);
 					break;
+				}
+
+				$classicingredients = [];
+				if(empty($packet->input)){//classic ui temp
+					if(!$recipe instanceof ShapedRecipe){
+						$classicingredients = $recipe->getIngredientList();
+					}
+					else{
+						for($x=0;$x<3; ++$x) {
+							for ($y = 0; $y < 3; ++$y) {
+								if(($item = $recipe->getIngredient($x, $y)) instanceof Item){
+									$classicingredients[] = $item;
+								}
+								else continue;
+							}
+						}
+					}
+					for($x = 0; $x < 3; ++$x){
+						for($y = 0; $y < 3; ++$y){
+							$packet->input[$y * 3 + $x] = ($recipe->getIngredient($x, $y)??Item::get(Item::AIR));
+						}
+					}
 				}
 
 				$canCraft = true;
@@ -2844,6 +2868,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 				/** @var Item[] $ingredients */
 				$ingredients = $packet->input;
+				if(empty($ingredients)) $ingredients = $classicingredients;
 				$result = $packet->output[0];
 
 				if(!$canCraft or !$recipe->getResult()->equals($result)){
