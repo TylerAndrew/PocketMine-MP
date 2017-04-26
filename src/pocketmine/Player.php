@@ -28,6 +28,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\entity\Arrow;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
+use pocketmine\entity\FishingHook;
 use pocketmine\entity\Human;
 use pocketmine\entity\Item as DroppedItem;
 use pocketmine\entity\Living;
@@ -230,6 +231,8 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	protected $inAirTicks = 0;
 	protected $startAirTicks = 5;
+
+	private $hookEID = -1;
 
 	//TODO: Abilities
 	protected $autoJump = true;
@@ -2210,6 +2213,32 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}else{
 							$thrownpotion->spawnToAll();
 						}
+					}elseif($item->getId() === Item::FISHING_ROD){
+						if($this->isFishing()){
+							$this->reelRod(false);
+							break;
+						}
+						$nbt = new CompoundTag("", [
+							"Pos" => new ListTag("Pos", [
+								new DoubleTag("", $this->x),
+								new DoubleTag("", $this->y + $this->getEyeHeight()),
+								new DoubleTag("", $this->z)
+							]),
+							"Motion" => new ListTag("Motion", [
+								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
+								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
+								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
+							]),
+							"Rotation" => new ListTag("Rotation", [
+								new FloatTag("", $this->yaw),
+								new FloatTag("", $this->pitch)
+							]),
+						]);
+						$f = 1.2;//todo check
+						$hook = Entity::createEntity("FishingHook", $this->getLevel(), $nbt, $this);
+						$hook->setMotion($hook->getMotion()->multiply($f));
+						$hook->spawnToAll();
+						$this->hookEID = $hook->getId();
 					}
 
 					$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
@@ -3791,5 +3820,26 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 	public function isLoaderActive(){
 		return $this->isConnected();
+	}
+
+	//Fishing
+	public function reelRod($forced = true){
+		if($this->isFishing()){
+			if($forced){
+				$this->getHookEntity()->close();
+			}else{
+				$this->getHookEntity()->retrieve();
+			}
+		}
+		$this->hookEID = -1;
+	}
+
+	/** @return FishingHook|Entity */
+	public function getHookEntity(){
+		return $this->getLevel()->getEntity($this->hookEID);
+	}
+
+	public function isFishing(){
+		return $this->hookEID !== -1;
 	}
 }
