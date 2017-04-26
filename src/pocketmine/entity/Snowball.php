@@ -21,6 +21,10 @@
 
 namespace pocketmine\entity;
 
+use pocketmine\event\entity\EntityDamageByChildEntityEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
+use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
@@ -43,6 +47,31 @@ class Snowball extends Projectile{
     public function getName(){
         return "Snowball";
     }
+
+	public function getResultDamage(): int {
+		return 0;
+	}
+
+	/**
+	 * @param Entity $entity
+	 */
+	public function onCollideWithEntity(Entity $entity){
+		$this->server->getPluginManager()->callEvent(new ProjectileHitEvent($this));
+
+		$damage = $this->getResultDamage();
+
+		if($this->shootingEntity === null){
+			$ev = new EntityDamageByEntityEvent($this, $entity, EntityDamageEvent::CAUSE_PROJECTILE, $damage);
+		}else{
+			$ev = new EntityDamageByChildEntityEvent($this->shootingEntity, $this, $entity, EntityDamageEvent::CAUSE_PROJECTILE, $damage);
+		}
+
+		$entity->attack($ev->getFinalDamage(), $ev);
+
+		$this->hadCollision = true;
+
+		$this->close();
+	}
 
 	public function onUpdate($currentTick){
 		if($this->closed){

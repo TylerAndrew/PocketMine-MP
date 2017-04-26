@@ -1,8 +1,11 @@
 <?php
 namespace pocketmine\entity;
 
+use pocketmine\event\entity\EntityDamageByChildEntityEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
+use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\level\Level;
 use pocketmine\level\particle\GenericParticle;
 use pocketmine\level\particle\Particle;
@@ -26,6 +29,26 @@ class ThrownEnderPearl extends Projectile {
 		parent::__construct($level, $nbt, $shootingEntity);
 	}
 
+	public function getResultDamage(): int {
+		return 0;
+	}
+
+	public function onCollideWithEntity(Entity $entity){
+		$this->server->getPluginManager()->callEvent(new ProjectileHitEvent($this));
+
+		$damage = $this->getResultDamage();
+
+		if($this->shootingEntity === null){
+			$ev = new EntityDamageByEntityEvent($this, $entity, EntityDamageEvent::CAUSE_PROJECTILE, $damage);
+		}else{
+			$ev = new EntityDamageByChildEntityEvent($this->shootingEntity, $this, $entity, EntityDamageEvent::CAUSE_PROJECTILE, $damage);
+		}
+
+		$entity->attack($ev->getFinalDamage(), $ev);
+
+		$this->hadCollision = true;
+	}
+
 	public function onUpdate($currentTick) {
 		if ($this->closed) {
 			return false;
@@ -35,7 +58,7 @@ class ThrownEnderPearl extends Projectile {
 
 		$hasUpdate = parent::onUpdate($currentTick);
 
-		if ($this->isCollided && $this->shootingEntity !== null && $this->shootingEntity instanceof Player) {
+		if (($this->isCollided || $this->hadCollision) && $this->shootingEntity !== null && $this->shootingEntity instanceof Player) {
 			$this->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityTeleportEvent($this->shootingEntity, $this->shootingEntity->getPosition(), $this->getPosition()));
 			if (!$ev->isCancelled()) {
 				$this->getLevel()->getServer()->getPluginManager()->callEvent($dev = new EntityDamageEvent($this->shootingEntity, EntityDamageEvent::CAUSE_FALL, 5));
@@ -46,10 +69,10 @@ class ThrownEnderPearl extends Projectile {
 				$this->getLevel()->addSound(new GenericSound($ev->getFrom(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
 				$this->getLevel()->addSound(new GenericSound($ev->getTo(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
 				$this->getLevel()->addParticle(new GenericParticle($ev->getFrom(), Particle::TYPE_PORTAL));
-				$this->getLevel()->addParticle(new GenericParticle($ev->getTo(), Particle::TYPE_PORTAL));
+				$this->getLevel()->addParticle(new GenericParticle($ev->getTo(), Particle::TYPE_PORTAL));//todo use event
 			}
 		}
-		if ($this->age > 1200 || $this->isCollided) {
+		if ($this->age > 1200 || $this->isCollided || $this->hadCollision) {
 			$this->close();
 			$hasUpdate = true;
 		}
