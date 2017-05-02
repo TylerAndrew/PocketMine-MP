@@ -21,9 +21,11 @@ class FishingHook extends Projectile {
 	public $height = 0.25;
 	protected $gravity = 0.1;
 	protected $drag = 0.05;
+	private $loottable = null;
 
 	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null) {
 		parent::__construct($level, $nbt, $shootingEntity);
+		$this->loottable = new TempLootGenerator(new Config(Server::getInstance()->getFilePath() . "src/pocketmine/resources/loot_tables/gameplay/fishing.json", Config::JSON, []));
 	}
 
 	public function initEntity() {
@@ -63,9 +65,7 @@ class FishingHook extends Projectile {
 				$hasUpdate = true;
 			} elseif ($this->level->getBlock($this) instanceof Lava) {//kill
 				$this->kill();
-			}/*elseif($this->isCollidedWithEntity()){//hook onto
-				//EntityLinkPacket, "rider"
-			}*/
+			}
 		}
 
 		#$this->timings->stopTiming();
@@ -98,11 +98,9 @@ class FishingHook extends Projectile {
 	}
 
 	public function createLoot() {
-		$loottable = new TempLootGenerator(new Config(Server::getInstance()->getFilePath() . "src/pocketmine/resources/loot_tables/gameplay/fishing.json", Config::JSON, []));
-		foreach ($loottable->getRandomLoot() as $loot) {
-			$this->getLevel()->dropItem($this, $loot, $this->getOwner()->subtract($this)->multiply(0.3));
+		foreach ($this->loottable->getRandomLoot() as $loot) {
+			$this->getLevel()->dropItem($this, $loot, $this->getOwner()->subtract($this));
 		}
-		unset($loottable);//optimise this
 	}
 
 	public function spawnTo(Player $player) {
