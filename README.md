@@ -35,7 +35,7 @@ There are a very wide range of already-written plugins available which you can u
 Yes, you can! Contributions are welcomed provided that they comply with our [Contributing Guidelines](CONTRIBUTING.md). Please ensure you read the relevant sections of the guidelines carefully before making a Pull Request or opening an Issue.
 
 ### Where can I get the latest .phar?
- - You can get the latest auto build phar for cs-1.0 here: https://phar.wolvesfortress.de/circleci.php
+ - You can get the latest auto build phar for cs-1.0 here: https://phar.wolvesfortress.de/circleci.php?branch=cs-1.0
  - [CSPhar](http://robskebueba.no-ip.biz/CSPhar.php) or [CSPhar by Dan](https://phar.wolvesfortress.de) are beta websites to easily show all builds
  - You can get an optimized PHP environment here: [SalmonGER/PHPbinary](https://github.com/SalmonGER/PocketMine-MP-Binarys).
  - You can get a Multicraft config demo here: [ClearSkyTeam/MulticraftConfig](https://github.com/ClearSkyTeam/MulticraftConfig).
