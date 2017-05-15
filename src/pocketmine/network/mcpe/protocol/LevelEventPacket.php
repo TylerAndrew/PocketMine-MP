@@ -107,7 +107,6 @@ class LevelEventPacket extends DataPacket{
 		$this->evid = $this->getVarInt();
 		$this->getVector3f($this->x, $this->y, $this->z);
 		$this->data = $this->getVarInt();
-		var_dump($this);
 	}
 
 	public function encode(){

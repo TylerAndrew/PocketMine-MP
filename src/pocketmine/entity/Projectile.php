@@ -35,7 +35,7 @@ use pocketmine\nbt\tag\ShortTag;
 abstract class Projectile extends Entity{
 
 	const DATA_SHOOTER_ID = 17;
-	
+
 	protected $damage = 0;
 	protected $isCritical;
 
