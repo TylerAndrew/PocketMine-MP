@@ -8,6 +8,7 @@ use pocketmine\entity\Item as DroppedItem;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\protocol\EntityEventPacket;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\utils\Config;
@@ -67,6 +68,21 @@ class FishingHook extends Projectile {
 				$this->kill();
 			}
 		}
+		$this->setDataProperty(self::DATA_BOBBER_X, self::DATA_TYPE_FLOAT, lcg_value()*2);
+		$this->setDataProperty(self::DATA_BOBBER_Y, self::DATA_TYPE_FLOAT, lcg_value()*2);
+		$this->setDataProperty(self::DATA_BOBBER_Z, self::DATA_TYPE_FLOAT, lcg_value()*2);
+		$pk = new EntityEventPacket();
+		$pk->eid = $this->getId();
+		$pk->event = EntityEventPacket::FISH_HOOK_POSITION;
+		$this->getOwner()->directDataPacket($pk);
+		$pk = new EntityEventPacket();
+		$pk->eid = $this->getId();
+		$pk->event = EntityEventPacket::FISH_HOOK_BUBBLE;
+		$this->getOwner()->directDataPacket($pk);
+		$pk = new EntityEventPacket();
+		$pk->eid = $this->getId();
+		$pk->event = EntityEventPacket::FISH_HOOK_TEASE;
+		$this->getOwner()->directDataPacket($pk);
 
 		#$this->timings->stopTiming();
 

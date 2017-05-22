@@ -87,6 +87,9 @@ abstract class Entity extends Location implements Metadatable{
 	/* 27 (byte) player-specific flags
 	 * 28 (int) player "index"?
 	 * 29 (block coords) bed position */
+	const DATA_BOBBER_X = 34;// (float) fishing bobber
+	const DATA_BOBBER_Y = 35;// (float) fishing bobber
+	const DATA_BOBBER_Z = 36;// (float) fishing bobber
 	const DATA_LEAD_HOLDER_EID = 38; //long
 	const DATA_SCALE = 39; //float
 	const DATA_INTERACTIVE_TAG = 40; //string (button text)
