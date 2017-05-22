@@ -52,9 +52,9 @@ use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
-use pocketmine\network\protocol\MobEffectPacket;
-use pocketmine\network\protocol\RemoveEntityPacket;
-use pocketmine\network\protocol\SetEntityDataPacket;
+use pocketmine\network\mcpe\protocol\MobEffectPacket;
+use pocketmine\network\mcpe\protocol\RemoveEntityPacket;
+use pocketmine\network\mcpe\protocol\SetEntityDataPacket;
 use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
@@ -76,7 +76,7 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_FLAGS = 0;
 	//1 (int)
 	const DATA_VARIANT = 2; //int
-	const DATA_COLOUR = 3; //byte
+	const DATA_COLOR = 3, DATA_COLOUR = 3; //byte
 	const DATA_NAMETAG = 4; //string
 	const DATA_OWNER_EID = 5; //long
 
@@ -397,6 +397,7 @@ abstract class Entity extends Location implements Metadatable{
 		$this->invulnerable = $this->namedtag["Invulnerable"] > 0 ? true : false;
 
 		$this->attributeMap = new AttributeMap();
+		$this->addAttributes();
 
 		$this->chunk->addEntity($this);
 		$this->level->addEntity($this);
@@ -466,6 +467,7 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->width *= $multiplier;
 		$this->height *= $multiplier;
+		$this->eyeHeight *= $multiplier;
 		$halfWidth = $this->width / 2;
 
 		$this->boundingBox->setBounds(
@@ -478,8 +480,6 @@ abstract class Entity extends Location implements Metadatable{
 		);
 
 		$this->setDataProperty(self::DATA_SCALE, self::DATA_TYPE_FLOAT, $value);
-		$this->setDataProperty(self::DATA_BOUNDING_BOX_WIDTH, self::DATA_TYPE_FLOAT, $this->width);
-		$this->setDataProperty(self::DATA_BOUNDING_BOX_HEIGHT, self::DATA_TYPE_FLOAT, $this->height);
 	}
 
 	public function isSneaking(){
@@ -567,10 +567,6 @@ abstract class Entity extends Location implements Metadatable{
 		$this->effects[$effect->getId()] = $effect;
 
 		$this->recalculateEffectColor();
-
-		if($effect->getId() === Effect::HEALTH_BOOST){
-			$this->setHealth($this->getHealth() + 4 * ($effect->getAmplifier() + 1));
-		}
 	}
 
 	protected function recalculateEffectColor(){
@@ -579,12 +575,12 @@ abstract class Entity extends Location implements Metadatable{
 		$count = 0;
 		$ambient = true;
 		foreach($this->effects as $effect){
-			if($effect->isVisible()){
+			if($effect->isVisible() and $effect->hasBubbles()){
 				$c = $effect->getColor();
-				$color[0] += $c[0] * ($effect->getAmplifier() + 1);
-				$color[1] += $c[1] * ($effect->getAmplifier() + 1);
-				$color[2] += $c[2] * ($effect->getAmplifier() + 1);
-				$count += $effect->getAmplifier() + 1;
+				$color[0] += $c[0] * $effect->getEffectLevel();
+				$color[1] += $c[1] * $effect->getEffectLevel();
+				$color[2] += $c[2] * $effect->getEffectLevel();
+				$count += $effect->getEffectLevel();
 				if(!$effect->isAmbient()){
 					$ambient = false;
 				}
@@ -596,7 +592,7 @@ abstract class Entity extends Location implements Metadatable{
 			$g = ($color[1] / $count) & 0xff;
 			$b = ($color[2] / $count) & 0xff;
 
-			$this->setDataProperty(Entity::DATA_POTION_COLOR, Entity::DATA_TYPE_INT, ($r << 16) + ($g << 8) + $b);
+			$this->setDataProperty(Entity::DATA_POTION_COLOR, Entity::DATA_TYPE_INT, 0xff000000 | ($r << 16) | ($g << 8) | $b);
 			$this->setDataProperty(Entity::DATA_POTION_AMBIENT, Entity::DATA_TYPE_BYTE, $ambient ? 1 : 0);
 		}else{
 			$this->setDataProperty(Entity::DATA_POTION_COLOR, Entity::DATA_TYPE_INT, 0);
@@ -712,8 +708,6 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->scheduleUpdate();
 
-		$this->addAttributes();
-
 		if(isset($this->namedtag->ActiveEffects)){
 			foreach($this->namedtag->ActiveEffects->getValue() as $e){
 				$amplifier = $e["Amplifier"] & 0xff; //0-255 only
@@ -790,6 +784,7 @@ abstract class Entity extends Location implements Metadatable{
 
 	/**
 	 * @param Player $player
+	 * @param bool   $send
 	 */
 	public function despawnFrom(Player $player, bool $send = true){
 		if(isset($this->hasSpawned[$player->getLoaderId()])){
@@ -824,7 +819,21 @@ abstract class Entity extends Location implements Metadatable{
 
 		$this->setLastDamageCause($source);
 
-		$this->setHealth($this->getHealth() - $source->getFinalDamage());
+		$damage = $source->getFinalDamage();
+
+		$absorption = $this->getAbsorption();
+		if($absorption > 0){
+			if($absorption > $damage){
+				//Use absorption health before normal health.
+				$this->setAbsorption($absorption - $damage);
+				$damage = 0;
+			}else{
+				$this->setAbsorption(0);
+				$damage -= $absorption;
+			}
+		}
+
+		$this->setHealth($this->getHealth() - $damage);
 	}
 
 	/**
@@ -874,6 +883,14 @@ abstract class Entity extends Location implements Metadatable{
 		}
 	}
 
+	public function getAbsorption() : int{
+		return 0;
+	}
+
+	public function setAbsorption(int $absorption){
+
+	}
+
 	/**
 	 * @param EntityDamageEvent $type
 	 */
@@ -896,7 +913,7 @@ abstract class Entity extends Location implements Metadatable{
 	 * @return int
 	 */
 	public function getMaxHealth(){
-		return $this->maxHealth + ($this->hasEffect(Effect::HEALTH_BOOST) ? 4 * ($this->getEffect(Effect::HEALTH_BOOST)->getAmplifier() + 1) : 0);
+		return $this->maxHealth;
 	}
 
 	/**
@@ -1227,7 +1244,7 @@ abstract class Entity extends Location implements Metadatable{
 	}
 
 	public function fall($fallDistance){
-		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getAmplifier() + 1 : 0));
+		$damage = floor($fallDistance - 3 - ($this->hasEffect(Effect::JUMP) ? $this->getEffect(Effect::JUMP)->getEffectLevel() : 0));
 		if($damage > 0){
 			$ev = new EntityDamageEvent($this, EntityDamageEvent::CAUSE_FALL, $damage);
 			$this->attack($ev->getFinalDamage(), $ev);
@@ -1349,6 +1366,8 @@ abstract class Entity extends Location implements Metadatable{
 		if($dx == 0 and $dz == 0 and $dy == 0){
 			return true;
 		}
+
+		$this->blocksAround = null;
 
 		if($this->keepMovement){
 			$this->boundingBox->offset($dx, $dy, $dz);
@@ -1478,7 +1497,7 @@ abstract class Entity extends Location implements Metadatable{
 			$this->z = ($this->boundingBox->minZ + $this->boundingBox->maxZ) / 2;
 
 			$this->checkChunks();
-
+			$this->checkBlockCollision();
 			$this->checkGroundState($movX, $movY, $movZ, $dx, $dy, $dz);
 			$this->updateFallState($dy, $this->onGround);
 
@@ -1726,7 +1745,10 @@ abstract class Entity extends Location implements Metadatable{
 		if(!$this->closed){
 			$this->server->getPluginManager()->callEvent(new EntityDespawnEvent($this));
 			$this->closed = true;
+
 			$this->despawnFromAll();
+			$this->hasSpawned = [];
+
 			if($this->chunk !== null){
 				$this->chunk->removeEntity($this);
 				$this->chunk = null;

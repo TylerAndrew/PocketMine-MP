@@ -27,7 +27,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\ProjectileHitEvent;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class Snowball extends Projectile{
