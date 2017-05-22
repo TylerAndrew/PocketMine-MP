@@ -2497,42 +2497,65 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 				return true;
 			}
 
-			if($item->getId() === Item::SNOWBALL){
-				$nbt = new CompoundTag("", [
-					"Pos" => new ListTag("Pos", [
-						new DoubleTag("", $this->x),
-						new DoubleTag("", $this->y + $this->getEyeHeight()),
-						new DoubleTag("", $this->z)
-					]),
-					"Motion" => new ListTag("Motion", [
-						new DoubleTag("", $aimPos->x),
-						new DoubleTag("", $aimPos->y),
-						new DoubleTag("", $aimPos->z)
-					]),
-					"Rotation" => new ListTag("Rotation", [
-						new FloatTag("", $this->yaw),
-						new FloatTag("", $this->pitch)
-					]),
-				]);
+			$nbt = new CompoundTag("", [
+				"Pos" => new ListTag("Pos", [
+					new DoubleTag("", $this->x),
+					new DoubleTag("", $this->y + $this->getEyeHeight()),
+					new DoubleTag("", $this->z)
+				]),
+				"Motion" => new ListTag("Motion", [
+					new DoubleTag("", $aimPos->x),
+					new DoubleTag("", $aimPos->y),
+					new DoubleTag("", $aimPos->z)
+				]),
+				"Rotation" => new ListTag("Rotation", [
+					new FloatTag("", $this->yaw),
+					new FloatTag("", $this->pitch)
+				]),
+			]);
 
-				$f = 1.5;
-				$snowball = Entity::createEntity("Snowball", $this->getLevel(), $nbt, $this);
-				$snowball->setMotion($snowball->getMotion()->multiply($f));
-				if($this->isSurvival()){
-					$item->setCount($item->getCount() - 1);
-					$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+			switch($item->getId()){
+				case Item::SNOWBALL: {
+					$f = 1.5;
+					$type = "Snowball";
+					break;
 				}
-				if($snowball instanceof Projectile){
-					$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($snowball));
-					if($projectileEv->isCancelled()){
-						$snowball->kill();
-					}else{
-						$snowball->spawnToAll();
-						$this->level->addSound(new LaunchSound($this), $this->getViewers());
-					}
+				case Item::SPLASH_POTION: {
+					$f = 1.1;
+					$type = "ThrownPotion";
+					$nbt->PotionId = new ShortTag("PotionId", $item->getDamage());
+					break;
+				}
+				case Item::LINGERING_POTION: {
+					$f = 1.1;
+					$type = "LingeringPotion";
+					$nbt->PotionId = new ShortTag("PotionId", $item->getDamage());
+					break;
+				}
+				case Item::ENDER_PEARL: {
+					$f = 1.5;
+					$type = "ThrownEnderPearl";
+					break;
+				}
+				default:
+					return true;
+			}
+			$projectile = Entity::createEntity($type, $this->getLevel(), $nbt, $this);
+			$projectile->setMotion($projectile->getMotion()->multiply($f));
+			if($this->isSurvival()){
+				$item->setCount($item->getCount() - 1);
+				$this->inventory->setItemInHand($item->getCount() > 0 ? $item : Item::get(Item::AIR));
+			}
+			if($projectile instanceof Projectile){
+				$this->server->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($projectile));
+				if($projectileEv->isCancelled()){
+					$projectile->kill();
 				}else{
-					$snowball->spawnToAll();
+					$projectile->spawnToAll();
+					$this->level->addSound(new LaunchSound($this), $this->getViewers());
 				}
+			}else{
+				$projectile->spawnToAll();
 			}
 
 			$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ACTION, true);
