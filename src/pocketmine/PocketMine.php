@@ -227,7 +227,6 @@ namespace pocketmine {
 				}
 
 				return parse_offset($offset);
-				break;
 			case 'linux':
 				// Ubuntu / Debian.
 				if(file_exists('/etc/timezone')){
@@ -254,7 +253,6 @@ namespace pocketmine {
 				}
 
 				return parse_offset($offset);
-				break;
 			case 'mac':
 				if(is_link('/etc/localtime')){
 					$filename = readlink('/etc/localtime');
@@ -265,10 +263,8 @@ namespace pocketmine {
 				}
 
 				return false;
-				break;
 			default:
 				return false;
-				break;
 		}
 	}
 
@@ -495,6 +491,7 @@ namespace pocketmine {
 
 	$killer = new ServerKiller(8);
 	$killer->start();
+	usleep(10000); //Fixes ServerKiller not being able to start on single-core machines
 
 	$erroredThreads = 0;
 	foreach(ThreadManager::getInstance()->getAll() as $id => $thread){

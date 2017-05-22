@@ -19,32 +19,10 @@
  *
 */
 
-namespace pocketmine\network\mcpe\protocol;
 
-#include <rules/DataPacket.h>
+namespace pocketmine\level\format\io\region;
 
 
-use pocketmine\item\Item;
-use pocketmine\network\mcpe\NetworkSession;
-
-class DropItemPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::DROP_ITEM_PACKET;
-
-	public $type;
-	/** @var Item */
-	public $item;
-
-	public function decode(){
-		$this->type = $this->getByte();
-		$this->item = $this->getSlot();
-	}
-
-	public function encode(){
-
-	}
-
-	public function handle(NetworkSession $session) : bool{
-		return $session->handleDropItem($this);
-	}
+class CorruptedRegionException extends RegionException{
 
 }
