@@ -19,7 +19,7 @@
  *
 */
 
-namespace pocketmine\level\generator\hell;
+namespace pocketmine\level\generator\hell\biome;
 
 use pocketmine\level\generator\biome\Biome;
 

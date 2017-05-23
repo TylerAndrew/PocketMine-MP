@@ -116,7 +116,7 @@ class Normal extends Generator{
 		$this->random = $random;
 		$this->random->setSeed($this->level->getSeed());
 		$this->noiseBase = new Simplex($this->random, 4, 1 / 4, 1 / 32);
-		$this->random->setSeed($this->level->getSeed());
+		$this->random->setSeed($this->level->getSeed()); //WHY TWICE?!
 		$this->selector = new BiomeSelector($this->random, function($temperature, $rainfall){
 			if($rainfall < 0.25){
 				if($temperature < 0.7){

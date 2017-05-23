@@ -56,6 +56,7 @@ use pocketmine\level\format\io\region\PMAnvil;
 use pocketmine\level\generator\biome\Biome;
 use pocketmine\level\generator\Flat;
 use pocketmine\level\generator\Generator;
+use pocketmine\level\generator\end\End;
 use pocketmine\level\generator\hell\Nether;
 use pocketmine\level\generator\normal\Normal;
 use pocketmine\level\Level;
@@ -1583,6 +1584,7 @@ class Server{
 			Generator::addGenerator(Flat::class, "flat");
 			Generator::addGenerator(Normal::class, "normal");
 			Generator::addGenerator(Normal::class, "default");
+			Generator::addGenerator(End::class, "end");
 			Generator::addGenerator(Nether::class, "hell");
 			Generator::addGenerator(Nether::class, "nether");
 

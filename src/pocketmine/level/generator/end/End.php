@@ -19,7 +19,7 @@
  *
 */
 
-namespace pocketmine\level\generator\hell;
+namespace pocketmine\level\generator\end;
 
 use pocketmine\block\Block;
 use pocketmine\block\Glowstone;
@@ -38,7 +38,7 @@ use pocketmine\level\Level;
 use pocketmine\math\Vector3 as Vector3;
 use pocketmine\utils\Random;
 
-class Nether extends Generator{
+class End extends Generator{
 
 	/** @var Populator[] */
 	private $populators = [];
@@ -46,7 +46,6 @@ class Nether extends Generator{
 	private $level;
 	/** @var Random */
 	private $random;
-	private $waterHeight = 32;
 	private $emptyHeight = 64;
 	private $emptyAmplitude = 1;
 	private $density = 0.5;
@@ -87,7 +86,7 @@ class Nether extends Generator{
 	}
 
 	public function getName(){
-		return "nether";
+		return "end";
 	}
 
 	public function getSettings(){
@@ -99,15 +98,6 @@ class Nether extends Generator{
 		$this->random = $random;
 		$this->random->setSeed($this->level->getSeed());
 		$this->noiseBase = new Simplex($this->random, 4, 1 / 4, 1 / 64);
-
-		$ores = new Ore();
-		$ores->setOreTypes([
-			new OreType(new StillLava(), 1, 1, 0, Level::Y_MAX - 1),
-			new OreType(new Glowstone(), 20, 8, 0, Level::Y_MAX - 1),
-			new OreType(new Gravel(), 10, 30, 0, Level::Y_MAX - 1),
-			new OreType(new SoulSand(), 10, 30, 0, Level::Y_MAX - 1)
-		]);
-		$this->populators[] = $ores;
 	}
 
 	public function generateChunk($chunkX, $chunkZ){
@@ -120,21 +110,17 @@ class Nether extends Generator{
 		for($x = 0; $x < 16; ++$x){
 			for($z = 0; $z < 16; ++$z){
 
-				$biome = Biome::getBiome(Biome::HELL);
+				$biome = Biome::getBiome(Biome::END);
 				$chunk->setBiomeId($x, $z, $biome->getId());
 
 				for($y = 0; $y < 128; ++$y){
-					if($y === 0 or $y === 127){
-						$chunk->setBlockId($x, $y, $z, Block::BEDROCK);
-						continue;
-					}
 					$noiseValue = (abs($this->emptyHeight - $y) / $this->emptyHeight) * $this->emptyAmplitude - $noise[$x][$z][$y];
 					$noiseValue -= 1 - $this->density;
 
 					if($noiseValue > 0){
-						$chunk->setBlockId($x, $y, $z, Block::NETHERRACK);
-					}elseif($y <= $this->waterHeight){
-						$chunk->setBlockId($x, $y, $z, Block::STILL_LAVA);
+						$chunk->setBlockId($x, $y, $z, Block::AIR);
+					}else{
+						$chunk->setBlockId($x, $y, $z, Block::END_STONE);
 					}
 				}
 			}

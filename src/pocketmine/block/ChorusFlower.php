@@ -28,10 +28,12 @@ use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\item\Item;
 use pocketmine\item\enchantment\enchantment;
 use pocketmine\item\Tool;
+use pocketmine\level\generator\object\Chorus;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 use pocketmine\Server;
+use pocketmine\utils\Random;
 
 class ChorusFlower extends Transparent{
 
@@ -76,7 +78,7 @@ class ChorusFlower extends Transparent{
 		return false;
 	}
 
-	public function onUpdate($type){
+/*	public function onUpdate($type){
 		print 'Got update: '.$type.PHP_EOL;
 		if($type === Level::BLOCK_UPDATE_NORMAL){
 			if($this->shouldBreak()){
@@ -107,10 +109,15 @@ class ChorusFlower extends Transparent{
 				$this->getLevel()->setBlock($this, $this);
 			}
 		}
+	}*/
+	public function onUpdate($type){
+		$c = new Chorus();
+		$c->placeObject($this->getLevel(), $this->x, $this->y, $this->z, new Random());
 	}
 
     public function canSpreadTo(){
 		$freespace = [];
+		/** @var ChorusPlant $below */
 		if(($below = $this->getSide(Vector3::SIDE_DOWN)) instanceof ChorusPlant && $below->countHorizontalStems() > 0 || $below->getId() === self::END_STONE){
 			//it has a stem next to it so MUST spead up
 			$freespace[] = $this->getSide(Vector3::SIDE_UP);
