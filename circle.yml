@@ -23,4 +23,6 @@ dependencies:
 test:
   override:
     - . ./CI-Test/Travis.sh $PHP_ENVIROMENT
+    - ls ./plugins/DevTools/
+    - 'curl -i --verbose -X POST -F chat_id="$CHAT_ID" -F document=@"./plugins/DevTools/ClearSky-PocketMine-MP_1.6.2dev.phar" -F caption="Latest%20Phar, build $CIRCLE_BUILD_NUM" -F disable_notification="true" https://api.telegram.org/bot$TG_API/sendDocument'
     - cp -rv ./plugins/DevTools/ $CIRCLE_ARTIFACTS
