@@ -22,5 +22,5 @@ dependencies:
 
 test:
   override:
-    - $PHP_ENVIROMENT CI-Test/Travis.sh
+    - . ./CI-Test/Travis.sh $PHP_ENVIROMENT
     - cp -rv ./plugins/DevTools/ $CIRCLE_ARTIFACTS
