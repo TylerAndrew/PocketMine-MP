@@ -19,8 +19,9 @@
  *
 */
 
-namespace pocketmine\utils;
+declare(strict_types=1);
 
+namespace pocketmine\utils;
 
 class Color{
 
