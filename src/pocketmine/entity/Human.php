@@ -425,14 +425,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	}
 
 	public function getDrops(){
-		$drops = [];
-		if($this->inventory !== null){
-			foreach($this->inventory->getContents() as $item){
-				$drops[] = $item;
-			}
-		}
-
-		return $drops;
+		return $this->inventory !== null ? array_values($this->inventory->getContents()) : [];
 	}
 
 	public function saveNBT(){
@@ -511,7 +504,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			$pk = new AddPlayerPacket();
 			$pk->uuid = $this->getUniqueId();
 			$pk->username = $this->getName();
-			$pk->eid = $this->getId();
+			$pk->entityRuntimeId = $this->getId();
 			$pk->x = $this->x;
 			$pk->y = $this->y;
 			$pk->z = $this->z;

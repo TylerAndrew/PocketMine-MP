@@ -37,6 +37,7 @@ use pocketmine\entity\Entity;
 use pocketmine\event\HandlerList;
 use pocketmine\event\level\LevelInitEvent;
 use pocketmine\event\level\LevelLoadEvent;
+use pocketmine\event\player\PlayerDataSaveEvent;
 use pocketmine\event\server\QueryRegenerateEvent;
 use pocketmine\event\server\ServerCommandEvent;
 use pocketmine\event\Timings;
@@ -758,8 +759,6 @@ class Server{
 		$nbt->Motion->setTagType(NBT::TAG_Double);
 		$nbt->Rotation->setTagType(NBT::TAG_Float);
 
-		$this->saveOfflinePlayerData($name, $nbt);
-
 		return $nbt;
 
 	}
@@ -769,11 +768,16 @@ class Server{
 	 * @param CompoundTag $nbtTag
 	 * @param bool        $async
 	 */
-	public function saveOfflinePlayerData($name, CompoundTag $nbtTag, $async = false){
-		if($this->shouldSavePlayerData()){
+	public function saveOfflinePlayerData(string $name, CompoundTag $nbtTag, bool $async = false){
+		$ev = new PlayerDataSaveEvent($nbtTag, $name);
+		$ev->setCancelled(!$this->shouldSavePlayerData());
+
+		$this->pluginManager->callEvent($ev);
+
+		if(!$ev->isCancelled()){
 			$nbt = new NBT(NBT::BIG_ENDIAN);
 			try{
-				$nbt->setData($nbtTag);
+				$nbt->setData($ev->getSaveData());
 
 				if($async){
 					$this->getScheduler()->scheduleAsyncTask(new FileWriteTask($this->getDataPath() . "players/" . strtolower($name) . ".dat", $nbt->writeCompressed()));
@@ -1506,7 +1510,7 @@ class Server{
 				$this->logger->warning("Debugging assertions are enabled, this may impact on performance. To disable them, set `zend.assertions = -1` in php.ini.");
 			}
 
-			ini_set('assert.exception', (bool) $this->getProperty("debug.assertions.throw-exception", 0));
+			ini_set('assert.exception', '1');
 
 			if($this->logger instanceof MainLogger){
 				$this->logger->setLogDebug(\pocketmine\DEBUG > 1);
@@ -1780,7 +1784,7 @@ class Server{
 		$packet->encode();
 		$packet->isEncoded = true;
 		if(Network::$BATCH_THRESHOLD >= 0 and strlen($packet->buffer) >= Network::$BATCH_THRESHOLD){
-			$this->batchPackets($players, [$packet->buffer], false);
+			$this->batchPackets($players, [$packet], false);
 			return;
 		}
 
@@ -1795,24 +1799,13 @@ class Server{
 	/**
 	 * Broadcasts a list of packets in a batch to a list of players
 	 *
-	 * @param Player[]            $players
-	 * @param DataPacket[]|string $packets
-	 * @param bool                $forceSync
+	 * @param Player[]     $players
+	 * @param DataPacket[] $packets
+	 * @param bool         $forceSync
+	 * @param bool         $immediate
 	 */
-	public function batchPackets(array $players, array $packets, $forceSync = false){
+	public function batchPackets(array $players, array $packets, $forceSync = false, bool $immediate = false){
 		Timings::$playerNetworkTimer->startTiming();
-		$str = "";
-
-		foreach($packets as $p){
-			if($p instanceof DataPacket){
-				if(!$p->isEncoded){
-					$p->encode();
-				}
-				$str .= Binary::writeUnsignedVarInt(strlen($p->buffer)) . $p->buffer;
-			}else{
-				$str .= Binary::writeUnsignedVarInt(strlen($p)) . $p;
-			}
-		}
 
 		$targets = [];
 		foreach($players as $p){
@@ -1821,27 +1814,45 @@ class Server{
 			}
 		}
 
-		if(!$forceSync and $this->networkCompressionAsync){
-			$task = new CompressBatchedTask($str, $targets, $this->networkCompressionLevel);
-			$this->getScheduler()->scheduleAsyncTask($task);
-		}else{
-			$this->broadcastPacketsCallback(zlib_encode($str, ZLIB_ENCODING_DEFLATE, $this->networkCompressionLevel), $targets);
+		if(count($targets) > 0){
+			$pk = new BatchPacket();
+
+			foreach($packets as $p){
+				$pk->addPacket($p);
+			}
+
+			if(!$forceSync and !$immediate and $this->networkCompressionAsync){
+				$task = new CompressBatchedTask($pk, $targets, $this->networkCompressionLevel);
+				$this->getScheduler()->scheduleAsyncTask($task);
+			}else{
+				$pk->compress($this->networkCompressionLevel);
+				$this->broadcastPacketsCallback($pk, $targets, $immediate);
+			}
 		}
 
 		Timings::$playerNetworkTimer->stopTiming();
 	}
 
-	public function broadcastPacketsCallback($data, array $identifiers){
-		$pk = new BatchPacket();
-		$pk->payload = $data;
-		$pk->encode();
-		$pk->isEncoded = true;
+	public function broadcastPacketsCallback(BatchPacket $pk, array $identifiers, bool $immediate = false){
+		if(!$pk->isEncoded){
+			$pk->encode();
+			$pk->isEncoded = true;
+		}
 
-		foreach($identifiers as $i){
-			if(isset($this->players[$i])){
-				$this->players[$i]->dataPacket($pk);
+		if($immediate){
+			foreach($identifiers as $i){
+				if(isset($this->players[$i])){
+					$this->players[$i]->directDataPacket($pk);
+				}
+			}
+		}else{
+			foreach($identifiers as $i){
+				if(isset($this->players[$i])){
+					$this->players[$i]->dataPacket($pk);
+				}
 			}
 		}
+
 	}
 
 
@@ -2195,9 +2206,9 @@ class Server{
 	}
 
 	public function addOnlinePlayer(Player $player){
-		$this->playerList[$player->getRawUniqueId()] = $player;
-
 		$this->updatePlayerListData($player->getUniqueId(), $player->getId(), $player->getDisplayName(), $player->getSkinId(), $player->getSkinData());
+
+		$this->playerList[$player->getRawUniqueId()] = $player;
 	}
 
 	public function removeOnlinePlayer(Player $player){
