@@ -25,9 +25,9 @@ test:
     - . ./CI-Test/Travis.sh $PHP_ENVIROMENT
     - ls ./plugins/DevTools/
     - |
-     'curl -i --verbose -X POST -F chat_id="$CHAT_ID" -F document=@"./plugins/DevTools/ClearSky-PocketMine-MP_1.6.2dev.phar" -F caption="State: Succeeded
-     Phar: #$CIRCLE_BUILD_NUM for branch \"$CIRCLE_BRANCH\" (#@$CIRCLE_TAG)
-     Changes: $CIRCLE_COMPARE_URL
-     Created by $CIRCLE_USERNAME
+     'curl -i --verbose -X POST -F chat_id="$CHAT_ID" -F document=@"./plugins/DevTools/ClearSky-PocketMine-MP_1.6.2dev.phar" -F caption="State: Succeeded \
+     Phar: #$CIRCLE_BUILD_NUM for branch \"$CIRCLE_BRANCH\" (#@$CIRCLE_TAG) \
+     Changes: $CIRCLE_COMPARE_URL \
+     Created by $CIRCLE_USERNAME \
      More build information here: $CIRCLE_BUILD_URL" -F disable_notification="true" https://api.telegram.org/bot$TG_API/sendDocument'
     - cp -rv ./plugins/DevTools/ $CIRCLE_ARTIFACTS
