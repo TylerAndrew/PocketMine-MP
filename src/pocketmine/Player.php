@@ -3438,8 +3438,10 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$packet->decode();
 		if(!$packet->feof()){
-			$this->server->getLogger()->debug("Still " . strlen(substr($packet->buffer, $packet->offset)) . " bytes unread in " . get_class($packet) . " from " . $this->getName() . ": " . bin2hex($packet->get(true)));
+			$remains = substr($packet->buffer, $packet->offset);
+			$this->server->getLogger()->debug("Still " . strlen($remains) . " bytes unread in " . $packet->getName() . ": 0x" . bin2hex($remains));
 		}
+
 		$this->server->getPluginManager()->callEvent($ev = new DataPacketReceiveEvent($this, $packet));
 		if(!$ev->isCancelled() and !$packet->handle($this)){
 			$this->server->getLogger()->debug("Unhandled " . get_class($packet) . " received from " . $this->getName() . ": 0x" . bin2hex($packet->buffer));
