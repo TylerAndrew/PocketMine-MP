@@ -1196,7 +1196,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			$this->level->sleepTicks = 0;
 
 			$pk = new AnimatePacket();
-			$pk->eid = $this->id;
+			$pk->entityRuntimeId = $this->id;
 			$pk->action = 3; //Wake up
 			$this->dataPacket($pk);
 		}
@@ -1639,7 +1639,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$entries = $sendAll ? $this->attributeMap->getAll() : $this->attributeMap->needSend();
 		if(count($entries) > 0){
 			$pk = new UpdateAttributesPacket();
-			$pk->entityId = $this->id;
+			$pk->entityRuntimeId = $this->id;
 			$pk->entries = $entries;
 			$this->dataPacket($pk);
 			foreach($entries as $entry){
@@ -2595,7 +2595,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			return true;
 		}
 
-		$packet->eid = $this->id;
+		$packet->entityRuntimeId = $this->id;
 		$pos = new Vector3($packet->x, $packet->y, $packet->z);
 
 		switch($packet->action){
@@ -2706,7 +2706,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 					}
 
 					$pk = new EntityEventPacket();
-					$pk->eid = $this->getId();
+					$pk->entityRuntimeId = $this->getId();
 					$pk->event = EntityEventPacket::USE_ITEM;
 					$this->dataPacket($pk);
 					$this->server->broadcastPacket($this->getViewers(), $pk);
@@ -2862,7 +2862,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		}
 
 		$pk = new AnimatePacket();
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->action = $ev->getAnimationType();
 		$this->server->broadcastPacket($this->getViewers(), $pk);
 
@@ -3969,7 +3969,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 			return;
 		}elseif($this->getLastDamageCause() === $source and $this->spawned){
 			$pk = new EntityEventPacket();
-			$pk->eid = $this->id;
+			$pk->entityRuntimeId = $this->id;
 			$pk->event = EntityEventPacket::HURT_ANIMATION;
 			$this->dataPacket($pk);
 
@@ -3984,7 +3984,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pitch = $pitch === null ? $this->pitch : $pitch;
 
 		$pk = new MovePlayerPacket();
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $pos->x;
 		$pk->y = $pos->y + $this->getEyeHeight();
 		$pk->z = $pos->z;

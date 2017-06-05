@@ -397,7 +397,7 @@ class Effect{
 		if(!$entity instanceof Living) return;
 		if($entity instanceof Player){
 			$pk = new MobEffectPacket();
-			$pk->eid = $entity->getId();
+			$pk->entityRuntimeId = $entity->getId();
 			$pk->effectId = $this->getId();
 			$pk->amplifier = $this->getAmplifier();
 			$pk->particles = $this->isVisible();
@@ -469,7 +469,7 @@ class Effect{
 		if(!$entity instanceof Living) return;
 		if($entity instanceof Player){
 			$pk = new MobEffectPacket();
-			$pk->eid = $entity->getId();
+			$pk->entityRuntimeId = $entity->getId();
 			$pk->eventId = MobEffectPacket::EVENT_REMOVE;
 			$pk->effectId = $this->getId();
 
