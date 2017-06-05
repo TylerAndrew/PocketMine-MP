@@ -42,28 +42,6 @@ class BrewingStand extends Transparent{
 		$this->meta = $meta;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = new CompoundTag("", [
-			new ListTag("Items", []),
-			new StringTag("id", Tile::BREWING_STAND),
-			new IntTag("x", $this->x),
-			new IntTag("y", $this->y),
-			new IntTag("z", $this->z)
-		]);
-		$nbt->Items->setTagType(NBT::TAG_Compound);
-		if($item->hasCustomName()){
-			$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
-		}
-		if($item->hasCustomBlockData()){
-			foreach($item->getCustomBlockData() as $key => $v){
-				$nbt->{$key} = $v;
-			}
-		}
-		Tile::createTile(Tile::BREWING_STAND, $this->getLevel(), $nbt);
-		return true;
-	}
-
 	public function canBeActivated(){
 		return true;
 	}
