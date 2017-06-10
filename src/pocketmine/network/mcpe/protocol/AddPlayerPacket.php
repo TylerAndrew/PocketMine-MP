@@ -19,10 +19,13 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
+use pocketmine\item\Item;
 use pocketmine\network\mcpe\NetworkSession;
 
 class AddPlayerPacket extends DataPacket{
@@ -35,12 +38,13 @@ class AddPlayerPacket extends DataPacket{
 	public $x;
 	public $y;
 	public $z;
-	public $speedX;
-	public $speedY;
-	public $speedZ;
-	public $pitch;
-	public $headYaw;
-	public $yaw;
+	public $speedX = 0.0;
+	public $speedY = 0.0;
+	public $speedZ = 0.0;
+	public $pitch = 0.0;
+	public $headYaw = null; //TODO
+	public $yaw = 0.0;
+	/** @var Item */
 	public $item;
 	public $metadata = [];
 

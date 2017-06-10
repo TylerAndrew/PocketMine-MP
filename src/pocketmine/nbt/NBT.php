@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 /**
  * Named Binary Tag handling classes
  */
@@ -67,7 +69,7 @@ class NBT{
 	const TAG_IntArray = 11;
 
 	public $buffer;
-	private $offset;
+	public $offset;
 	public $endianness;
 	private $data;
 

@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 
 namespace pocketmine\updater;
 
@@ -34,7 +36,7 @@ class UpdateCheckTask extends AsyncTask{
 	/** @var string */
 	private $channel;
 	/** @var string */
-	private $error;
+	private $error = "Unknown error";
 
 	public function __construct(string $endpoint, string $channel){
 		$this->endpoint = $endpoint;
@@ -42,11 +44,11 @@ class UpdateCheckTask extends AsyncTask{
 	}
 
 	public function onRun(){
-		$this->error = "";
-		$response = Utils::getURL($this->endpoint . "?channel=" . $this->channel, 4, [], $this->error);
-		if($this->error !== ""){
-			return;
-		}else{
+		$error = "";
+		$response = Utils::getURL($this->endpoint . "?channel=" . $this->channel, 4, [], $error);
+		$this->error = $error;
+
+		if($response !== false){
 			$response = json_decode($response, true);
 			if(is_array($response)){
 				$this->setResult(

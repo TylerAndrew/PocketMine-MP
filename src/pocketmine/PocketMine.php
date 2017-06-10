@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace {
 	function safe_var_dump(){
 		static $cnt = 0;
@@ -142,12 +144,12 @@ namespace pocketmine {
 		}
 	});
 
-	ini_set("allow_url_fopen", 1);
-	ini_set("display_errors", 1);
-	ini_set("display_startup_errors", 1);
+	ini_set("allow_url_fopen", '1');
+	ini_set("display_errors", '1');
+	ini_set("display_startup_errors", '1');
 	ini_set("default_charset", "utf-8");
 
-	ini_set("memory_limit", -1);
+	ini_set("memory_limit", '-1');
 	define('pocketmine\START_TIME', microtime(true));
 
 	$opts = getopt("", ["data:", "plugins:", "no-wizard", "enable-profiler"]);
@@ -386,7 +388,7 @@ namespace pocketmine {
 					$args = $trace[$i]["params"];
 				}
 				foreach($args as $name => $value){
-					$params .= (is_object($value) ? get_class($value) . " " . (method_exists($value, "__toString") ? $value->__toString() : "object") : gettype($value) . " " . (is_array($value) ? "Array()" : Utils::printable(@strval($value)))) . ", ";
+					$params .= (is_object($value) ? get_class($value) . " object" : gettype($value) . " " . (is_array($value) ? "Array()" : Utils::printable(@strval($value)))) . ", ";
 				}
 			}
 			$messages[] = "#$j " . (isset($trace[$i]["file"]) ? cleanPath($trace[$i]["file"]) : "") . "(" . (isset($trace[$i]["line"]) ? $trace[$i]["line"] : "") . "): " . (isset($trace[$i]["class"]) ? $trace[$i]["class"] . (($trace[$i]["type"] === "dynamic" or $trace[$i]["type"] === "->") ? "->" : "::") : "") . $trace[$i]["function"] . "(" . Utils::printable(substr($params, 0, -2)) . ")";

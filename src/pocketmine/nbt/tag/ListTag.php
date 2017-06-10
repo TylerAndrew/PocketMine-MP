@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\nbt\tag;
 
 use pocketmine\nbt\NBT;
@@ -27,16 +29,22 @@ use pocketmine\nbt\NBT;
 
 class ListTag extends NamedTag implements \ArrayAccess, \Countable{
 
-	private $tagType;
+	private $tagType = NBT::TAG_End;
 
-	public function __construct($name = "", $value = []){
-		$this->__name = $name;
-		foreach($value as $k => $v){
-			$this->{$k} = $v;
-		}
+	/**
+	 * ListTag constructor.
+	 *
+	 * @param string     $name
+	 * @param NamedTag[] $value
+	 */
+	public function __construct(string $name = "", array $value = []){
+		parent::__construct($name, $value);
 	}
 
-	public function &getValue(){
+	/**
+	 * @return NamedTag[]
+	 */
+	public function &getValue() : array{
 		$value = [];
 		foreach($this as $k => $v){
 			if($v instanceof Tag){
@@ -47,13 +55,22 @@ class ListTag extends NamedTag implements \ArrayAccess, \Countable{
 		return $value;
 	}
 
+	/**
+	 * @param NamedTag[] $value
+	 *
+	 * @throws \TypeError
+	 */
 	public function setValue($value){
 		if(is_array($value)){
 			foreach($value as $name => $tag){
 				if($tag instanceof NamedTag){
 					$this->{$name} = $tag;
+				}else{
+					throw new \TypeError("ListTag members must be NamedTags, got " . gettype($tag) . " in given array");
 				}
 			}
+		}else{
+			throw new \TypeError("ListTag value must be NamedTag[], " . gettype($value) . " given");
 		}
 	}
 
@@ -113,11 +130,11 @@ class ListTag extends NamedTag implements \ArrayAccess, \Countable{
 		return NBT::TAG_List;
 	}
 
-	public function setTagType($type){
+	public function setTagType(int $type){
 		$this->tagType = $type;
 	}
 
-	public function getTagType(){
+	public function getTagType() : int{
 		return $this->tagType;
 	}
 
@@ -135,11 +152,11 @@ class ListTag extends NamedTag implements \ArrayAccess, \Countable{
 	}
 
 	public function write(NBT $nbt, bool $network = false){
-		if(!isset($this->tagType)){
-			$id = null;
+		if($this->tagType === NBT::TAG_End){ //previously empty list, try detecting type from tag children
+			$id = NBT::TAG_End;
 			foreach($this as $tag){
-				if($tag instanceof Tag){
-					if(!isset($id)){
+				if($tag instanceof Tag and !($tag instanceof EndTag)){
+					if($id === NBT::TAG_End){
 						$id = $tag->getType();
 					}elseif($id !== $tag->getType()){
 						return false;

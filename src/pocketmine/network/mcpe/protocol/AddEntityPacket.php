@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
@@ -35,9 +37,9 @@ class AddEntityPacket extends DataPacket{
 	public $x;
 	public $y;
 	public $z;
-	public $speedX;
-	public $speedY;
-	public $speedZ;
+	public $speedX = 0.0;
+	public $speedY = 0.0;
+	public $speedZ = 0.0;
 	public $yaw = 0.0;
 	public $pitch = 0.0;
 	/** @var Attribute[] */

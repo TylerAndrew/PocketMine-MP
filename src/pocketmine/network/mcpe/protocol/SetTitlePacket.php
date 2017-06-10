@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 
 namespace pocketmine\network\mcpe\protocol;
 
@@ -38,10 +40,10 @@ class SetTitlePacket extends DataPacket{
 	const TYPE_SET_ANIMATION_TIMES = 5;
 
 	public $type;
-	public $text;
-	public $fadeInTime;
-	public $stayTime;
-	public $fadeOutTime;
+	public $text = "";
+	public $fadeInTime = 0;
+	public $stayTime = 0;
+	public $fadeOutTime = 0;
 
 	public function decode(){
 		$this->type = $this->getVarInt();
