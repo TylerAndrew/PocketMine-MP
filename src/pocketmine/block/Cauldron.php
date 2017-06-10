@@ -23,22 +23,17 @@ namespace pocketmine\block;
 
 use pocketmine\event\player\PlayerBucketEmptyEvent;
 use pocketmine\event\player\PlayerBucketFillEvent;
-use pocketmine\event\player\PlayerGlassBottleEvent;
 use pocketmine\item\Armor;
 use pocketmine\item\Item;
 use pocketmine\item\Potion;
 use pocketmine\item\Tool;
-use pocketmine\level\sound\ExplodeSound;
-use pocketmine\level\sound\GraySplashSound;
-use pocketmine\level\sound\SpellSound;
-use pocketmine\level\sound\SplashSound;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
-use pocketmine\network\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\tile\Cauldron as TileCauldron;
@@ -224,7 +219,7 @@ class Cauldron extends Solid {
 					$player->getInventory()->setItemInHand($newItem);
 					$ev = new LevelEventPacket();
 					$color = $item->getCustomColor();
-					$ev->data = Color::getRGB($color[0], $color[1], $color[2])->getColorCode();
+					$ev->data = $color->toARGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_ADD_DYE;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
@@ -242,7 +237,7 @@ class Cauldron extends Solid {
 					$player->getInventory()->setItemInHand($newItem);
 					$ev = new LevelEventPacket();
 					$color = $item->getCustomColor();
-					$ev->data = Color::getRGB($color[0], $color[1], $color[2])->getColorCode();
+					$ev->data = $color->toARGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_ADD_DYE;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
@@ -301,7 +296,8 @@ class Cauldron extends Solid {
 					}
 					$color = Potion::getColor($item->getDamage());
 					$ev = new LevelEventPacket();
-					$ev->data = Color::getRGB($color[0], $color[1], $color[2])->getColorCode();
+					$color = new Color($color[0], $color[1], $color[2]);
+					$ev->data = $color->toARGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
@@ -328,8 +324,9 @@ class Cauldron extends Solid {
 					$this->getLevel()->setBlock($this, $this, true);
 					$this->addItem($item, $player, $result);
 					$color = Potion::getColor($result->getDamage());
+					$color = new Color($color[0], $color[1], $color[2]);
 					$ev = new LevelEventPacket();
-					$ev->data = Color::getRGB($color[0], $color[1], $color[2])->getColorCode();
+					$ev->data = $color->toARGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
@@ -344,7 +341,7 @@ class Cauldron extends Solid {
 					}
 					$ev = new LevelEventPacket();
 					$color = $tile->getCustomColor();
-					$ev->data = Color::getRGB($color[0], $color[1], $color[2])->getColorCode();
+					$ev->data = $color->toARGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_TAKE_POTION;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;

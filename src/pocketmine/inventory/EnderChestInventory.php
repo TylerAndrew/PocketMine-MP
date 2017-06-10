@@ -24,10 +24,8 @@ namespace pocketmine\inventory;
 use pocketmine\entity\Human;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
-use pocketmine\network\protocol\BlockEventPacket;
+use pocketmine\network\mcpe\protocol\BlockEventPacket;
 use pocketmine\Player;
-use pocketmine\tile\Chest;
-use pocketmine\tile\EnderChest;
 
 class EnderChestInventory extends ContainerInventory {
 	public function __construct(Position $pos){

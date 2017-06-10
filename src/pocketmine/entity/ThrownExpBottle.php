@@ -3,7 +3,11 @@ namespace pocketmine\entity;
 
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\nbt\tag\DoubleTag;
+use pocketmine\nbt\tag\FloatTag;
+use pocketmine\nbt\tag\ListTag;
+use pocketmine\nbt\tag\ShortTag;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class ThrownExpBottle extends Projectile{
@@ -42,7 +46,25 @@ class ThrownExpBottle extends Projectile{
 		if($this->onGround){
 			$this->kill();
 			$this->close();
-			$this->getLevel()->spawnExperienceOrb($this->add(0,1,0), mt_rand(3,11));
+			$nbt = new CompoundTag("", [
+				"Pos" => new ListTag("Pos", [
+					new DoubleTag("", $this->getX()),
+					new DoubleTag("", $this->getY() + 1),
+					new DoubleTag("", $this->getZ())
+				]),
+				"Motion" => new ListTag("Motion", [
+					new DoubleTag("", 0),
+					new DoubleTag("", 0),
+					new DoubleTag("", 0)
+				]),
+				"Rotation" => new ListTag("Rotation", [
+					new FloatTag("", lcg_value() * 360),
+					new FloatTag("", 0)
+				]),
+				"Experience" => new ShortTag("Experience", mt_rand(3,11)),
+			]);
+			$exp = Entity::createEntity(ExperienceOrb::NETWORK_ID, $this->getLevel(), $nbt);
+			$this->getLevel()->addEntity($exp);
 		}
 
 		$this->timings->stopTiming();
@@ -53,7 +75,7 @@ class ThrownExpBottle extends Projectile{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = self::NETWORK_ID;
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

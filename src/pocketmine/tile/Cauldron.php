@@ -81,13 +81,16 @@ class Cauldron extends Spawnable{
 		}
 	}
 
-	public function getCustomColor(){//
+	/**
+	 * @return null|Color
+	 */
+	public function getCustomColor(){
 		if($this->isCustomColor()){
 			$color = $this->namedtag["CustomColor"];
 			$green = ($color >> 8) & 0xff;
 			$red = ($color >> 16) & 0xff;
 			$blue = ($color) & 0xff;
-			return Color::getRGB($red, $green, $blue);
+			return new Color($red, $green, $blue);
 		}
 		return null;
 	}

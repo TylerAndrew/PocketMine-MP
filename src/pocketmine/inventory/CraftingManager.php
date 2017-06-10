@@ -191,11 +191,12 @@ class CraftingManager{
 		return null;
 	}
 
-    /**
-     * @param Item $input
-     *
-     * @return BrewingRecipe
-     */
+	/**
+	 * @param Item $input
+	 * @param Item $potion
+	 *
+	 * @return BrewingRecipe
+	 */
     public function matchBrewingRecipe(Item $input, Item $potion){
         $subscript = $input->getId() . ":" . ($input->getDamage() === null ? "0" : $input->getDamage()) . ":" . $potion->getId() . ":" .($potion->getDamage() === null ? "0" : $potion->getDamage());
         return $this->brewingRecipes[$subscript] ?? null;

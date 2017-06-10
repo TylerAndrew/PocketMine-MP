@@ -2,7 +2,7 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class ZombieHorse extends Animal /*implements Rideable*/{
@@ -27,7 +27,7 @@ class ZombieHorse extends Animal /*implements Rideable*/{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = self::NETWORK_ID;
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -42,9 +42,9 @@ class ZombieHorse extends Animal /*implements Rideable*/{
 		parent::spawnTo($player);
 	}
 
-    public function isBaby(){
-        return $this->getDataFlag(self::DATA_AGEABLE_FLAGS, self::DATA_FLAG_BABY);
-    }
+	public function isBaby(){
+		return $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_BABY);
+	}
 
     public function getDrops(){
         $drops = [

@@ -24,19 +24,16 @@ namespace pocketmine\tile;
 use pocketmine\block\Block;
 use pocketmine\entity\Effect;
 use pocketmine\inventory\BeaconInventory;
-use pocketmine\inventory\Inventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
-use pocketmine\Server;
 
 class Beacon extends Spawnable implements Nameable, InventoryHolder {
 	/**
@@ -77,15 +74,15 @@ class Beacon extends Spawnable implements Nameable, InventoryHolder {
 		return $c;
 	}
 
-	public function getName() {
+	public function getName() : string {
 		return $this->hasName() ? $this->namedtag->CustomName->getValue() : "Beacon";
 	}
 
-	public function hasName() {
+	public function hasName() : bool {
 		return isset($this->namedtag->CustomName);
 	}
 
-	public function setName($str) {
+	public function setName(string $str) {
 		if ($str === "") {
 			unset($this->namedtag->CustomName);
 			return;

@@ -33,29 +33,32 @@ abstract class Armor extends Item {
 		return 1;
 	}
 
-	public function setCustomColor(Color $color) {
-		if (($hasTag = $this->hasCompoundTag())) {
+	public function setCustomColor(Color $color){
+		if (($hasTag = $this->hasCompoundTag())){
 			$tag = $this->getNamedTag();
-		} else {
+		} else{
 			$tag = new CompoundTag("", []);
 		}
-		$tag->customColor = new IntTag("customColor", $color->getColorCode());
+		$tag->customColor = new IntTag("customColor", $color->toARGB());
 		$this->setCompoundTag($tag);
 	}
 
-	public function getCustomColor() {
+	/**
+	 * @return null|Color
+	 */
+	public function getCustomColor(){
 		if (!$this->hasCompoundTag()) return null;
 		$tag = $this->getNamedTag();
-		if (isset($tag->customColor)) {
-			return $tag["customColor"];
+		if (isset($tag->customColor)){
+			return Color::fromABGR($tag->customColor->getValue());
 		}
 		return null;
 	}
 
-	public function clearCustomColor() {
+	public function clearCustomColor(){
 		if (!$this->hasCompoundTag()) return;
 		$tag = $this->getNamedTag();
-		if (isset($tag->customColor)) {
+		if (isset($tag->customColor)){
 			unset($tag->customColor);
 		}
 		$this->setCompoundTag($tag);

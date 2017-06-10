@@ -2,7 +2,7 @@
 namespace pocketmine\entity;
 
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class ZombieVillager extends Zombie{
@@ -28,7 +28,7 @@ class ZombieVillager extends Zombie{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = self::NETWORK_ID;
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -45,9 +45,9 @@ class ZombieVillager extends Zombie{
 	
 
 	/**
-	 * Sets the zombievillager profession
+	 * Sets the Zombie Villager's profession
 	 *
-	 * @param $profession
+	 * @param $type
 	 */
 	public function setVariant($type){
 		$this->namedtag->Profession = new IntTag("Profession", $type);

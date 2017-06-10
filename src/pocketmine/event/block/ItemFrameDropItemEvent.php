@@ -2,7 +2,6 @@
 namespace pocketmine\event\block;
 
 use pocketmine\block\Block;
-use pocketmine\event\block\BlockEvent;
 use pocketmine\event\Cancellable;
 use pocketmine\item\Item;
 use pocketmine\Player;

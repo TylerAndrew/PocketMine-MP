@@ -26,6 +26,7 @@ namespace pocketmine\item;
 use pocketmine\entity\Effect;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Human;
+
 class Potion extends Food{
 	const WATER_BOTTLE = 0;
 	const AWKWARD = 4;
@@ -187,7 +188,7 @@ class Potion extends Food{
 				$effect[] = Effect::getEffect(Effect::JUMP)->setAmplifier(0)->setDuration(8 * 60 * 20);
 				break;
 			case Potion::LEAPING_TWO:
-				$effect[] = Effect::getEffect(Effect::JUMP)->setAmplifier(1)->setDuration(1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::JUMP)->setAmplifier(1)->setDuration((int) 1.5 * 60 * 20);
 				break;
 			case Potion::FIRE_RESISTANCE:
 				$effect[] = Effect::getEffect(Effect::FIRE_RESISTANCE)->setAmplifier(0)->setDuration(3 * 60 * 20);
@@ -202,7 +203,7 @@ class Potion extends Food{
 				$effect[] = Effect::getEffect(Effect::SPEED)->setAmplifier(0)->setDuration(8 * 60 * 20);
 				break;
 			case Potion::SPEED_TWO:
-				$effect[] = Effect::getEffect(Effect::SPEED)->setAmplifier(1)->setDuration(1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::SPEED)->setAmplifier(1)->setDuration((int) 1.5 * 60 * 20);
 				break;
 			case Potion::SLOWNESS:
 				$effect[] = Effect::getEffect(Effect::SLOWNESS)->setAmplifier(0)->setDuration(1 * 60 * 20);
@@ -241,10 +242,10 @@ class Potion extends Food{
 				$effect[] = Effect::getEffect(Effect::STRENGTH)->setAmplifier(0)->setDuration(8 * 60 * 20);
 				break;
 			case Potion::STRENGTH_TWO:
-				$effect[] = Effect::getEffect(Effect::STRENGTH)->setAmplifier(1)->setDuration(1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::STRENGTH)->setAmplifier(1)->setDuration((int) 1.5 * 60 * 20);
 				break;
 			case Potion::WEAKNESS:
-				$effect[] = Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration(1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration((int) 1.5 * 60 * 20);
 				break;
 			case Potion::WEAKNESS_T:
 				$effect[] = Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration(4 * 60 * 20);
@@ -267,7 +268,7 @@ class Potion extends Food{
 		}
 		return $effect;
 	}
-	
+
 	public function canBeConsumed() : bool{
 		return true;
 	}
@@ -287,7 +288,7 @@ class Potion extends Food{
 	public function canBeConsumedBy(Entity $entity) : bool{
 		return $entity instanceof Human;
 	}
-	
+
 	public function getMaxStackSize() {
 		return 1;
 	}

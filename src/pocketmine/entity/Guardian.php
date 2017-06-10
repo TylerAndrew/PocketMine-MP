@@ -3,7 +3,7 @@ namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class Guardian extends WaterAnimal implements Ageable{
@@ -28,7 +28,7 @@ class Guardian extends WaterAnimal implements Ageable{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = self::NETWORK_ID;
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
@@ -52,8 +52,8 @@ class Guardian extends WaterAnimal implements Ageable{
 		else{
 			$drops[] = ItemItem::get(ItemItem::RAW_FISH, 0, mt_rand(0, 100) < 40?1:0);
 		}
-		
-		$drops[] = ItemItem::get(ItemItem::PRISMARINE_CRYSTAL, 0, mt_rand(0, 100) < 40?1:0);
+
+		$drops[] = ItemItem::get(ItemItem::PRISMARINE_CRYSTALS, 0, mt_rand(0, 100) < 40?1:0);
 		
 		return $drops;
 	}

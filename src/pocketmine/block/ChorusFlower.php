@@ -22,11 +22,8 @@
 
 namespace pocketmine\block;
 
-use pocketmine\block\ChorusPlant;
-use pocketmine\event\block\BlockGrowEvent;
 use pocketmine\event\block\BlockSpreadEvent;
 use pocketmine\item\Item;
-use pocketmine\item\enchantment\enchantment;
 use pocketmine\item\Tool;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
@@ -111,6 +108,7 @@ class ChorusFlower extends Transparent{
 
     public function canSpreadTo(){
 		$freespace = [];
+		/** ChorusPlant $below */
 		if(($below = $this->getSide(Vector3::SIDE_DOWN)) instanceof ChorusPlant && $below->countHorizontalStems() > 0 || $below->getId() === self::END_STONE){
 			//it has a stem next to it so MUST spead up
 			$freespace[] = $this->getSide(Vector3::SIDE_UP);

@@ -2,10 +2,8 @@
 
 namespace pocketmine\level\sound;
 
-use pocketmine\level\sound\Sound;
 use pocketmine\math\Vector3;
-use pocketmine\network\protocol\BlockEventPacket;
-use pocketmine\network\protocol\LevelSoundEventPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 
 class NoteblockSound extends Sound{
 	const INSTRUMENT_PIANO = 0;
@@ -38,10 +36,10 @@ class NoteblockSound extends Sound{
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
-		$pk->volume = $this->instrument;
+		$pk->extraData = $this->instrument;
 		$pk->pitch = $this->pitch;
 		$pk->unknownBool = true;
-		$pk->unknownBool2 = true;
+		$pk->disableRelativeVolume = false;
 		
 		return $pk;
 	}

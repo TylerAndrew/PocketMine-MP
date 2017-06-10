@@ -1,15 +1,14 @@
 <?php
 namespace pocketmine\block;
 
-use pocketmine\inventory\BeaconInventory;
 use pocketmine\item\Item;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
-use pocketmine\tile\Tile;
 use pocketmine\tile\Beacon as TileBeacon;
+use pocketmine\tile\Tile;
 
 class Beacon extends Solid {
 

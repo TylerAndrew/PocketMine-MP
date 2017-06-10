@@ -6,12 +6,12 @@ use pocketmine\block\Block;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\level\particle\DestroyBlockParticle;
-use pocketmine\network\protocol\AddPaintingPacket;
+use pocketmine\network\mcpe\protocol\AddPaintingPacket;
 use pocketmine\Player;
 
 class Painting extends Hanging{
 	const NETWORK_ID = 83;
-	
+
 	const MOTIVES = [
 		// Motive Width Height
 		["Kebab", 1, 1],
@@ -41,13 +41,13 @@ class Painting extends Hanging{
 		["Pigscene", 4, 4],
 		["Flaming Skull", 4, 4],
 	];
-	
+
 	private $motive;
 	protected $maxHealth = 1;
 
 	public function initEntity(){
 		parent::initEntity();
-		
+
 		if(isset($this->namedtag->Motive)){
 			$this->motive = $this->namedtag["Motive"];
 		}
@@ -73,7 +73,7 @@ class Painting extends Hanging{
 
 	public function spawnTo(Player $player){
 		$pk = new AddPaintingPacket();
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

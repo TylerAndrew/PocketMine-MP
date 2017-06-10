@@ -76,8 +76,75 @@ class Color{
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Sets the green value of this colour.
 	 * @param int $g
+=======
+	 * @param $damage
+	 * @return Color
+	 */
+	public static function getDyeColor($damage){
+		switch ($damage){
+			case 1:
+				return new Color(30, 27, 27);
+				break;
+			case 2:
+				return new Color(30, 27, 27);
+				break;
+			case 3:
+				return new Color(179, 49, 44);
+				break;
+			case 4:
+				return new Color(61, 81, 26);
+				break;
+			case 5:
+				return new Color(81, 48, 26);
+				break;
+			case 6:
+				return new Color(37, 49, 146);
+				break;
+			case 7:
+				return new Color(123, 47, 190);
+				break;
+			case 8:
+				return new Color(40, 118, 151);
+				break;
+			case 9:
+				return new Color(153, 153, 153);
+				break;
+			case 10:
+				return new Color(67, 67, 67);
+				break;
+			case 11:
+				return new Color(216, 129, 152);
+				break;
+			case 12:
+				return new Color(65, 205, 52);
+				break;
+			case 13:
+				return new Color(222, 207, 42);
+				break;
+			case 14:
+				return new Color(102, 137, 211);
+				break;
+			case 15:
+				return new Color(195, 84, 205);
+				break;
+			case 16:
+				return new Color(235, 136, 68);
+				break;
+			case 17:
+				return new Color(240, 240, 240);
+				break;
+			default:
+				return null;
+		}
+	}
+
+	/**
+	 * Returns the alpha (transparency) value of this colour.
+	 * @return int
+>>>>>>> 65d929ca... Plenty fixes and optimizations
 	 */
 	public function setG(int $g){
 		$this->g = $g & 0xff;

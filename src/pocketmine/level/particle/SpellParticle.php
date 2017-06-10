@@ -22,7 +22,7 @@
 namespace pocketmine\level\particle;
 
 use pocketmine\math\Vector3;
-use pocketmine\network\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 
 class SpellParticle extends GenericParticle{
 	public function __construct(Vector3 $pos, $r = 0, $g = 0, $b = 0, $a = 255){

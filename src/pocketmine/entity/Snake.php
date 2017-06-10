@@ -24,8 +24,8 @@ namespace pocketmine\entity;
 use pocketmine\event\entity\EntityDamageByChildEntityEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
-use pocketmine\network\protocol\AnimatePacket;
-use pocketmine\network\protocol\EntityEventPacket;
+use pocketmine\network\mcpe\protocol\AnimatePacket;
+use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\Server;
 
 class Snake extends Entity{
@@ -57,13 +57,13 @@ class Snake extends Entity{
 			}
 		}
 		$pk = new EntityEventPacket();
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->event = $this->getHealth() <= 0?EntityEventPacket::DEATH_ANIMATION:EntityEventPacket::HURT_ANIMATION; // Ouch!
 		Server::getInstance()->broadcastPacket($this->hasSpawned, $pk);
 		// TESTING
 		for($i = 0; $i < 400; $i++){
 			$pk = new AnimatePacket();
-			$pk->eid = $this->getId();
+			$pk->entityRuntimeId = $this->getId();
 			$pk->action = $i;
 			Server::getInstance()->broadcastPacket($this->hasSpawned, $pk);
 		}

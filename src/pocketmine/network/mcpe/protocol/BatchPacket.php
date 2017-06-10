@@ -27,8 +27,9 @@ namespace pocketmine\network\mcpe\protocol;
 
 
 use pocketmine\network\mcpe\NetworkSession;
-#ifndef COMPILE
 use pocketmine\utils\Binary;
+
+#ifndef COMPILE
 #endif
 
 class BatchPacket extends DataPacket{

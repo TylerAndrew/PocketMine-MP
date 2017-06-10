@@ -4,7 +4,6 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
-use pocketmine\item\enchantment\enchantment;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
@@ -47,7 +46,7 @@ class ChorusPlant extends Transparent
 		if($type === Level::BLOCK_UPDATE_NORMAL || $type === Level::BLOCK_UPDATE_RANDOM){
 			if($this->shouldBreak()){
 				print 'invalid, break it'.PHP_EOL;
-				$this->getLevel()->scheduleUpdate($this, 20);
+				$this->getLevel()->scheduleDelayedBlockUpdate($this, 20);
 			}
 		}elseif($type === Level::BLOCK_UPDATE_SCHEDULED){
 			$this->getLevel()->useBreakOn($this, $item, null, true);
@@ -71,6 +70,7 @@ class ChorusPlant extends Transparent
 				$destroy = false;
 				if($checkNeighbours){
 					foreach([Vector3::SIDE_NORTH,Vector3::SIDE_SOUTH,Vector3::SIDE_WEST,Vector3::SIDE_EAST] as $side){
+						/** ChorusPlant $stem */
 						if(($stem = $this->getSide($side))->getId() === self::CHORUS_PLANT && $stem->shouldBreak(false)){
 							print 'A connected requested destroy'.PHP_EOL;//check every connected one
 							$destroy = true;// loop?

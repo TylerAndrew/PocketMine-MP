@@ -1,20 +1,17 @@
 <?php
 namespace pocketmine\entity;
 
-use pocketmine\block\Block;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\item\Potion;
 use pocketmine\level\Level;
-use pocketmine\level\particle\DestroyBlockParticle;
 use pocketmine\level\particle\ItemBreakParticle;
-use pocketmine\level\particle\SpellParticle;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
-use pocketmine\network\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class LingeringPotion extends Projectile {
@@ -100,7 +97,7 @@ class LingeringPotion extends Projectile {
 	public function spawnTo(Player $player) {
 		$pk = new AddEntityPacket();
 		$pk->type = self::NETWORK_ID;
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

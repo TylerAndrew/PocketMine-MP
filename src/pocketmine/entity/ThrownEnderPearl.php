@@ -3,13 +3,11 @@ namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
-use pocketmine\level\Level;
 use pocketmine\level\particle\GenericParticle;
 use pocketmine\level\particle\Particle;
 use pocketmine\level\sound\GenericSound;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\protocol\AddEntityPacket;
-use pocketmine\network\protocol\LevelEventPacket;
+use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 
 class ThrownEnderPearl extends Projectile {
@@ -22,10 +20,6 @@ class ThrownEnderPearl extends Projectile {
 	protected $gravity = 0.03;
 	protected $drag = 0.01;
 
-	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null) {
-		parent::__construct($level, $nbt, $shootingEntity);
-	}
-
 	public function onUpdate($currentTick) {
 		if ($this->closed) {
 			return false;
@@ -35,14 +29,14 @@ class ThrownEnderPearl extends Projectile {
 
 		$hasUpdate = parent::onUpdate($currentTick);
 
-		if ($this->isCollided && $this->shootingEntity !== null && $this->shootingEntity instanceof Player) {
-			$this->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityTeleportEvent($this->shootingEntity, $this->shootingEntity->getPosition(), $this->getPosition()));
+		if ($this->isCollided && $this->getOwningEntity() !== null && $this->getOwningEntity() instanceof Player) {
+			$this->getLevel()->getServer()->getPluginManager()->callEvent($ev = new EntityTeleportEvent($this->getOwningEntity(), $this->getOwningEntity()->getPosition(), $this->getPosition()));
 			if (!$ev->isCancelled()) {
-				$this->getLevel()->getServer()->getPluginManager()->callEvent($dev = new EntityDamageEvent($this->shootingEntity, EntityDamageEvent::CAUSE_FALL, 5));
+				$this->getLevel()->getServer()->getPluginManager()->callEvent($dev = new EntityDamageEvent($this->getOwningEntity(), EntityDamageEvent::CAUSE_FALL, 5));
 				if (!$dev->isCancelled()) {
-					$this->shootingEntity->attack($dev->getFinalDamage(), $dev);
+					$this->getOwningEntity()->attack($dev->getFinalDamage(), $dev);
 				}
-				$this->shootingEntity->teleport($ev->getTo(), $this->shootingEntity->getYaw(), $this->shootingEntity->getPitch());
+				$this->getOwningEntity()->teleport($ev->getTo(), $this->getOwningEntity()->getYaw(), $this->getOwningEntity()->getPitch());
 				$this->getLevel()->addSound(new GenericSound($ev->getFrom(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
 				$this->getLevel()->addSound(new GenericSound($ev->getTo(), LevelEventPacket::EVENT_SOUND_ENDERMAN_TELEPORT));
 				$this->getLevel()->addParticle(new GenericParticle($ev->getFrom(), Particle::TYPE_PORTAL));
@@ -62,7 +56,7 @@ class ThrownEnderPearl extends Projectile {
 	public function spawnTo(Player $player) {
 		$pk = new AddEntityPacket();
 		$pk->type = self::NETWORK_ID;
-		$pk->eid = $this->getId();
+		$pk->entityRuntimeId = $this->getId();
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;

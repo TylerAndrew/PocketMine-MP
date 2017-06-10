@@ -21,7 +21,6 @@
 
 namespace pocketmine\tile;
 
-use pocketmine\block\Block;
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;

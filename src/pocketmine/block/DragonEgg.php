@@ -21,8 +21,6 @@
 
 namespace pocketmine\block;
 
-use pocketmine\item\Tool;
-
 class DragonEgg extends Fallable{
 
 	protected $id = self::DRAGON_EGG;
