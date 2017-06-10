@@ -38,7 +38,6 @@ Yes, you can! Contributions are welcomed provided that they comply with our [Con
 ### Where can I get the latest .phar?
  - You can get the latest auto build phar here: [CSPhar-Direct](https://phar.wolvesfortress.de/circleci.php?branch=cs-1.0) (beta)
  - You can get an overview of phar builds here: [CSPhar](https://phar.wolvesfortress.de) (beta)
- - You can get an optimized PHP environment here: [SalmonGER/PHPbinary](https://github.com/SalmonGER/PocketMine-MP-Binarys).
  - You can get a Multicraft config demo here: [ClearSkyTeam/MulticraftConfig](https://github.com/ClearSkyTeam/MulticraftConfig).
 
 ## Third-party Libraries/Protocols Used
