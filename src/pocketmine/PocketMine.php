@@ -73,7 +73,7 @@ namespace pocketmine {
 	use pocketmine\wizard\SetupWizard;
 	use raklib\RakLib;
 
-	const VERSION = "1.6.2dev";
+	const VERSION = "1.6.2dev SELF-COMPILED";
 	const API_VERSION = "3.0.0-ALPHA5";
 	const CODENAME = "Aurora";
 

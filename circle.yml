@@ -16,12 +16,11 @@ dependencies:
     - wget -O PHP7.tar.gz https://dl.bintray.com/pocketmine/PocketMine/PHP_7.0.6_x86-64_Linux.tar.gz --no-check-certificate
     - tar -xf PHP7.tar.gz
   override:
-    - finalCMD=$(printf "s/CuttingEdge/$CIRCLE_BUILD_NUM/g"); printf ${finalCMD}; sed -i -e ${finalCMD} src/pocketmine/PocketMine.php;
+    - sed -i -e s/SELF-COMPILED/$CIRCLE_BUILD_NUM/g src/pocketmine/PocketMine.php;
     - mkdir plugins
 
 test:
   override:
     - . ./CI-Test/Travis.sh $PHP_ENVIROMENT
-    - ls ./plugins
     - 'curl -i --verbose -X POST -F chat_id="$CHAT_ID" -F document=@"./plugins/DevTools/ClearSky-PocketMine-MP_1.6.2dev.phar" -F caption="State: Succeeded\nPhar: #$CIRCLE_BUILD_NUM for branch \"$CIRCLE_BRANCH\" (#@$CIRCLE_TAG)\nChanges: $CIRCLE_COMPARE_URL\nCreated by $CIRCLE_USERNAME\nMore build information here: $CIRCLE_BUILD_URL" -F disable_notification="true" https://api.telegram.org/bot$TG_API/sendDocument'
     - cp -rv ./plugins/DevTools/ $CIRCLE_ARTIFACTS
