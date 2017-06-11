@@ -65,6 +65,7 @@ class Attribute{
 		self::addAttribute(self::EXPERIENCE, "minecraft:player.experience", 0.00, 1.00, 0.00);
 		//TODO: minecraft:luck (for fishing?)
 		//TODO: minecraft:horse_jump_power
+		//TODO: minecraft:fall_damage
 	}
 
 	/**
