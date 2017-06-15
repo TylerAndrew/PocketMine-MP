@@ -14,7 +14,7 @@ class EnderCrystal extends Living implements Explosive{
 
 	public $height = 1;
 	public $width = 1;
-	public $lenght = 1;//TODO: Size
+	public $length = 1;//TODO: Size
 	protected $maxHealth = 1;
 	
 	public function __construct(Level $level, CompoundTag $nbt){
@@ -63,9 +63,6 @@ class EnderCrystal extends Living implements Explosive{
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 
