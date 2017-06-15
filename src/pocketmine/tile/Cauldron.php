@@ -19,10 +19,6 @@
  *
 */
 
-/*
- * Copied from @beito123's FlowerPot plugin
- */
-
 namespace pocketmine\tile;
 
 use pocketmine\level\Level;
