@@ -922,7 +922,7 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 		$this->spawnToAll();
 
-		if($this->server->getUpdater()->hasUpdate() and $this->hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE)){
+		if($this->server->getUpdater()->hasUpdate() and $this->hasPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE) and $this->server->getProperty("auto-updater.on-update.warn-ops", true)){
 			$this->server->getUpdater()->showPlayerUpdate($this);
 		}
 
@@ -3403,6 +3403,11 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 */
 	public function handleDataPacket(DataPacket $packet){
 		if($this->connected === false){
+			return;
+		}
+
+		//TODO: Remove this hack once InteractPacket spam issue is fixed
+		if($packet->buffer === "\x21\x04\x00"){
 			return;
 		}
 
