@@ -308,9 +308,9 @@ abstract class Entity extends Location implements Metadatable{
 	public $lastY = null;
 	public $lastZ = null;
 
-	public $motionX;
-	public $motionY;
-	public $motionZ;
+	public $motionX = 0.0;
+	public $motionY = 0.0;
+	public $motionZ = 0.0;
 	/** @var Vector3 */
 	public $temporalVector;
 	public $lastMotionX;
