@@ -144,7 +144,7 @@ class Cauldron extends Spawnable{
 			new IntTag("x", (Int) $this->x),
 			new IntTag("y", (Int) $this->y),
 			new IntTag("z", (Int) $this->z),
-			new ShortTag("PotionId", $this->namedtag["PotionId"]),
+			new ShortTag("PotionId", $this->namedtag["PotionId"] > ((2 ** 15) - 1) ? 0 : $this->namedtag["PotionId"]),
 			new ByteTag("SplashPotion", $this->namedtag["SplashPotion"]),
 			new ListTag("Items", $this->namedtag["Items"])//unused?
 		]);
