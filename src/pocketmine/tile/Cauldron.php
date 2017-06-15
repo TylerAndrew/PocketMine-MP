@@ -43,9 +43,6 @@ class Cauldron extends Spawnable{
 		if(!isset($nbt->SplashPotion)){
 			$nbt->SplashPotion = new ByteTag("SplashPotion", 0);
 		}
-		if(!isset($nbt->Items) or !($nbt->Items instanceof ListTag)){
-			$nbt->Items = new ListTag("Items", []);
-		}
 		parent::__construct($level, $nbt);
 	}
 
@@ -113,7 +110,7 @@ class Cauldron extends Spawnable{
 
 	public function setCustomColor($r, $g = 0xff, $b = 0xff){
 		if($r instanceof Color){
-			$color = ($r->getRed() << 16 | $r->getGreen() << 8 | $r->getBlue()) & 0;
+			$color = ($r->getR() << 16 | $r->getG() << 8 | $r->getB()) & 0;
 		}else{
 			$color = ($r << 16 | $g << 8 | $b) & 0;
 		}
@@ -145,8 +142,7 @@ class Cauldron extends Spawnable{
 			new IntTag("y", (Int) $this->y),
 			new IntTag("z", (Int) $this->z),
 			new ShortTag("PotionId", $this->namedtag["PotionId"] > ((2 ** 15) - 1) ? 0 : $this->namedtag["PotionId"]),
-			new ByteTag("SplashPotion", $this->namedtag["SplashPotion"]),
-			new ListTag("Items", $this->namedtag["Items"])//unused?
+			new ByteTag("SplashPotion", $this->namedtag["SplashPotion"])
 		]);
 
 		if($this->getPotionId() === 0 and $this->isCustomColor()){
