@@ -70,7 +70,7 @@ class Cauldron extends Solid {
 			new IntTag("x", $block->x),
 			new IntTag("y", $block->y),
 			new IntTag("z", $block->z),
-			new ShortTag("PotionId", 0xffff),
+			new ShortTag("PotionId", 0),
 			new ByteTag("SplashPotion", 0),
 			new ListTag("Items", [])
 		]);
@@ -155,7 +155,7 @@ class Cauldron extends Solid {
 						}
 						if ($tile->hasPotion()) {//if has potion
 							$this->meta = 0;//empty
-							$tile->setPotionId(0xffff);//reset potion
+							$tile->setPotionId(0);//reset potion
 							$tile->setSplashPotion(false);
 							$tile->clearCustomColor();
 							$this->getLevel()->setBlock($this, $this, true);
@@ -196,7 +196,7 @@ class Cauldron extends Solid {
 				}
 				$tile->setCustomColor($color);
 				$ev = new LevelEventPacket();
-				$ev->data = $color->getColorCode();
+				$ev->data = $color->toARGB();
 				$ev->evid = LevelEventPacket::EVENT_CAULDRON_ADD_DYE;
 				$ev->x = $this->x + 0.5;
 				$ev->y = $this->y;
@@ -254,7 +254,7 @@ class Cauldron extends Solid {
 				) {//long...
 					$this->meta = 0x00;
 					$this->getLevel()->setBlock($this, $this, true);
-					$tile->setPotionId(0xffff);//reset
+					$tile->setPotionId(0);//reset
 					$tile->setSplashPotion(false);
 					$tile->clearCustomColor();
 					if ($player->isSurvival()) {
@@ -274,7 +274,7 @@ class Cauldron extends Solid {
 					if ($player->isSurvival()) {
 						$player->getInventory()->setItemInHand(Item::get(Item::GLASS_BOTTLE));
 					}
-					$tile->setPotionId(0xffff);
+					$tile->setPotionId(0);
 					$tile->setSplashPotion(false);
 					$tile->clearCustomColor();
 					$ev = new LevelEventPacket();
@@ -317,7 +317,7 @@ class Cauldron extends Solid {
 						$result = Item::get(Item::POTION, $tile->getPotionId());
 					}
 					if ($this->isEmpty()) {
-						$tile->setPotionId(0xffff);//reset
+						$tile->setPotionId(0);//reset
 						$tile->setSplashPotion(false);
 						$tile->clearCustomColor();
 					}
