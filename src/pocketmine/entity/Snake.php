@@ -60,14 +60,6 @@ class Snake extends Entity{
 		$pk->entityRuntimeId = $this->getId();
 		$pk->event = $this->getHealth() <= 0?EntityEventPacket::DEATH_ANIMATION:EntityEventPacket::HURT_ANIMATION; // Ouch!
 		Server::getInstance()->broadcastPacket($this->hasSpawned, $pk);
-		// TESTING
-		for($i = 0; $i < 400; $i++){
-			$pk = new AnimatePacket();
-			$pk->entityRuntimeId = $this->getId();
-			$pk->action = $i;
-			Server::getInstance()->broadcastPacket($this->hasSpawned, $pk);
-		}
-		// END TESTING
 		
 		$this->attackTime = 0; // 0.5 seconds cooldown
 	}
