@@ -76,10 +76,6 @@ class Color{
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Sets the green value of this colour.
-	 * @param int $g
-=======
 	 * @param $damage
 	 * @return Color
 	 */
@@ -144,7 +140,6 @@ class Color{
 	/**
 	 * Returns the alpha (transparency) value of this colour.
 	 * @return int
->>>>>>> 65d929ca... Plenty fixes and optimizations
 	 */
 	public function setG(int $g){
 		$this->g = $g & 0xff;
