@@ -139,7 +139,7 @@ class Color{
 
 	/**
 	 * Returns the alpha (transparency) value of this colour.
-	 * @return int
+	 * @param int $g
 	 */
 	public function setG(int $g){
 		$this->g = $g & 0xff;

@@ -185,7 +185,8 @@ class NBT{
 
 		return true;
 	}
-	
+
+
 	public function get($len){
 		if($len < 0){
 			$this->offset = strlen($this->buffer) - 1;
