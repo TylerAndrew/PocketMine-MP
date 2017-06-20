@@ -60,21 +60,21 @@ class Boat extends Item{
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
 		$realPos = $target->getSide($face)->add(0.5, 0.4, 0.5);
 		$boat = new BoatEntity($player->getLevel(), new CompoundTag("", [
-			"Pos" => new ListTag("Pos", [
+			new ListTag("Pos", [
 				new DoubleTag("", $realPos->getX()),
 				new DoubleTag("", $realPos->getY()),
 				new DoubleTag("", $realPos->getZ())
 			]),
-			"Motion" => new ListTag("Motion", [
+			new ListTag("Motion", [
 				new DoubleTag("", 0),
 				new DoubleTag("", 0),
 				new DoubleTag("", 0)
 			]),
-			"Rotation" => new ListTag("Rotation", [
+			new ListTag("Rotation", [
 				new FloatTag("", 0),
 				new FloatTag("", 0)
 			]),
-			"WoodID" => new IntTag("WoodID",$this->getDamage()),
+			new IntTag("WoodID",$this->getDamage()),
 		]));
 		$boat->spawnToAll();
 		if($player->isSurvival()){

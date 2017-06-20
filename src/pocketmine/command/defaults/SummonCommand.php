@@ -125,17 +125,17 @@ class SummonCommand extends VanillaCommand {
 		$type = $args[0];
 		$level = ($sender instanceof Player) ? $sender->getLevel() : $sender->getServer()->getDefaultLevel();
 		$nbt = new CompoundTag("", [
-			"Pos" => new ListTag("Pos", [
+			new ListTag("Pos", [
 				new DoubleTag("", $x),
 				new DoubleTag("", $y),
 				new DoubleTag("", $z)
 			]),
-			"Motion" => new ListTag("Motion", [
+			new ListTag("Motion", [
 				new DoubleTag("", 0),
 				new DoubleTag("", 0),
 				new DoubleTag("", 0)
 			]),
-			"Rotation" => new ListTag("Rotation", [
+			new ListTag("Rotation", [
 				new FloatTag("", lcg_value() * 360),
 				new FloatTag("", 0)
 			]),

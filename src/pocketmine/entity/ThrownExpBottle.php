@@ -47,21 +47,21 @@ class ThrownExpBottle extends Projectile{
 			$this->kill();
 			$this->close();
 			$nbt = new CompoundTag("", [
-				"Pos" => new ListTag("Pos", [
+				new ListTag("Pos", [
 					new DoubleTag("", $this->getX()),
 					new DoubleTag("", $this->getY() + 1),
 					new DoubleTag("", $this->getZ())
 				]),
-				"Motion" => new ListTag("Motion", [
+				new ListTag("Motion", [
 					new DoubleTag("", 0),
 					new DoubleTag("", 0),
 					new DoubleTag("", 0)
 				]),
-				"Rotation" => new ListTag("Rotation", [
+				new ListTag("Rotation", [
 					new FloatTag("", lcg_value() * 360),
 					new FloatTag("", 0)
 				]),
-				"Experience" => new ShortTag("Experience", mt_rand(3,11)),
+				new ShortTag("Experience", mt_rand(3,11)),
 			]);
 			$exp = Entity::createEntity(ExperienceOrb::NETWORK_ID, $this->getLevel(), $nbt);
 			$this->getLevel()->addEntity($exp);

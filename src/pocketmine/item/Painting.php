@@ -129,18 +129,18 @@ class Painting extends Item{
 			}
 
 			$nbt = new CompoundTag("", [
-				"Motive" => new StringTag("Motive", $data["Motive"]),
-				"Pos" => new ListTag("Pos", [
+				new StringTag("Motive", $data["Motive"]),
+				new ListTag("Pos", [
 					new DoubleTag("", $data["x"]),
 					new DoubleTag("", $data["y"]),
 					new DoubleTag("", $data["z"])
 				]),
-				"Motion" => new ListTag("Motion", [
+				new ListTag("Motion", [
 					new DoubleTag("", 0),
 					new DoubleTag("", 0),
 					new DoubleTag("", 0)
 				]),
-				"Rotation" => new ListTag("Rotation", [
+				new ListTag("Rotation", [
 					new FloatTag("", $data["yaw"]),
 					new FloatTag("", 0)
 				]),
