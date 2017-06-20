@@ -2532,17 +2532,17 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 
 			if($item->getId() === Item::SNOWBALL){
 				$nbt = new CompoundTag("", [
-					"Pos" => new ListTag("Pos", [
+					new ListTag("Pos", [
 						new DoubleTag("", $this->x),
 						new DoubleTag("", $this->y + $this->getEyeHeight()),
 						new DoubleTag("", $this->z)
 					]),
-					"Motion" => new ListTag("Motion", [
+					new ListTag("Motion", [
 						new DoubleTag("", $aimPos->x),
 						new DoubleTag("", $aimPos->y),
 						new DoubleTag("", $aimPos->z)
 					]),
-					"Rotation" => new ListTag("Rotation", [
+					new ListTag("Rotation", [
 						new FloatTag("", $this->yaw),
 						new FloatTag("", $this->pitch)
 					]),
@@ -2627,22 +2627,22 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 						}
 
 						$nbt = new CompoundTag("", [
-							"Pos" => new ListTag("Pos", [
+							new ListTag("Pos", [
 								new DoubleTag("", $this->x),
 								new DoubleTag("", $this->y + $this->getEyeHeight()),
 								new DoubleTag("", $this->z)
 							]),
-							"Motion" => new ListTag("Motion", [
+							new ListTag("Motion", [
 								new DoubleTag("", -sin($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI)),
 								new DoubleTag("", -sin($this->pitch / 180 * M_PI)),
 								new DoubleTag("", cos($this->yaw / 180 * M_PI) * cos($this->pitch / 180 * M_PI))
 							]),
-							"Rotation" => new ListTag("Rotation", [
+							new ListTag("Rotation", [
 								//yaw/pitch for arrows taken crosswise, not along the arrow shaft.
 								new FloatTag("", ($this->yaw > 180 ? 360 : 0) - $this->yaw), //arrow yaw must range from -180 to +180
 								new FloatTag("", -$this->pitch)
 							]),
-							"Fire" => new ShortTag("Fire", $this->isOnFire() ? 45 * 60 : 0)
+							new ShortTag("Fire", $this->isOnFire() ? 45 * 60 : 0)
 						]);
 
 						$diff = ($this->server->getTick() - $this->startAction);
@@ -3645,83 +3645,91 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 	 */
 	final public function close($message = "", $reason = "generic reason", $notify = true){
 		if($this->connected and !$this->closed){
-			if($notify and strlen((string) $reason) > 0){
-				$pk = new DisconnectPacket();
-				$pk->message = $reason;
-				$this->directDataPacket($pk);
-			}
-
-			$this->connected = false;
-
-			$this->server->getPluginManager()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_USERS, $this);
-			$this->server->getPluginManager()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this);
-
-			if($this->joined){
-				$this->save();
-
-				$this->server->getPluginManager()->callEvent($ev = new PlayerQuitEvent($this, $message));
-				if($ev->getQuitMessage() != ""){
-					$this->server->broadcastMessage($ev->getQuitMessage());
+			try{
+				if($notify and strlen((string) $reason) > 0){
+					$pk = new DisconnectPacket();
+					$pk->message = $reason;
+					$this->directDataPacket($pk);
 				}
-			}
-			$this->joined = false;
 
-			if($this->isValid()){
-				foreach($this->usedChunks as $index => $d){
-					Level::getXZ($index, $chunkX, $chunkZ);
-					$this->level->unregisterChunkLoader($this, $chunkX, $chunkZ);
-					foreach($this->level->getChunkEntities($chunkX, $chunkZ) as $entity){
-						$entity->despawnFrom($this);
+				$this->connected = false;
+
+				$this->server->getPluginManager()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_USERS, $this);
+				$this->server->getPluginManager()->unsubscribeFromPermission(Server::BROADCAST_CHANNEL_ADMINISTRATIVE, $this);
+
+				if($this->joined){
+					try{
+						$this->save();
+					}catch(\Throwable $e){
+						$this->server->getLogger()->critical("Failed to save player data for " . $this->getName());
+						$this->server->getLogger()->logException($e);
 					}
-					unset($this->usedChunks[$index]);
+
+					$this->server->getPluginManager()->callEvent($ev = new PlayerQuitEvent($this, $message));
+					if($ev->getQuitMessage() != ""){
+						$this->server->broadcastMessage($ev->getQuitMessage());
+					}
 				}
-			}
-			$this->usedChunks = [];
-			$this->loadQueue = [];
+				$this->joined = false;
 
-			foreach($this->server->getOnlinePlayers() as $player){
-				if(!$player->canSee($this)){
-					$player->showPlayer($this);
+				if($this->isValid()){
+					foreach($this->usedChunks as $index => $d){
+						Level::getXZ($index, $chunkX, $chunkZ);
+						$this->level->unregisterChunkLoader($this, $chunkX, $chunkZ);
+						foreach($this->level->getChunkEntities($chunkX, $chunkZ) as $entity){
+							$entity->despawnFrom($this);
+						}
+						unset($this->usedChunks[$index]);
+					}
 				}
-			}
-			$this->hiddenPlayers = [];
+				$this->usedChunks = [];
+				$this->loadQueue = [];
 
-			foreach($this->windowIndex as $window){
-				$this->removeWindow($window);
-			}
-			$this->windows = null;
-			$this->windowIndex = [];
+				foreach($this->server->getOnlinePlayers() as $player){
+					if(!$player->canSee($this)){
+						$player->showPlayer($this);
+					}
+				}
+				$this->hiddenPlayers = [];
 
-			parent::close();
-			$this->spawned = false;
+				foreach($this->windowIndex as $window){
+					$this->removeWindow($window);
+				}
+				$this->windows = null;
+				$this->windowIndex = [];
 
-			$this->interface->close($this, $notify ? $reason : "");
+				parent::close();
+				$this->spawned = false;
 
-			if($this->loggedIn){
+				$this->interface->close($this, $notify ? $reason : "");
+
+				$this->loggedIn = false;
+
+				$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("pocketmine.player.logOut", [
+					TextFormat::AQUA . $this->getName() . TextFormat::WHITE,
+					$this->ip,
+					$this->port,
+					$this->getServer()->getLanguage()->translateString($reason)
+				]));
+
+				$this->spawnPosition = null;
+
+				if($this->perm !== null){
+					$this->perm->clearPermissions();
+					$this->perm = null;
+				}
+
+				if($this->inventory !== null){
+					$this->inventory = null;
+					$this->currentTransaction = null;
+				}
+
+			}catch(\Throwable $e){
+				$this->server->getLogger()->logException($e);
+			}finally{
 				$this->server->removeOnlinePlayer($this);
+				$this->server->removePlayer($this);
 			}
-			$this->loggedIn = false;
-
-			$this->server->getLogger()->info($this->getServer()->getLanguage()->translateString("pocketmine.player.logOut", [
-				TextFormat::AQUA . $this->getName() . TextFormat::WHITE,
-				$this->ip,
-				$this->port,
-				$this->getServer()->getLanguage()->translateString($reason)
-			]));
-
-			$this->spawnPosition = null;
-
-			if($this->perm !== null){
-				$this->perm->clearPermissions();
-				$this->perm = null;
-			}
-
-			if($this->inventory !== null){
-				$this->inventory = null;
-				$this->currentTransaction = null;
-			}
-
-			$this->server->removePlayer($this);
 		}
 	}
 
@@ -3971,7 +3979,6 @@ class Player extends Human implements CommandSender, InventoryHolder, ChunkLoade
 		$pk->pitch = $pitch;
 		$pk->yaw = $yaw;
 		$pk->mode = $mode;
-		$pk->onGround = $this->onGround;
 
 		if($targets !== null){
 			$this->server->broadcastPacket($targets, $pk);
