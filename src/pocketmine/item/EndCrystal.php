@@ -46,17 +46,17 @@ class EndCrystal extends Item{
 		$entity = null;
 
 		$nbt = new CompoundTag("", [
-			"Pos" => new ListTag("Pos", [
+			new ListTag("Pos", [
 				new DoubleTag("", $block->getX() + 0.5),
 				new DoubleTag("", $block->getY()),
 				new DoubleTag("", $block->getZ() + 0.5)
 			]),
-			"Motion" => new ListTag("Motion", [
+			new ListTag("Motion", [
 				new DoubleTag("", 0),
 				new DoubleTag("", 0),
 				new DoubleTag("", 0)
 			]),
-			"Rotation" => new ListTag("Rotation", [
+			new ListTag("Rotation", [
 				new FloatTag("", 0),
 				new FloatTag("", 0)
 			]),
