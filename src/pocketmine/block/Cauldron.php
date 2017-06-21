@@ -19,6 +19,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\event\player\PlayerBucketEmptyEvent;
@@ -30,7 +32,6 @@ use pocketmine\item\Tool;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
@@ -40,59 +41,59 @@ use pocketmine\tile\Cauldron as TileCauldron;
 use pocketmine\tile\Tile;
 use pocketmine\utils\Color;
 
-class Cauldron extends Solid {
+class Cauldron extends Solid{
 
 	protected $id = self::CAULDRON_BLOCK;
 
-	public function __construct($meta = 0) {
+	public function __construct($meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness() {
+	public function getHardness(){
 		return 2;
 	}
 
-	public function getName(): string {
+	public function getName(): string{
 		return "Cauldron";
 	}
 
-	public function canBeActivated(): bool {
+	public function canBeActivated(): bool{
 		return true;
 	}
 
-	public function getToolType() {
+	public function getToolType(){
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null) {
+	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
 		$nbt = new CompoundTag("", [
 			new StringTag("id", Tile::CAULDRON),
 			new IntTag("x", $block->x),
 			new IntTag("y", $block->y),
 			new IntTag("z", $block->z),
-			new ShortTag("PotionId", 0),
+			new ShortTag("PotionId", -1),
+			new ShortTag("PotionType", 1),
 			new ByteTag("SplashPotion", 0),
-			new ListTag("Items", [])
 		]);
 
-		if ($item->hasCustomBlockData()) {
-			foreach ($item->getCustomBlockData() as $key => $v) {
+		if ($item->hasCustomBlockData()){
+			foreach ($item->getCustomBlockData() as $key => $v){
 				$nbt->{$key} = $v;
 			}
 		}
 
-		Tile::createTile(Tile::CAULDRON, $this->getLevel(), $nbt);//
+		Tile::createTile(Tile::CAULDRON, $this->getLevel(), $nbt);
 		$this->getLevel()->setBlock($block, $this, true, true);
 		return true;
 	}
 
-	public function onBreak(Item $item) {
+	public function onBreak(Item $item){
 		$this->getLevel()->setBlock($this, new Air(), true);
 		return true;
 	}
 
-	public function getDrops(Item $item): array {
-		if ($item->isPickaxe() >= 1) {
+	public function getDrops(Item $item): array{
+		if ($item->isPickaxe() >= 1){
 			return [
 				[Item::CAULDRON, 0, 1]
 			];
@@ -100,35 +101,22 @@ class Cauldron extends Solid {
 		return [];
 	}
 
-	public function update() {//umm... right update method...?
-		$this->getLevel()->setBlock($this, Block::get($this->id, $this->meta + 1), true);
-		$this->getLevel()->setBlock($this, $this, true);//Undo the damage value
-	}
-
-	public function isEmpty() {
-		return $this->meta === 0x00;
-	}
-
-	public function isFull() {
-		return $this->meta === 0x06;
-	}
-
-	public function onActivate(Item $item, Player $player = null) {
+	public function onActivate(Item $item, Player $player = null){//TODO: make checks check for potion type
 		$tile = $this->getLevel()->getTile($this);
-		if (!($tile instanceof TileCauldron)) {
+		if (!($tile instanceof TileCauldron)){
 			return false;
 		}
-		switch ($item->getId()) {
+		switch ($item->getId()){
 			case Item::BUCKET:
-				if ($item->getDamage() === 0) {//empty bucket
-					if (!$this->isFull() or $tile->isCustomColor() or $tile->hasPotion()) {
+				if ($item->getDamage() === 0){//empty bucket
+					if (!$this->isFull() or $tile->hasCustomColor() or $tile->hasPotion()){
 						break;
 					}
 					$bucket = clone $item;
 					$bucket->setDamage(8);//water bucket
 					Server::getInstance()->getPluginManager()->callEvent($ev = new PlayerBucketFillEvent($player, $this, 0, $item, $bucket));
-					if (!$ev->isCancelled()) {
-						if ($player->isSurvival()) {
+					if (!$ev->isCancelled()){
+						if ($player->isSurvival()){
 							$player->getInventory()->setItemInHand($ev->getItem());
 						}
 						$this->meta = 0;//empty
@@ -142,20 +130,20 @@ class Cauldron extends Solid {
 						$ev->z = $this->z + 0.5;
 						$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 					}
-				} elseif ($item->getDamage() === 8) {//water bucket
-					if ($this->isFull() and !$tile->isCustomColor() and !$tile->hasPotion()) {
+				} elseif ($item->getDamage() === 8){//water bucket
+					if ($this->isFull() and !$tile->hasCustomColor() and !$tile->hasPotion()){
 						break;
 					}
 					$bucket = clone $item;
 					$bucket->setDamage(0);//empty bucket
 					Server::getInstance()->getPluginManager()->callEvent($ev = new PlayerBucketEmptyEvent($player, $this, 0, $item, $bucket));
-					if (!$ev->isCancelled()) {
-						if ($player->isSurvival()) {
+					if (!$ev->isCancelled()){
+						if ($player->isSurvival()){
 							$player->getInventory()->setItemInHand($ev->getItem());
 						}
-						if ($tile->hasPotion()) {//if has potion
+						if ($tile->hasPotion()){//if has potion
 							$this->meta = 0;//empty
-							$tile->setPotionId(0);//reset potion
+							$tile->setPotionId(-1);//reset potion
 							$tile->setSplashPotion(false);
 							$tile->clearCustomColor();
 							$this->getLevel()->setBlock($this, $this, true);
@@ -166,7 +154,7 @@ class Cauldron extends Solid {
 							$ev->y = $this->y;
 							$ev->z = $this->z + 0.5;
 							$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
-						} else {
+						} else{
 							$this->meta = 6;//fill
 							$tile->clearCustomColor();
 							$this->getLevel()->setBlock($this, $this, true);
@@ -182,13 +170,13 @@ class Cauldron extends Solid {
 					}
 				}
 				break;
-			case Item::DYE:
+			case Item::DYE://TODO: can't put colors in old ones
 				if ($tile->hasPotion()) break;
 				$color = Color::getDyeColor($item->getDamage());
-				if ($tile->isCustomColor()) {
+				if ($tile->hasCustomColor()){
 					$color = Color::averageColor($color, $tile->getCustomColor());
 				}
-				if ($player->isSurvival()) {
+				if ($player->isSurvival()){
 					$item->setCount($item->getCount() - 1);
 					/*if($item->getCount() <= 0){
 						$player->getInventory()->setItemInHand(Item::get(Item::AIR));
@@ -196,7 +184,7 @@ class Cauldron extends Solid {
 				}
 				$tile->setCustomColor($color);
 				$ev = new LevelEventPacket();
-				$ev->data = $color->toARGB();
+				$ev->data = $color->toRGB();
 				$ev->evid = LevelEventPacket::EVENT_CAULDRON_ADD_DYE;
 				$ev->x = $this->x + 0.5;
 				$ev->y = $this->y;
@@ -210,7 +198,8 @@ class Cauldron extends Solid {
 			case Item::LEATHER_BOOTS:
 				/** @var Armor $item */
 				if ($this->isEmpty()) break;
-				if ($tile->isCustomColor()) {
+				if ($tile->hasPotion()) break;
+				if ($tile->hasCustomColor()){
 					--$this->meta;
 					$this->getLevel()->setBlock($this, $this, true);
 					$newItem = clone $item;
@@ -218,17 +207,17 @@ class Cauldron extends Solid {
 					$newItem->setCustomColor($tile->getCustomColor());
 					$player->getInventory()->setItemInHand($newItem);
 					$ev = new LevelEventPacket();
-					$color = $item->getCustomColor();
-					$ev->data = $color->toARGB();
-					$ev->evid = LevelEventPacket::EVENT_CAULDRON_ADD_DYE;
+					$color = $tile->getCustomColor();
+					$ev->data = $color->toRGB();
+					$ev->evid = LevelEventPacket::EVENT_CAULDRON_DYE_ARMOR;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
 					$ev->z = $this->z + 0.5;
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
-					if ($this->isEmpty()) {
+					if ($this->isEmpty()){
 						$tile->clearCustomColor();
 					}
-				} else {
+				} else{
 					--$this->meta;
 					$this->getLevel()->setBlock($this, $this, true);
 					$newItem = clone $item;
@@ -237,8 +226,8 @@ class Cauldron extends Solid {
 					$player->getInventory()->setItemInHand($newItem);
 					$ev = new LevelEventPacket();
 					$color = $item->getCustomColor();
-					$ev->data = $color->toARGB();
-					$ev->evid = LevelEventPacket::EVENT_CAULDRON_ADD_DYE;
+					$ev->data = $color->toRGB();
+					$ev->evid = LevelEventPacket::EVENT_CAULDRON_CLEAN_ARMOR;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
 					$ev->z = $this->z + 0.5;
@@ -251,13 +240,13 @@ class Cauldron extends Solid {
 						($item->getId() === Item::POTION and $tile->getSplashPotion()) or
 						($item->getId() === Item::SPLASH_POTION and !$tile->getSplashPotion()) and $item->getDamage() !== 0 or
 						($item->getDamage() === Potion::WATER_BOTTLE and $tile->hasPotion()))
-				) {//long...
+				){
 					$this->meta = 0x00;
 					$this->getLevel()->setBlock($this, $this, true);
-					$tile->setPotionId(0);//reset
+					$tile->setPotionId(-1);//reset
 					$tile->setSplashPotion(false);
 					$tile->clearCustomColor();
-					if ($player->isSurvival()) {
+					if ($player->isSurvival()){
 						$player->getInventory()->setItemInHand(Item::get(Item::GLASS_BOTTLE));
 					}
 					$ev = new LevelEventPacket();
@@ -267,11 +256,11 @@ class Cauldron extends Solid {
 					$ev->y = $this->y;
 					$ev->z = $this->z + 0.5;
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
-				} elseif ($item->getDamage() === Potion::WATER_BOTTLE) {
+				} elseif ($item->getDamage() === Potion::WATER_BOTTLE){
 					$this->meta += 2;
 					if ($this->meta > 0x06) $this->meta = 0x06;
 					$this->getLevel()->setBlock($this, $this, true);
-					if ($player->isSurvival()) {
+					if ($player->isSurvival()){
 						$player->getInventory()->setItemInHand(Item::get(Item::GLASS_BOTTLE));
 					}
 					$tile->setPotionId(0);
@@ -279,25 +268,25 @@ class Cauldron extends Solid {
 					$tile->clearCustomColor();
 					$ev = new LevelEventPacket();
 					$ev->data = 0;
-					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;//TODO: Check if thats actually fill or explode
+					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
 					$ev->z = $this->z + 0.5;
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
-				} elseif (!$this->isFull()) {
+				} elseif (!$this->isFull()){
 					$this->meta += 2;
 					if ($this->meta > 0x06) $this->meta = 0x06;
 					$tile->setPotionId($item->getDamage());
 					$tile->setSplashPotion($item->getId() === Item::SPLASH_POTION);
 					$tile->clearCustomColor();
 					$this->getLevel()->setBlock($this, $this, true);
-					if ($player->isSurvival()) {
+					if ($player->isSurvival()){
 						$player->getInventory()->setItemInHand(Item::get(Item::GLASS_BOTTLE));
 					}
 					$color = Potion::getColor($item->getDamage());
 					$ev = new LevelEventPacket();
 					$color = new Color($color[0], $color[1], $color[2]);
-					$ev->data = $color->toARGB();
+					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
@@ -306,18 +295,18 @@ class Cauldron extends Solid {
 				}
 				break;
 			case Item::GLASS_BOTTLE:
-				if ($this->meta < 2) {
+				if ($this->meta < 2){
 					break;
 				}
-				if ($tile->hasPotion()) {
+				if ($tile->hasPotion()){
 					$this->meta -= 2;
-					if ($tile->getSplashPotion() === true) {
+					if ($tile->getSplashPotion() === true){
 						$result = Item::get(Item::SPLASH_POTION, $tile->getPotionId());
-					} else {
+					} else{
 						$result = Item::get(Item::POTION, $tile->getPotionId());
 					}
-					if ($this->isEmpty()) {
-						$tile->setPotionId(0);//reset
+					if ($this->isEmpty()){
+						$tile->setPotionId(-1);//reset
 						$tile->setSplashPotion(false);
 						$tile->clearCustomColor();
 					}
@@ -326,22 +315,22 @@ class Cauldron extends Solid {
 					$color = Potion::getColor($result->getDamage());
 					$color = new Color($color[0], $color[1], $color[2]);
 					$ev = new LevelEventPacket();
-					$ev->data = $color->toARGB();
+					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
 					$ev->z = $this->z + 0.5;
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
-				} else {
+				} else{
 					$this->meta -= 2;
 					$this->getLevel()->setBlock($this, $this, true);
-					if ($player->isSurvival()) {
+					if ($player->isSurvival()){
 						$result = Item::get(Item::POTION, Potion::WATER_BOTTLE);
 						$this->addItem($item, $player, $result);
 					}
 					$ev = new LevelEventPacket();
 					$color = $tile->getCustomColor();
-					$ev->data = $color->toARGB();
+					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_TAKE_POTION;
 					$ev->x = $this->x + 0.5;
 					$ev->y = $this->y;
@@ -353,14 +342,27 @@ class Cauldron extends Solid {
 		return true;
 	}
 
-	public function addItem(Item $item, Player $player, Item $result) {
-		if ($item->getCount() <= 1) {
+	public function isFull(){
+		return $this->meta === 0x06;
+	}
+
+	public function update(){//umm... right update method...?
+		$this->getLevel()->setBlock($this, Block::get($this->id, $this->meta + 1), true);
+		$this->getLevel()->setBlock($this, $this, true);//Undo the damage value
+	}
+
+	public function isEmpty(){
+		return $this->meta === 0x00;
+	}
+
+	public function addItem(Item $item, Player $player, Item $result){
+		if ($item->getCount() <= 1){
 			$player->getInventory()->setItemInHand($result);
-		} else {
+		} else{
 			$item->setCount($item->getCount() - 1);
-			if ($player->getInventory()->canAddItem($result) === true) {
+			if ($player->getInventory()->canAddItem($result) === true){
 				$player->getInventory()->addItem($result);
-			} else {
+			} else{
 				$motion = $player->getDirectionVector()->multiply(0.4);
 				$position = clone $player->getPosition();
 				$player->getLevel()->dropItem($position->add(0, 0.5, 0), $result, $motion, 40);

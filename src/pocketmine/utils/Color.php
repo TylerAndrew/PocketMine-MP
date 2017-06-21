@@ -27,7 +27,7 @@ class Color{
 
 	/** @var int */
 	protected $a, $r, $g, $b;
-	
+
 	public function __construct(int $r, int $g, int $b, int $a = 0xff){
 		$this->r = $r & 0xff;
 		$this->g = $g & 0xff;
@@ -36,129 +36,46 @@ class Color{
 	}
 
 	/**
-	 * Returns the alpha (transparency) value of this colour.
-	 * @return int
-	 */
-	public function getA() : int{
-		return $this->a;
-	}
-
-	/**
-	 * Sets the alpha (opacity) value of this colour, lower = more transparent
-	 * @param int $a
-	 */
-	public function setA(int $a){
-		$this->a = $a & 0xff;
-	}
-
-	/**
-	 * Retuns the red value of this colour.
-	 * @return int
-	 */
-	public function getR() : int{
-		return $this->r;
-	}
-
-	/**
-	 * Sets the red value of this colour.
-	 * @param int $r
-	 */
-	public function setR(int $r){
-		$this->r = $r & 0xff;
-	}
-
-	/**
-	 * Returns the green value of this colour.
-	 * @return int
-	 */
-	public function getG() : int{
-		return $this->g;
-	}
-
-	/**
 	 * @param $damage
 	 * @return Color
 	 */
 	public static function getDyeColor($damage){
 		switch ($damage){
+			case 0:
+				return new Color(30, 27, 27);
 			case 1:
-				return new Color(30, 27, 27);
-				break;
-			case 2:
-				return new Color(30, 27, 27);
-				break;
-			case 3:
 				return new Color(179, 49, 44);
-				break;
-			case 4:
+			case 2:
 				return new Color(61, 81, 26);
-				break;
-			case 5:
+			case 3:
 				return new Color(81, 48, 26);
-				break;
-			case 6:
+			case 4:
 				return new Color(37, 49, 146);
-				break;
-			case 7:
+			case 5:
 				return new Color(123, 47, 190);
-				break;
-			case 8:
+			case 6:
 				return new Color(40, 118, 151);
-				break;
-			case 9:
+			case 7:
 				return new Color(153, 153, 153);
-				break;
-			case 10:
+			case 8:
 				return new Color(67, 67, 67);
-				break;
-			case 11:
+			case 9:
 				return new Color(216, 129, 152);
-				break;
-			case 12:
+			case 10:
 				return new Color(65, 205, 52);
-				break;
-			case 13:
+			case 11:
 				return new Color(222, 207, 42);
-				break;
-			case 14:
+			case 12:
 				return new Color(102, 137, 211);
-				break;
-			case 15:
+			case 13:
 				return new Color(195, 84, 205);
-				break;
-			case 16:
+			case 14:
 				return new Color(235, 136, 68);
-				break;
-			case 17:
+			case 15:
 				return new Color(240, 240, 240);
-				break;
 			default:
 				return null;
 		}
-	}
-
-	/**
-	 * Returns the alpha (transparency) value of this colour.
-	 * @param int $g
-	 */
-	public function setG(int $g){
-		$this->g = $g & 0xff;
-	}
-
-	/**
-	 * Returns the blue value of this colour.
-	 * @return int
-	 */
-	public function getB() : int{
-		return $this->b;
-	}
-
-	/**
-	 * Sets the blue value of this colour.
-	 * @param int $b
-	 */
-	public function setB(int $b){
-		$this->b = $b & 0xff;
 	}
 
 	/**
@@ -182,38 +99,6 @@ class Color{
 		return new Color(($code >> 16) & 0xff, ($code >> 8) & 0xff, $code & 0xff, ($code >> 24) & 0xff);
 	}
 
-	/**
-	 * Returns an ARGB 32-bit colour value.
-	 * @return int
-	 */
-	public function toARGB() : int{
-		return ($this->a << 24) | ($this->r << 16) | ($this->g << 8) | $this->b;
-	}
-
-	/**
-	 * Returns a little-endian ARGB 32-bit colour value.
-	 * @return int
-	 */
-	public function toBGRA() : int{
-		return ($this->b << 24) | ($this->g << 16) | ($this->r << 8) | $this->a;
-	}
-
-	/**
-	 * Returns an RGBA 32-bit colour value.
-	 * @return int
-	 */
-	public function toRGBA() : int{
-		return ($this->r << 24) | ($this->g << 16) | ($this->b << 8) | $this->a;
-	}
-
-	/**
-	 * Returns a little-endian RGBA colour value.
-	 * @return int
-	 */
-	public function toABGR() : int{
-		return ($this->a << 24) | ($this->b << 16) | ($this->g << 8) | $this->r;
-	}
-
 	public static function fromABGR(int $code){
 		return new Color($code & 0xff, ($code >> 8) & 0xff, ($code >> 16) & 0xff, ($code >> 24) & 0xff);
 	}
@@ -223,12 +108,117 @@ class Color{
 		$tg = 0;//green
 		$tb = 0;//blue
 		$count = 0;
-		foreach($colors as $c){
+		foreach ($colors as $c){
 			$tr += $c->getR();
 			$tg += $c->getG();
 			$tb += $c->getB();
 			++$count;
 		}
-		return new Color($tr / $count, $tg / $count, $tb / $count);
+		$color = new Color((int)($tr / $count), (int)($tg / $count), (int)($tb / $count));
+		return $color;
+	}
+
+	/**
+	 * Retuns the red value of this colour.
+	 * @return int
+	 */
+	public function getR(): int{
+		return $this->r;
+	}
+
+	/**
+	 * Returns the green value of this colour.
+	 * @return int
+	 */
+	public function getG(): int{
+		return $this->g;
+	}
+
+	/**
+	 * Returns the blue value of this colour.
+	 * @return int
+	 */
+	public function getB(): int{
+		return $this->b;
+	}
+
+	/**
+	 * Returns the alpha (transparency) value of this colour.
+	 * @return int
+	 */
+	public function getA(): int{
+		return $this->a;
+	}
+
+	/**
+	 * Sets the alpha (opacity) value of this colour, lower = more transparent
+	 * @param int $a
+	 */
+	public function setA(int $a){
+		$this->a = $a & 0xff;
+	}
+
+	/**
+	 * Sets the red value of this colour.
+	 * @param int $r
+	 */
+	public function setR(int $r){
+		$this->r = $r & 0xff;
+	}
+
+	/**
+	 * Returns the alpha (transparency) value of this colour.
+	 * @param int $g
+	 */
+	public function setG(int $g){
+		$this->g = $g & 0xff;
+	}
+
+	/**
+	 * Sets the blue value of this colour.
+	 * @param int $b
+	 */
+	public function setB(int $b){
+		$this->b = $b & 0xff;
+	}
+
+	/**
+	 * Returns an ARGB 32-bit colour value.
+	 * @return int
+	 */
+	public function toARGB(): int{
+		return ($this->a << 24) | ($this->r << 16) | ($this->g << 8) | $this->b;
+	}
+
+	/**
+	 * Returns an RGB 32-bit colour value.
+	 * @return int
+	 */
+	public function toRGB(): int{
+		return ($this->r << 16) | ($this->g << 8) | $this->b & 0xffffff;
+	}
+
+	/**
+	 * Returns a little-endian ARGB 32-bit colour value.
+	 * @return int
+	 */
+	public function toBGRA(): int{
+		return ($this->b << 24) | ($this->g << 16) | ($this->r << 8) | $this->a;
+	}
+
+	/**
+	 * Returns an RGBA 32-bit colour value.
+	 * @return int
+	 */
+	public function toRGBA(): int{
+		return ($this->r << 24) | ($this->g << 16) | ($this->b << 8) | $this->a;
+	}
+
+	/**
+	 * Returns a little-endian RGBA colour value.
+	 * @return int
+	 */
+	public function toABGR(): int{
+		return ($this->a << 24) | ($this->b << 16) | ($this->g << 8) | $this->r;
 	}
 }
