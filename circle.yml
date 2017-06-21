@@ -22,5 +22,6 @@ dependencies:
 test:
   override:
     - . ./CI-Test/Travis.sh $PHP_ENVIROMENT
-    - 'curl -s -i -X POST -F chat_id="$CHAT_ID" -F document=@"$(find|grep PocketMine-MP)" -F caption="State: Succeeded\nPhar: #$CIRCLE_BUILD_NUM for branch \"$CIRCLE_BRANCH\" (#@$CIRCLE_TAG)\nChanges: $CIRCLE_COMPARE_URL\nCreated by $CIRCLE_USERNAME\nMore build information here: $CIRCLE_BUILD_URL" -F disable_notification="true" https://api.telegram.org/bot$TG_API/sendDocument > /dev/null'
+    - 'printf "State: Succeeded\nPhar: #$CIRCLE_BUILD_NUM for branch \"$CIRCLE_BRANCH\"\nChanges: $CIRCLE_COMPARE_URL\nCreated by $CIRCLE_USERNAME\nMore build information here: $CIRCLE_BUILD_URL" >> message.txt'
+    - 'curl -s -i -X POST -F chat_id="$CHAT_ID" -F document=@"$(find|grep PocketMine-MP)" -F caption="$(<message.txt)" -F disable_notification="true" https://api.telegram.org/bot$TG_API/sendDocument > /dev/null'
     - cp -rv ./plugins/DevTools/ $CIRCLE_ARTIFACTS
