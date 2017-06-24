@@ -24,12 +24,11 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
-use pocketmine\item\Tool;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
-class Button extends Flowable{
+abstract class Button extends Flowable{
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
@@ -49,19 +48,20 @@ class Button extends Flowable{
 
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
 		$below = $this->getSide(Vector3::SIDE_DOWN);
-		if (!$target->isTransparent() || ($face === Vector3::SIDE_DOWN && ($below instanceof WoodenSlab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall)){
+		if ($target->isSolid() || ($face === Vector3::SIDE_DOWN && ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof StoneWall)){
 			$this->meta = $face;
-			$this->getLevel()->setBlock($block, $this);
+			$this->getLevel()->setBlock($block, $this, true, true);
 			return true;
 		}
 
 		return false;
 	}
 
-	public function onUpdate($type){
+/*	public function onUpdate($type){
 		if ($type === Level::BLOCK_UPDATE_NORMAL){
 			$below = $this->getSide(Vector3::SIDE_DOWN);
-			if ($this->getSide($this->meta)->isTransparent() && !($this->meta === 0 && ($below instanceof WoodenSlab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall)){
+			if($this->getSide($this->meta)->isSolid()) return false;
+			if (!($this->meta === 0 && ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof StoneWall)){
 				$this->getLevel()->useBreakOn($this);
 
 				return Level::BLOCK_UPDATE_NORMAL;
@@ -69,5 +69,5 @@ class Button extends Flowable{
 		}
 
 		return false;
-	}
+	}*/
 }
