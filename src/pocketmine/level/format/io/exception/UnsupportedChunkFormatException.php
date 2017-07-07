@@ -21,14 +21,10 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\command;
+namespace pocketmine\level\format\io\exception;
 
-use pocketmine\plugin\Plugin;
+use pocketmine\level\format\ChunkException;
 
-interface PluginIdentifiableCommand{
+class UnsupportedChunkFormatException extends ChunkException{
 
-	/**
-	 * @return Plugin
-	 */
-	public function getPlugin();
 }

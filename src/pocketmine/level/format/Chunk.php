@@ -28,7 +28,7 @@ namespace pocketmine\level\format;
 
 use pocketmine\block\Block;
 use pocketmine\entity\Entity;
-use pocketmine\level\format\io\ChunkException;
+use pocketmine\level\format\ChunkException;
 use pocketmine\level\Level;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -67,12 +67,13 @@ class Chunk{
 	/** @var Entity[] */
 	protected $entities = [];
 
-	/** @var int[256] */
+	/** @var int[] */
 	protected $heightMap = [];
 
 	/** @var string */
 	protected $biomeIds;
 
+	/** @var int[] */
 	protected $extraData = [];
 
 	/** @var CompoundTag[] */

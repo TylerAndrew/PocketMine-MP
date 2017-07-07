@@ -36,6 +36,7 @@ class PlayerAnimationEvent extends PlayerEvent implements Cancellable{
 
 	const ARM_SWING = 1;
 
+	/** @var int */
 	private $animationType;
 
 	/**
@@ -50,7 +51,7 @@ class PlayerAnimationEvent extends PlayerEvent implements Cancellable{
 	/**
 	 * @return int
 	 */
-	public function getAnimationType(){
+	public function getAnimationType() : int{
 		return $this->animationType;
 	}
 

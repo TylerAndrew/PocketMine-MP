@@ -21,14 +21,28 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\command;
+namespace pocketmine\network\mcpe\protocol;
 
-use pocketmine\plugin\Plugin;
+#include <rules/DataPacket.h>
 
-interface PluginIdentifiableCommand{
+use pocketmine\network\mcpe\NetworkSession;
 
-	/**
-	 * @return Plugin
-	 */
-	public function getPlugin();
+class GameRulesChangedPacket extends DataPacket{
+	const NETWORK_ID = ProtocolInfo::GAME_RULES_CHANGED_PACKET;
+
+	public $gameRules = [];
+
+	public function decode(){
+		$this->gameRules = $this->getGameRules();
+	}
+
+	public function encode(){
+		$this->reset();
+		$this->putGameRules($this->gameRules);
+	}
+
+	public function handle(NetworkSession $session) : bool{
+		return $session->handleGameRulesChanged($this);
+	}
+
 }

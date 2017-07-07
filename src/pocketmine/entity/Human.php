@@ -75,6 +75,8 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	protected $xpSeed;
 	protected $maxHealth = 20;
 
+	protected $baseOffset = 1.62;
+
 	public function __construct(Level $level, CompoundTag $nbt){
 		if($this->skin === "" and (!isset($nbt->Skin) or !isset($nbt->Skin->Data) or !Player::isValidSkin($nbt->Skin->Data->getValue()))){
 			throw new \InvalidStateException((new \ReflectionClass($this))->getShortName() . " must have a valid skin set");

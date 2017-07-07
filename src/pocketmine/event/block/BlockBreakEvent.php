@@ -33,10 +33,10 @@ use pocketmine\Player;
 class BlockBreakEvent extends BlockEvent implements Cancellable{
 	public static $handlerList = null;
 
-	/** @var \pocketmine\Player */
+	/** @var Player */
 	protected $player;
 
-	/** @var \pocketmine\item\Item */
+	/** @var Item */
 	protected $item;
 
 	/** @var bool */

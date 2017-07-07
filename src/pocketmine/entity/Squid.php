@@ -91,8 +91,6 @@ class Squid extends WaterAnimal implements Ageable{
 			}
 		}
 
-		$this->lastUpdate = $currentTick;
-
 		$this->timings->startTiming();
 
 		$hasUpdate = parent::onUpdate($currentTick);
