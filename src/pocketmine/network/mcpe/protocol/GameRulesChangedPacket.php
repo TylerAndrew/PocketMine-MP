@@ -21,35 +21,28 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\event\player;
+namespace pocketmine\network\mcpe\protocol;
 
-use pocketmine\event\Cancellable;
-use pocketmine\item\Item;
-use pocketmine\Player;
+#include <rules/DataPacket.h>
 
-/**
- * Called when a player tries to drop an item from its hotbar
- */
-class PlayerDropItemEvent extends PlayerEvent implements Cancellable{
-	public static $handlerList = null;
+use pocketmine\network\mcpe\NetworkSession;
 
-	/** @var Item */
-	private $drop;
+class GameRulesChangedPacket extends DataPacket{
+	const NETWORK_ID = ProtocolInfo::GAME_RULES_CHANGED_PACKET;
 
-	/**
-	 * @param Player $player
-	 * @param Item   $drop
-	 */
-	public function __construct(Player $player, Item $drop){
-		$this->player = $player;
-		$this->drop = $drop;
+	public $gameRules = [];
+
+	public function decode(){
+		$this->gameRules = $this->getGameRules();
 	}
 
-	/**
-	 * @return Item
-	 */
-	public function getItem() : Item{
-		return $this->drop;
+	public function encode(){
+		$this->reset();
+		$this->putGameRules($this->gameRules);
+	}
+
+	public function handle(NetworkSession $session) : bool{
+		return $session->handleGameRulesChanged($this);
 	}
 
 }

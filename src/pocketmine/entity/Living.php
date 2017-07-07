@@ -54,8 +54,10 @@ abstract class Living extends Entity implements Damageable{
 		if(isset($this->namedtag->HealF)){
 			$this->namedtag->Health = new FloatTag("Health", (float) $this->namedtag["HealF"]);
 			unset($this->namedtag->HealF);
-		}elseif(isset($this->namedtag->Health) and !($this->namedtag->Health instanceof FloatTag)){
-			$this->namedtag->Health = new FloatTag("Health", (float) $this->namedtag->Health->getValue());
+		}elseif(isset($this->namedtag->Health)){
+			if(!($this->namedtag->Health instanceof FloatTag)){
+				$this->namedtag->Health = new FloatTag("Health", (float) $this->namedtag->Health->getValue());
+			}
 		}else{
 			$this->namedtag->Health = new FloatTag("Health", (float) $this->getMaxHealth());
 		}
@@ -328,7 +330,7 @@ abstract class Living extends Entity implements Damageable{
 	 * @param int   $maxDistance
 	 * @param array $transparent
 	 *
-	 * @return Block
+	 * @return Block|null
 	 */
 	public function getTargetBlock($maxDistance, array $transparent = []){
 		try{

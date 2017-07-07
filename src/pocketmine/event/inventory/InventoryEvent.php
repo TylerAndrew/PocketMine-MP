@@ -26,6 +26,7 @@ declare(strict_types=1);
  */
 namespace pocketmine\event\inventory;
 
+use pocketmine\entity\Human;
 use pocketmine\event\Event;
 use pocketmine\inventory\Inventory;
 
@@ -41,14 +42,14 @@ abstract class InventoryEvent extends Event{
 	/**
 	 * @return Inventory
 	 */
-	public function getInventory(){
+	public function getInventory() : Inventory{
 		return $this->inventory;
 	}
 
 	/**
-	 * @return \pocketmine\entity\Human[]
+	 * @return Human[]
 	 */
-	public function getViewers(){
+	public function getViewers() : array{
 		return $this->inventory->getViewers();
 	}
 }

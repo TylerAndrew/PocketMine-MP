@@ -25,7 +25,7 @@ namespace pocketmine\level\format\io\region;
 
 use pocketmine\level\format\Chunk;
 use pocketmine\level\format\io\BaseLevelProvider;
-use pocketmine\level\format\io\ChunkException;
+use pocketmine\level\format\ChunkException;
 use pocketmine\level\format\io\ChunkUtils;
 use pocketmine\level\format\SubChunk;
 use pocketmine\level\generator\Generator;
@@ -430,7 +430,7 @@ class McRegion extends BaseLevelProvider{
 	 * @param int $x
 	 * @param int $z
 	 *
-	 * @return RegionLoader
+	 * @return RegionLoader|null
 	 */
 	protected function getRegion(int $x, int $z){
 		return $this->regions[Level::chunkHash($x, $z)] ?? null;

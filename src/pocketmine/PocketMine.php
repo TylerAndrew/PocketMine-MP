@@ -174,6 +174,7 @@ namespace pocketmine {
 	date_default_timezone_set("UTC");
 
 	$logger = new MainLogger(\pocketmine\DATA . "server.log");
+	$logger->registerStatic();
 
 	if(!ini_get("date.timezone")){
 		if(($timezone = detect_system_timezone()) and date_default_timezone_set($timezone)){
@@ -291,7 +292,7 @@ namespace pocketmine {
 	/**
 	 * @param string $offset In the format of +09:00, +02:00, -04:00 etc.
 	 *
-	 * @return string
+	 * @return string|bool
 	 */
 	function parse_offset($offset){
 		//Make signed offsets unsigned for date_parse
@@ -392,11 +393,12 @@ namespace pocketmine {
 				}else{
 					$args = $trace[$i]["params"];
 				}
-				foreach($args as $name => $value){
-					$params .= (is_object($value) ? get_class($value) . " object" : gettype($value) . " " . (is_array($value) ? "Array()" : Utils::printable(@strval($value)))) . ", ";
-				}
+
+				$params = implode(", ", array_map(function($value){
+					return (is_object($value) ? get_class($value) . " object" : gettype($value) . " " . (is_array($value) ? "Array()" : Utils::printable(@strval($value))));
+				}, $args));
 			}
-			$messages[] = "#$j " . (isset($trace[$i]["file"]) ? cleanPath($trace[$i]["file"]) : "") . "(" . (isset($trace[$i]["line"]) ? $trace[$i]["line"] : "") . "): " . (isset($trace[$i]["class"]) ? $trace[$i]["class"] . (($trace[$i]["type"] === "dynamic" or $trace[$i]["type"] === "->") ? "->" : "::") : "") . $trace[$i]["function"] . "(" . Utils::printable(substr($params, 0, -2)) . ")";
+			$messages[] = "#$j " . (isset($trace[$i]["file"]) ? cleanPath($trace[$i]["file"]) : "") . "(" . (isset($trace[$i]["line"]) ? $trace[$i]["line"] : "") . "): " . (isset($trace[$i]["class"]) ? $trace[$i]["class"] . (($trace[$i]["type"] === "dynamic" or $trace[$i]["type"] === "->") ? "->" : "::") : "") . $trace[$i]["function"] . "(" . Utils::printable($params) . ")";
 		}
 
 		return $messages;
@@ -429,6 +431,14 @@ namespace pocketmine {
 		if(version_compare($pthreads_version, "3.1.5") < 0){
 			$logger->critical("pthreads >= 3.1.5 is required, while you have $pthreads_version.");
 			++$errors;
+		}
+
+		if(extension_loaded("leveldb")){
+			$leveldb_version = phpversion("leveldb");
+			if(version_compare($leveldb_version, "0.2.0") < 0){
+				$logger->critical("php-leveldb >= 0.2.0 is required, while you have $leveldb_version");
+				++$errors;
+			}
 		}
 
 		if(extension_loaded("pocketmine")){
