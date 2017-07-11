@@ -40,7 +40,7 @@ class ResourcePackStackPacket extends DataPacket{
 	/** @var ResourcePack[] */
 	public $resourcePackStack = [];
 
-	public function decode(){
+	public function decodePayload(){
 		/*$this->mustAccept = $this->getBool();
 		$behaviorPackCount = $this->getUnsignedVarInt();
 		while($behaviorPackCount-- > 0){
@@ -57,8 +57,7 @@ class ResourcePackStackPacket extends DataPacket{
 		}*/
 	}
 
-	public function encode(){
-		$this->reset();
+	public function encodePayload(){
 		$this->putBool($this->mustAccept);
 
 		$this->putUnsignedVarInt(count($this->behaviorPackStack));
