@@ -1,6 +1,6 @@
 [submodule "src/raklib"]
 	path = src/raklib
-	url = https://github.com/pmmp/RakLib.git
+	url = https://github.com/ClearSkyTeam/Raklib.git
 	branch = master
 [submodule "src/spl"]
 	path = src/spl
