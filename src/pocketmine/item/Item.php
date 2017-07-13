@@ -27,6 +27,7 @@ declare(strict_types=1);
 namespace pocketmine\item;
 
 use pocketmine\block\Block;
+use pocketmine\block\Quartz;
 use pocketmine\entity\Entity;
 use pocketmine\inventory\Fuel;
 use pocketmine\item\enchantment\Enchantment;
@@ -237,7 +238,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::PUMPKIN_PIE] = PumpkinPie::class;
 			self::$list[self::COMPARATOR] = Comparator::class;
 			self::$list[self::NETHER_BRICK] = NetherBrick::class;
-			self::$list[self::QUARTZ] = Quartz::class;
+			self::$list[self::NETHER_QUARTZ] = Quartz::class;
 			self::$list[self::PRISMARINE_SHARD] = PrismarineShard::class;
 			self::$list[self::RAW_RABBIT] = RawRabbit::class;
 			self::$list[self::COOKED_RABBIT] = CookedRabbit::class;
