@@ -120,11 +120,7 @@ class BaseLang{
 	public function translate(TextContainer $c){
 		if($c instanceof TranslationContainer){
 			$baseText = $this->internalGet($c->getText());
-<<<<<<< HEAD
-			$baseText = $this->parseTranslation($baseText !== null ? (string)$baseText : (string)$c->getText());
-=======
 			$baseText = $this->parseTranslation($baseText ?? $c->getText());
->>>>>>> pmmp/master
 
 			foreach($c->getParameters() as $i => $p){
 				$baseText = str_replace("{%$i}", $this->parseTranslation((string) $p), $baseText);
