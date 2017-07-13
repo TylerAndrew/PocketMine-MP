@@ -238,6 +238,8 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::COMPARATOR] = Comparator::class;
 			self::$list[self::NETHER_BRICK] = NetherBrick::class;
 			self::$list[self::NETHER_QUARTZ] = NetherQuartz::class;
+			self::$list[self::PRISMARINE_SHARD] = PrismarineShard::class;
+			self::$list[self::RAW_RABBIT] = RawRabbit::class;
 			self::$list[self::COOKED_RABBIT] = CookedRabbit::class;
 			self::$list[self::RABBIT_STEW] = RabbitStew::class;
 			self::$list[self::RABBIT_FOOT] = RabbitFoot::class;
