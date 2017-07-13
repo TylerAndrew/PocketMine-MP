@@ -50,7 +50,7 @@ class Item implements ItemIds, \JsonSerializable{
 	private static $cachedParser = null;
 
 	private static function parseCompoundTag(string $tag) : CompoundTag{
-		if(strlen($tag) === 0){
+		if($tag === ""){
 			throw new \InvalidArgumentException("No NBT data found in supplied string");
 		}
 
@@ -238,7 +238,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::PUMPKIN_PIE] = PumpkinPie::class;
 			self::$list[self::COMPARATOR] = Comparator::class;
 			self::$list[self::NETHER_BRICK] = NetherBrick::class;
-			self::$list[self::NETHER_QUARTZ] = Quartz::class;
+			self::$list[self::NETHER_QUARTZ] = NetherQuartz::class;
 			self::$list[self::PRISMARINE_SHARD] = PrismarineShard::class;
 			self::$list[self::RAW_RABBIT] = RawRabbit::class;
 			self::$list[self::COOKED_RABBIT] = CookedRabbit::class;
