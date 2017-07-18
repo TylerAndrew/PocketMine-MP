@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\plugin;
 
 use pocketmine\permission\Permission;
+use pocketmine\Server;
 
 class PluginDescription{
 	private $name;
@@ -143,10 +144,11 @@ class PluginDescription{
 	/**
 	 * @return array
 	 */
-	public function getCompatibleApis() : array{ //TODO config
-		$apis = $this->api;
-		array_push($apis, \pocketmine\API_VERSION);
-		return $apis;
+	public function getCompatibleApis() : array{
+		$api = $this->api;
+		if(Server::getInstance()->getProperty("settings.use-outdated-plugins", false) && Server::getInstance()->getProperty("settings.use-outdated-plugins", "") === "Yes i am 100% really sure!");
+			array_push($api, \pocketmine\API_VERSION);
+		return $api;
 	}
 
 	/**

@@ -12,6 +12,12 @@ settings:
  shutdown-message: "Server closed"
  #Allow listing plugins via Query
  query-plugins: true
+ #Load plugins that are out of date.
+ #WARNING! THIS MOST LIKELY WILL CRASH OR EVEN CORRUPT YOUR SERVER DATA!
+ use-outdated-plugins: true
+ #Write: "Yes i am 100% really sure!" here
+ #WARNING! THIS MOST LIKELY WILL CRASH OR EVEN CORRUPT YOUR SERVER DATA!
+ really-use-outdated-plugins: "No"
  #Show a console message when a plugin uses deprecated API methods
  deprecated-verbose: true
  #Enable plugin and core profiling by default
