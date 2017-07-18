@@ -1542,6 +1542,9 @@ class Server{
 
 			define('pocketmine\DEBUG', (int) $this->getProperty("debug.level", 1));
 
+			if($this->getProperty("settings.use-outdated-plugins", false) == false && $this->getProperty("settings.really-use-outdated-plugins", "") !== "Yes i am 100% really sure!")
+				$this->logger->warning("Loading outdated plugins is DISABLED! Enable in pocketmine.yml if needed.");
+
 			if(((int) ini_get('zend.assertions')) > 0 and ((bool) $this->getProperty("debug.assertions.warn-if-enabled", true)) !== false){
 				$this->logger->warning("Debugging assertions are enabled, this may impact on performance. To disable them, set `zend.assertions = -1` in php.ini.");
 			}

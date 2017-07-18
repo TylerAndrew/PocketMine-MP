@@ -14,7 +14,7 @@ settings:
  query-plugins: true
  #Load plugins that are out of date.
  #WARNING! THIS MOST LIKELY WILL CRASH OR EVEN CORRUPT YOUR SERVER DATA!
- use-outdated-plugins: true
+ use-outdated-plugins: false
  #Write: "Yes i am 100% really sure!" here
  #WARNING! THIS MOST LIKELY WILL CRASH OR EVEN CORRUPT YOUR SERVER DATA!
  really-use-outdated-plugins: "No"

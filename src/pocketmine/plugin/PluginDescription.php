@@ -146,7 +146,7 @@ class PluginDescription{
 	 */
 	public function getCompatibleApis() : array{
 		$api = $this->api;
-		if(Server::getInstance()->getProperty("settings.use-outdated-plugins", false) === "true" && Server::getInstance()->getProperty("settings.really-use-outdated-plugins", "") === "Yes i am 100% really sure!")
+		if(Server::getInstance()->getProperty("settings.use-outdated-plugins", false) == true && Server::getInstance()->getProperty("settings.really-use-outdated-plugins", "") === "Yes i am 100% really sure!")
 			array_push($api, \pocketmine\API_VERSION);
 		return $api;
 	}
