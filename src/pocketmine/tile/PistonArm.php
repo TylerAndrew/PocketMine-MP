@@ -37,7 +37,7 @@ class PistonArm extends Spawnable{
 		parent::__construct($level, $nbt);
 	}
 
-    public function getSpawnCompound(){
+    public function getSpawnCompound(): CompoundTag{
         /*if($this->extended){
             $c = new CompoundTag("", [
                 new CompoundTag("AttachedBlocks", []),

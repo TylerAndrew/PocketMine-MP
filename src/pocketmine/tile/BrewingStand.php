@@ -117,7 +117,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	/**
 	 * @return int
 	 */
-	public function getSize(){
+	public function getSize(): int{
 		return 4;
 	}
 
@@ -143,7 +143,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	 *
 	 * @return Item
 	 */
-	public function getItem($index){
+	public function getItem(int $index): Item{
 		$i = $this->getSlotIndex($index);
 		if($i < 0){
 			return Item::get(Item::AIR, 0, 0);
@@ -160,7 +160,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	 *
 	 * @return bool
 	 */
-	public function setItem($index, Item $item){
+	public function setItem(int $index, Item $item){
 		$i = $this->getSlotIndex($index);
 
 		$d = $item->nbtSerialize($index);
@@ -208,7 +208,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 		}
 	}
 
-	public function onUpdate(){
+	public function onUpdate(): bool{
 		if($this->closed === true){
 			return false;
 		}
@@ -300,7 +300,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 		return $ret;
 	}
 
-	public function getSpawnCompound(){
+	public function getSpawnCompound(): CompoundTag{
 		$nbt = new CompoundTag("", [
 			new StringTag("id", Tile::BREWING_STAND),
 			new IntTag("x", (int) $this->x),

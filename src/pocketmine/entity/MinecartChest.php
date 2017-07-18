@@ -61,7 +61,7 @@ class MinecartChest extends Snake{
     	}
     }
 
-    public function getDrops(){
+    public function getDrops() : array {
         return [ItemItem::get(ItemItem::MINECART, 0, 1),ItemItem::get(ItemItem::CHEST, 0, 1)];
     }
     

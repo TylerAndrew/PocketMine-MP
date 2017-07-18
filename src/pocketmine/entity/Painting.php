@@ -83,7 +83,7 @@ class Painting extends Hanging{
 		parent::spawnTo($player);
 	}
 
-	public function getDrops(){
+	public function getDrops() : array {
 		return [ItemItem::get(ItemItem::PAINTING, 0, 1)];
 	}
 }

@@ -33,7 +33,7 @@ class MovingBlock extends Spawnable{
 		parent::__construct($level, $nbt);
 	}
 
-	public function getSpawnCompound(){
+	public function getSpawnCompound(): CompoundTag{
         $c = new CompoundTag("", [
 			new StringTag("id", Tile::MOVING_BLOCK),
             new ByteTag("isMovable", (bool) true),

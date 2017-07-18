@@ -57,7 +57,7 @@ class Beacon extends Spawnable implements Nameable, InventoryHolder {
 		parent::saveNBT();
 	}
 
-	public function getSpawnCompound() {
+	public function getSpawnCompound(): CompoundTag{
 		$c = new CompoundTag("", [
 			new StringTag("id", Tile::BEACON),
 			new ByteTag("isMovable", (bool)true),
@@ -203,7 +203,7 @@ class Beacon extends Spawnable implements Nameable, InventoryHolder {
 
 	public function getEffectTier(int $tier) { }
 
-	public function onUpdate() {
+	public function onUpdate(): bool{
 		if (!empty($this->getEffects())) {
 			$this->applyEffects($this);
 		}

@@ -61,7 +61,7 @@ class MinecartHopper extends Snake{
     	}
     }
 
-    public function getDrops(){
+    public function getDrops() : array {
         return [ItemItem::get(ItemItem::MINECART, 0, 1),ItemItem::get(ItemItem::HOPPER, 0, 1)];
     }
     

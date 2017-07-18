@@ -33,7 +33,7 @@ class Comparator extends Spawnable{
 		parent::__construct($level, $nbt);
 	}
 
-	public function getSpawnCompound(){
+	public function getSpawnCompound(): CompoundTag{
         $c = new CompoundTag("", [
             new IntTag("OutputSignal", (int) 0),
 			new StringTag("id", Tile::COMPARATOR),

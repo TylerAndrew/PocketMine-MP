@@ -33,7 +33,7 @@ class EndPortal extends Spawnable{
 		parent::__construct($level, $nbt);
 	}
 
-	public function getSpawnCompound(){
+	public function getSpawnCompound(): CompoundTag{
         $c = new CompoundTag("", [
 			new StringTag("id", Tile::END_PORTAL),
             new ByteTag("isMovable", (bool) true),

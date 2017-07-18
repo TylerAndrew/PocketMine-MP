@@ -110,7 +110,7 @@ class Cauldron extends Spawnable{
 		$this->onChanged();
 	}
 
-	public function getSpawnCompound(){
+	public function getSpawnCompound(): CompoundTag{
 		$nbt = new CompoundTag("", [
 			new StringTag("id", Tile::CAULDRON),
 			new IntTag("x", (int) $this->x),
