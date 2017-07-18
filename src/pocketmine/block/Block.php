@@ -687,7 +687,7 @@ class Block extends Position implements BlockIds, Metadatable{
 	}
 
 	/**
-	 * @return AxisAlignedBB
+	 * @return AxisAlignedBB|null
 	 */
 	public function getBoundingBox(){
 		if($this->boundingBox === null){
@@ -697,7 +697,7 @@ class Block extends Position implements BlockIds, Metadatable{
 	}
 
 	/**
-	 * @return AxisAlignedBB
+	 * @return AxisAlignedBB|null
 	 */
 	protected function recalculateBoundingBox(){
 		return new AxisAlignedBB(

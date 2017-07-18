@@ -58,7 +58,7 @@ class Zombie extends Monster{
 		parent::spawnTo($player);
 	}
 
-	public function getDrops(){
+	public function getDrops() : array{
 		$drops = [
 			ItemItem::get(ItemItem::FEATHER, 0, 1)
 		];
