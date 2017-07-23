@@ -47,11 +47,12 @@ class BeaconDelayedCheckTask extends Task {
 	 *
 	 * @return void
 	 */
-	public function onRun($currentTick) {
+	public function onRun(int $currentTick) {
 		$level = Server::getInstance()->getLevel($this->levelId);
 		if (!Server::getInstance()->isLevelLoaded($level->getName()) || !$level->isChunkLoaded($this->pos->x >> 4, $this->pos->z >> 4)) return;
 		//Stop server from ticking it when chunk unloaded
 		$tile = $level->getTile($this->pos);
+		/** @var Beacon $tile */
 		if ($tile instanceof Beacon) {
 			$tile->scheduleUpdate();
 		}
