@@ -1540,6 +1540,7 @@ class Level implements ChunkManager, Metadatable{
 		$itemTag->setName("Item");
 
 		if($item->getId() > 0 and $item->getCount() > 0){
+			/** @var DroppedItem $itemEntity */
 			$itemEntity = Entity::createEntity("Item", $this, new CompoundTag("", [
 				new ListTag("Pos", [
 					new DoubleTag("", $source->getX()),

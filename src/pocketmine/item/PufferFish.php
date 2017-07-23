@@ -38,7 +38,7 @@ class PufferFish extends Food {
 	}
 
 	public function getAdditionalEffects(): array {
-		[
+		return [
 			Effect::getEffect(Effect::HUNGER)->setDuration(300)->setAmplifier(2),
 			Effect::getEffect(Effect::NAUSEA)->setDuration(300)->setAmplifier(1),
 			Effect::getEffect(Effect::POISON)->setDuration(1200)->setAmplifier(3),

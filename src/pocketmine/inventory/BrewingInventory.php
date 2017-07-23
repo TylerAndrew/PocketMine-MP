@@ -39,7 +39,7 @@ class BrewingInventory extends ContainerInventory{
 	}
 
 	public function getResult(){
-		if($brew = Server::getInstance()->getCraftingManager()->matchBrewingRecipe($this->getIngredient())){
+		if($brew = Server::getInstance()->getCraftingManager()->matchBrewingRecipe($this->getIngredient(), $this->getIngredient())){//TODO check
 			$canbrew = ($brew instanceof BrewingRecipe);
 			if($canbrew) return $brew->getResult();
 		}

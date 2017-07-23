@@ -904,6 +904,10 @@ class Item implements ItemIds, \JsonSerializable{
 		return 64;
 	}
 
+	/**
+	 * Returns the amount of ticks a fuel burns
+	 * @return null|int
+	 */
 	final public function getFuelTime(){
 		if(!isset(Fuel::$duration[$this->id])){
 			return null;

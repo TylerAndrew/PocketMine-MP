@@ -107,8 +107,8 @@ class ChorusFlower extends Transparent{
 	}
 
     public function canSpreadTo(){
-		$freespace = [];
-		/** ChorusPlant $below */
+		/*$freespace = [];
+		/** ChorusPlant $below * /
 		if(($below = $this->getSide(Vector3::SIDE_DOWN)) instanceof ChorusPlant && $below->countHorizontalStems() > 0 || $below->getId() === self::END_STONE){
 			//it has a stem next to it so MUST spead up
 			$freespace[] = $this->getSide(Vector3::SIDE_UP);
@@ -126,7 +126,8 @@ class ChorusFlower extends Transparent{
 			}
 		}
 		var_dump($freespace);
-		return $freespace;
+		return $freespace;*/
+		return [];
 	}
 
     public function hasValidStem(Vector3 $target){

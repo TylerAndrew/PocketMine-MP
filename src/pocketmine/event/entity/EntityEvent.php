@@ -21,8 +21,6 @@
 
 declare(strict_types=1);
 
-declare(strict_types=1);
-
 /**
  * Entity related Events, like spawn, inventory, attack...
  */

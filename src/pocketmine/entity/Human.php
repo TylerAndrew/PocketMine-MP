@@ -266,6 +266,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 	public function setTotalXp($xp) : float{
 		$this->totalXp = $xp;
 		$this->recalculateXpProgress();
+		return $this->getTotalXp();
 	}
 
 	public function getRemainderXp() : int{

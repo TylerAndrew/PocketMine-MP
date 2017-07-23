@@ -64,7 +64,7 @@ class BrewingRecipe implements Recipe{
 	/**
 	 * @return Item
 	 */
-	public function getResult(){
+	public function getResult() : Item{
 		return clone $this->output;
 	}
 

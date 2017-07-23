@@ -38,9 +38,9 @@ class MinecartHopper extends Snake{
     }
 
     public function onUpdate($currentTick){
+		$hasUpdate = false;
     	if($this->isAlive()){
     		$this->timings->startTiming();
-    		$hasUpdate = false;
     		/*
     		if($this->isLinked() && $this->getlinkedTarget() !== null){
     			$hasUpdate = true;
@@ -56,9 +56,9 @@ class MinecartHopper extends Snake{
     		}
     			
     		$this->timings->stopTiming();
-    
-    		return $hasUpdate;
+
     	}
+		return $hasUpdate;
     }
 
     public function getDrops() : array {

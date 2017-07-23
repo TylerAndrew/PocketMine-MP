@@ -53,7 +53,7 @@ class ChorusPlant extends Transparent
 		}
 	}
 
-	public function shouldBreak($checkNeighbours = true){
+	public function shouldBreak($checkNeighbours = true){/*
 		$count = $this->countHorizontalStems();
 		#test solids
 		foreach([Vector3::SIDE_NORTH,Vector3::SIDE_SOUTH,Vector3::SIDE_WEST,Vector3::SIDE_EAST] as $side){
@@ -70,7 +70,7 @@ class ChorusPlant extends Transparent
 				$destroy = false;
 				if($checkNeighbours){
 					foreach([Vector3::SIDE_NORTH,Vector3::SIDE_SOUTH,Vector3::SIDE_WEST,Vector3::SIDE_EAST] as $side){
-						/** ChorusPlant $stem */
+						/** ChorusPlant $stem * /
 						if(($stem = $this->getSide($side))->getId() === self::CHORUS_PLANT && $stem->shouldBreak(false)){
 							print 'A connected requested destroy'.PHP_EOL;//check every connected one
 							$destroy = true;// loop?
@@ -87,7 +87,7 @@ class ChorusPlant extends Transparent
 				return false;
 			}else{
 				return true;
-			}*/
+			}* /
 			return $destroy;//test this may collide with next case
 		}elseif($count >= 1){
 			if($this->getSide(Vector3::SIDE_UP)->getId() === self::CHORUS_PLANT){
@@ -103,7 +103,7 @@ class ChorusPlant extends Transparent
 				}
 				return false;
 			}
-		}
+		}*/
 		return false;
 	}
 
