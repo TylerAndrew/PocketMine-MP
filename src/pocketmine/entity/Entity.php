@@ -109,10 +109,10 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_FIREBALL_POWER_X = 30; //float
 	const DATA_FIREBALL_POWER_Y = 31;
 	const DATA_FIREBALL_POWER_Z = 32;
-	/* 33 (unknown)
-	 * 34 (float) fishing bobber
-	 * 35 (float) fishing bobber
-	 * 36 (float) fishing bobber */
+	/* 33 (unknown) */
+	const DATA_FISHING_HOOK_RELATIVE_X = 34; //float
+	const DATA_FISHING_HOOK_RELATIVE_Y = 35; //float
+	const DATA_FISHING_HOOK_RELATIVE_Z = 36; //float
 	const DATA_POTION_AUX_VALUE = 37; //short
 	const DATA_LEAD_HOLDER_EID = 38; //long
 	const DATA_SCALE = 39; //float
