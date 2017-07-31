@@ -49,10 +49,6 @@ class TNT extends Solid{
 		return 0;
 	}
 
-	public function canBeActivated(){
-		return true;
-	}
-
 	public function onActivate(Item $item, Player $player = null){
 		if($item->getId() === Item::FLINT_STEEL || $item->getId() === Item::FIRE_CHARGE){
 			$item->useOn($this);

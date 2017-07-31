@@ -59,6 +59,7 @@ abstract class Tile extends Position{
     const PISTON = "PistonArm";
     const SIGN = "Sign";
     const SKULL = "Skull";
+	const BED = "Bed";
 
 	public static $tileCount = 1;
 
@@ -82,6 +83,7 @@ abstract class Tile extends Position{
 
 	public static function init(){
         self::registerTile(Beacon::class);
+		self::registerTile(Bed::class);
         self::registerTile(BrewingStand::class);
 		self::registerTile(Cauldron::class);
 		self::registerTile(Chest::class);
@@ -132,7 +134,6 @@ abstract class Tile extends Position{
 
 	/**
 	 * Returns the short save name
-	 *
 	 * @return string
 	 */
 	public function getSaveId() : string{
