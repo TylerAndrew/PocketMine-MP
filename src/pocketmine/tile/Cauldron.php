@@ -28,19 +28,18 @@ use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ShortTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\utils\Color;
 
 class Cauldron extends Spawnable{
 
 	public function __construct(Level $level, CompoundTag $nbt){
-		if(!isset($nbt->PotionId)){
+		if (!isset($nbt->PotionId)){
 			$nbt->PotionId = new ShortTag("PotionId", -1);
 		}
-		if(!isset($nbt->SplashPotion)){
+		if (!isset($nbt->SplashPotion)){
 			$nbt->SplashPotion = new ByteTag("SplashPotion", 0);
 		}
-		if(!isset($nbt->PotionType)){
+		if (!isset($nbt->PotionType)){
 			$nbt->PotionType = new ShortTag("PotionType", 1);
 		}
 		parent::__construct($level, $nbt);
@@ -84,8 +83,8 @@ class Cauldron extends Spawnable{
 	 * @return null|Color
 	 */
 	public function getCustomColor(){
-		if($this->hasCustomColor()){
-			return Color::fromRGB((int) $this->namedtag["CustomColor"]);
+		if ($this->hasCustomColor()){
+			return Color::fromRGB((int)$this->namedtag["CustomColor"]);
 		}
 		return null;
 	}
@@ -101,27 +100,21 @@ class Cauldron extends Spawnable{
 	}
 
 	public function clearCustomColor(){
-		if(isset($this->namedtag->CustomColor)){
+		if (isset($this->namedtag->CustomColor)){
 			unset($this->namedtag->CustomColor);
 		}
 		$this->namedtag->PotionType = new ShortTag("PotionType", -1);
 		$this->onChanged();
 	}
 
-	public function getSpawnCompound(): CompoundTag{
-		$nbt = new CompoundTag("", [
-			new StringTag("id", Tile::CAULDRON),
-			new IntTag("x", (int) $this->x),
-			new IntTag("y", (int) $this->y),
-			new IntTag("z", (int) $this->z),
-			new ShortTag("PotionId", (int) ($this->namedtag["PotionId"] >= (2 ** 15)?$this->namedtag["PotionId"]-=(2 ** 16):$this->namedtag["PotionId"])),
-			new ShortTag("PotionType", (int) ($this->namedtag["PotionType"] >= (2 ** 15)?$this->namedtag["PotionType"]-=(2 ** 16):$this->namedtag["PotionType"])),//-1 = 65535
-			new ByteTag("SplashPotion", (int) $this->namedtag["SplashPotion"]),
-		]);
+	public function addAdditionalSpawnData(CompoundTag $nbt){
+		$nbt->PotionId = (int)($this->namedtag["PotionId"] >= (2 ** 15) ? $this->namedtag["PotionId"] -= (2 ** 16) : $this->namedtag["PotionId"]);
+		$nbt->PotionType = (int)($this->namedtag["PotionType"] >= (2 ** 15) ? $this->namedtag["PotionType"] -= (2 ** 16) : $this->namedtag["PotionType"]);//TODO: check if this was fixed
+		$nbt->SplashPotion = (int)$this->namedtag["SplashPotion"];
 
-		if($this->hasCustomColor()){
+		if ($this->hasCustomColor()){
 			$nbt->CustomColor = $this->namedtag->CustomColor;
 		}
-		return $nbt;
+		//TODO: isMovable
 	}
 }

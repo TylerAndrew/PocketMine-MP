@@ -52,7 +52,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 		Item::GHAST_TEAR => 0,
 		Item::BLAZE_POWDER => 0,
 		Item::GOLDEN_CARROT => 0,
-		Item::PUFFER_FISH => 0,
+		Item::PUFFERFISH => 0,
 		Item::RABBIT_FOOT => 0,
 
 		Item::GUNPOWDER => 0,
@@ -300,19 +300,13 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 		return $ret;
 	}
 
-	public function getSpawnCompound(): CompoundTag{
-		$nbt = new CompoundTag("", [
-			new StringTag("id", Tile::BREWING_STAND),
-			new IntTag("x", (int) $this->x),
-			new IntTag("y", (int) $this->y),
-			new IntTag("z", (int) $this->z),
-			new ShortTag("CookTime", self::MAX_BREW_TIME),
-			$this->namedtag->Items,
-		]);
+	public function addAdditionalSpawnData(CompoundTag $nbt){
+		$nbt->CookTime = $this->namedtag->CookTime;
+		$nbt->Items = $this->namedtag->Items;
 
 		if($this->hasName()){
 			$nbt->CustomName = $this->namedtag->CustomName;
 		}
-		return $nbt;
+		//TODO: isMovable
 	}
 }

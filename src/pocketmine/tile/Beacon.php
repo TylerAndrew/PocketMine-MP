@@ -29,7 +29,6 @@ use pocketmine\item\Item;
 use pocketmine\level\Level;
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
@@ -58,21 +57,14 @@ class Beacon extends Spawnable implements Nameable, InventoryHolder{
 		parent::saveNBT();
 	}
 
-	public function getSpawnCompound(): CompoundTag{
-		$c = new CompoundTag("", [
-			new StringTag("id", Tile::BEACON),
-			new ByteTag("isMovable", (bool)true),
-			$this->namedtag->primary,
-			$this->namedtag->secondary,
-			new IntTag("x", (int)$this->x),
-			new IntTag("y", (int)$this->y),
-			new IntTag("z", (int)$this->z)
-		]);
+	public function addAdditionalSpawnData(CompoundTag $nbt){
+		$nbt->primary = $this->namedtag->primary;
+		$nbt->secondary = $this->namedtag->secondary;
 
 		if ($this->hasName()){
-			$c->CustomName = $this->namedtag->CustomName;
+			$nbt->CustomName = $this->namedtag->CustomName;
 		}
-		return $c;
+		//TODO: isMovable
 	}
 
 	public function hasName(): bool{
@@ -190,7 +182,7 @@ class Beacon extends Spawnable implements Nameable, InventoryHolder{
 		if (!empty($this->getEffects())){
 			$this->applyEffects($this);
 		}
-		$this->getLevel()->getServer()->getScheduler()->scheduleDelayedTask(new BeaconDelayedCheckTask($this, $this->getLevel()->getId()), 20 * 4 + Server::getInstance()->getTicksPerSecond());//4 seconds
+		$this->getLevel()->getServer()->getScheduler()->scheduleDelayedTask(new BeaconDelayedCheckTask($this, $this->getLevel()->getId()), 20 * 3 + floor(Server::getInstance()->getTicksPerSecond()));//4 seconds
 		return true;
 	}
 

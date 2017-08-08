@@ -30,7 +30,6 @@ use pocketmine\level\generator\object\TallGrass as TallGrassObject;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
-use pocketmine\Server;
 use pocketmine\utils\Random;
 
 class Grass extends Solid{
@@ -109,7 +108,7 @@ class Grass extends Solid{
 			$this->getLevel()->setBlock($this, new Farmland());
 
 			return true;
-		}elseif($item->isShovel() and $this->getSide(1)->getId() === Block::AIR){
+		}elseif($item->isShovel() and $this->getSide(Vector3::SIDE_UP)->getId() === Block::AIR){
 			$item->useOn($this);
 			$this->getLevel()->setBlock($this, new GrassPath());
 

@@ -25,28 +25,20 @@ use pocketmine\level\Level;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\StringTag;
 
 class MovingBlock extends Spawnable{
 
 	public function __construct(Level $level, CompoundTag $nbt){
+		//TODO init extra nbt
 		parent::__construct($level, $nbt);
 	}
 
-	public function getSpawnCompound(): CompoundTag{
-        $c = new CompoundTag("", [
-			new StringTag("id", Tile::MOVING_BLOCK),
-            new ByteTag("isMovable", (bool) true),
-            new ByteTag("movingBlockData", (bool) 0),
-            new ByteTag("movingBlockId", (bool) 0),
-            new IntTag("pistonPosX", (int) $this->x),
-            new IntTag("pistonPosY", (int) $this->y),
-            new IntTag("pistonPosZ", (int) $this->z),
-            new IntTag("x", (int) $this->x),
-            new IntTag("y", (int) $this->y),
-            new IntTag("z", (int) $this->z),
-		]);
-
-		return $c;
+	public function addAdditionalSpawnData(CompoundTag $nbt){
+		$nbt->movingBlockData = new ByteTag("movingBlockData", (bool)0);
+		$nbt->movingBlockId = new ByteTag("movingBlockId", (bool)0);
+		$nbt->pistonPosX = new IntTag("pistonPosX", (int)$this->x);
+		$nbt->pistonPosY = new IntTag("pistonPosY", (int)$this->y);
+		$nbt->pistonPosZ = new IntTag("pistonPosZ", (int)$this->z);
+		//TODO: isMovable
 	}
 }

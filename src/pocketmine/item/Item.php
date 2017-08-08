@@ -44,7 +44,6 @@ use pocketmine\utils\Binary;
 use pocketmine\utils\Config;
 
 class Item implements ItemIds, \JsonSerializable{
-
 	/** @var NBT */
 	private static $cachedParser = null;
 
@@ -96,6 +95,7 @@ class Item implements ItemIds, \JsonSerializable{
 	public static function init(){
 		if(self::$list === null){
 			self::$list = new \SplFixedArray(65536);
+
 			self::$list[self::IRON_SHOVEL] = IronShovel::class;
 			self::$list[self::IRON_PICKAXE] = IronPickaxe::class;
 			self::$list[self::IRON_AXE] = IronAxe::class;
@@ -123,10 +123,10 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::STICK] = Stick::class;
 			self::$list[self::BOWL] = Bowl::class;
 			self::$list[self::MUSHROOM_STEW] = MushroomStew::class;
-			self::$list[self::GOLD_SWORD] = GoldSword::class;
-			self::$list[self::GOLD_SHOVEL] = GoldShovel::class;
-			self::$list[self::GOLD_PICKAXE] = GoldPickaxe::class;
-			self::$list[self::GOLD_AXE] = GoldAxe::class;
+			self::$list[self::GOLDEN_SWORD] = GoldSword::class;
+			self::$list[self::GOLDEN_SHOVEL] = GoldShovel::class;
+			self::$list[self::GOLDEN_PICKAXE] = GoldPickaxe::class;
+			self::$list[self::GOLDEN_AXE] = GoldAxe::class;
 			self::$list[self::STRING] = StringItem::class;
 			self::$list[self::FEATHER] = Feather::class;
 			self::$list[self::GUNPOWDER] = Gunpowder::class;
@@ -134,7 +134,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::STONE_HOE] = StoneHoe::class;
 			self::$list[self::IRON_HOE] = IronHoe::class;
 			self::$list[self::DIAMOND_HOE] = DiamondHoe::class;
-			self::$list[self::GOLD_HOE] = GoldHoe::class;
+			self::$list[self::GOLDEN_HOE] = GoldHoe::class;
 			self::$list[self::WHEAT_SEEDS] = WheatSeeds::class;
 			self::$list[self::WHEAT] = Wheat::class;
 			self::$list[self::BREAD] = Bread::class;
@@ -142,10 +142,10 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::LEATHER_TUNIC] = LeatherTunic::class;
 			self::$list[self::LEATHER_PANTS] = LeatherPants::class;
 			self::$list[self::LEATHER_BOOTS] = LeatherBoots::class;
-			self::$list[self::CHAIN_HELMET] = ChainHelmet::class;
-			self::$list[self::CHAIN_CHESTPLATE] = ChainChestplate::class;
-			self::$list[self::CHAIN_LEGGINGS] = ChainLeggings::class;
-			self::$list[self::CHAIN_BOOTS] = ChainBoots::class;
+			self::$list[self::CHAINMAIL_HELMET] = ChainHelmet::class;
+			self::$list[self::CHAINMAIL_CHESTPLATE] = ChainChestplate::class;
+			self::$list[self::CHAINMAIL_LEGGINGS] = ChainLeggings::class;
+			self::$list[self::CHAINMAIL_BOOTS] = ChainBoots::class;
 			self::$list[self::IRON_HELMET] = IronHelmet::class;
 			self::$list[self::IRON_CHESTPLATE] = IronChestplate::class;
 			self::$list[self::IRON_LEGGINGS] = IronLeggings::class;
@@ -154,10 +154,10 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::DIAMOND_CHESTPLATE] = DiamondChestplate::class;
 			self::$list[self::DIAMOND_LEGGINGS] = DiamondLeggings::class;
 			self::$list[self::DIAMOND_BOOTS] = DiamondBoots::class;
-			self::$list[self::GOLD_HELMET] = GoldHelmet::class;
-			self::$list[self::GOLD_CHESTPLATE] = GoldChestplate::class;
-			self::$list[self::GOLD_LEGGINGS] = GoldLeggings::class;
-			self::$list[self::GOLD_BOOTS] = GoldBoots::class;
+			self::$list[self::GOLDEN_HELMET] = GoldHelmet::class;
+			self::$list[self::GOLDEN_CHESTPLATE] = GoldChestplate::class;
+			self::$list[self::GOLDEN_LEGGINGS] = GoldLeggings::class;
+			self::$list[self::GOLDEN_BOOTS] = GoldBoots::class;
 			self::$list[self::FLINT] = Flint::class;
 			self::$list[self::RAW_PORKCHOP] = RawPorkchop::class;
 			self::$list[self::COOKED_PORKCHOP] = CookedPorkchop::class;
@@ -166,6 +166,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::SIGN] = Sign::class;
 			self::$list[self::WOODEN_DOOR] = WoodenDoor::class;
 			self::$list[self::BUCKET] = Bucket::class;
+
 			self::$list[self::MINECART] = Minecart::class;
 			self::$list[self::SADDLE] = Saddle::class;
 			self::$list[self::IRON_DOOR] = IronDoor::class;
@@ -173,12 +174,14 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::SNOWBALL] = Snowball::class;
 			self::$list[self::BOAT] = Boat::class;
 			self::$list[self::LEATHER] = Leather::class;
+
 			self::$list[self::BRICK] = Brick::class;
 			self::$list[self::CLAY] = Clay::class;
 			self::$list[self::SUGARCANE] = Sugarcane::class;
 			self::$list[self::PAPER] = Paper::class;
 			self::$list[self::BOOK] = Book::class;
 			self::$list[self::SLIMEBALL] = Slimeball::class;
+
 			self::$list[self::EGG] = Egg::class;
 			self::$list[self::COMPASS] = Compass::class;
 			self::$list[self::FISHING_ROD] = FishingRod::class;
@@ -193,6 +196,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::BED] = Bed::class;
 			self::$list[self::REPEATER] = Repeater::class;
 			self::$list[self::COOKIE] = Cookie::class;
+
 			self::$list[self::SHEARS] = Shears::class;
 			self::$list[self::MELON] = Melon::class;
 			self::$list[self::PUMPKIN_SEEDS] = PumpkinSeeds::class;
@@ -215,10 +219,12 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::MAGMA_CREAM] = MagmaCream::class;
 			self::$list[self::BREWING_STAND] = BrewingStand::class;
 			self::$list[self::CAULDRON] = Cauldron::class;
-			self::$list[self::EYE_OF_ENDER] = EyeOfEnder::class;
+			self::$list[self::ENDER_EYE] = EyeOfEnder::class;
 			self::$list[self::GLISTERING_MELON] = GlisteringMelon::class;
 			self::$list[self::SPAWN_EGG] = SpawnEgg::class;
 			self::$list[self::FIRE_CHARGE] = FireCharge::class;
+			self::$list[self::GLISTERING_MELON] = GlisteringMelon::class;
+			self::$list[self::SPAWN_EGG] = SpawnEgg::class;
 			self::$list[self::EMERALD] = Emerald::class;
 			self::$list[self::ITEM_FRAME] = ItemFrame::class;
 			self::$list[self::FLOWER_POT] = FlowerPot::class;
@@ -227,7 +233,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::BAKED_POTATO] = BakedPotato::class;
 			self::$list[self::POISONOUS_POTATO] = PoisonousPotato::class;
 			self::$list[self::GOLDEN_CARROT] = GoldenCarrot::class;
-			self::$list[self::MOB_HEAD] = MobHead::class;
+			self::$list[self::SKULL] = Skull::class;
 			self::$list[self::CARROT_ON_A_STICK] = CarrotOnAStick::class;
 			self::$list[self::NETHER_STAR] = NetherStar::class;
 			self::$list[self::PUMPKIN_PIE] = PumpkinPie::class;
@@ -254,7 +260,7 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::JUNGLE_DOOR] = JungleDoor::class;
 			self::$list[self::ACACIA_DOOR] = AcaciaDoor::class;
 			self::$list[self::DARK_OAK_DOOR] = DarkOakDoor::class;
-			self::$list[self::POPPED_CHORUS_FRUIT] = PoppedChorusFruit::class;
+			self::$list[self::CHORUS_FRUIT_POPPED] = PoppedChorusFruit::class;
 			self::$list[self::DRAGON_BREATH] = DragonBreath::class;
 			self::$list[self::SPLASH_POTION] = SplashPotion::class;
 			self::$list[self::LINGERING_POTION] = LingeringPotion::class;
@@ -264,17 +270,10 @@ class Item implements ItemIds, \JsonSerializable{
 			self::$list[self::BEETROOT_SEEDS] = BeetrootSeeds::class;
 			self::$list[self::BEETROOT_SOUP] = BeetrootSoup::class;
 			self::$list[self::RAW_SALMON] = RawSalmon::class;
-			self::$list[self::CLOWN_FISH] = Clownfish::class;
-			self::$list[self::PUFFER_FISH] = PufferFish::class;
+			self::$list[self::CLOWNFISH] = Clownfish::class;
+			self::$list[self::PUFFERFISH] = PufferFish::class;
 			self::$list[self::COOKED_SALMON] = CookedSalmon::class;
 			self::$list[self::ENCHANTED_GOLDEN_APPLE] = GoldenAppleEnchanted::class;
-			// self::$list[self::CAMERA] = Camera::class;
-
-			for($i = 0; $i < 256; ++$i){
-				if(Block::$list[$i] !== null){
-					self::$list[$i] = Block::$list[$i];
-				}
-			}
 		}
 
 		self::initCreativeItems();
@@ -288,7 +287,7 @@ class Item implements ItemIds, \JsonSerializable{
 		$creativeItems = new Config(Server::getInstance()->getFilePath() . "src/pocketmine/resources/creativeitems.json", Config::JSON, []);
 
 		foreach($creativeItems->getAll() as $data){
-			$item = Item::get($data["id"], $data["damage"], $data["count"], $data["nbt"]);
+			$item = Item::jsonDeserialize($data);
 			if($item->getName() === "Unknown"){
 				continue;
 			}
@@ -356,13 +355,15 @@ class Item implements ItemIds, \JsonSerializable{
 	 */
 	public static function get(int $id, int $meta = 0, int $count = 1, $tags = "") : Item{
 		try{
-			$class = self::$list[$id];
-			if($class === null){
-				return (new Item($id, $meta, $count))->setCompoundTag($tags);
-			}elseif($id < 256){
-				return (new ItemBlock(new $class($meta), $meta, $count))->setCompoundTag($tags);
+			if($id < 256){
+				return (new ItemBlock(Block::get($id, $meta), $meta, $count))->setCompoundTag($tags);
 			}else{
-				return (new $class($meta, $count))->setCompoundTag($tags);
+				$class = self::$list[$id];
+				if($class === null){
+					return (new Item($id, $meta, $count))->setCompoundTag($tags);
+				}else{
+					return (new $class($meta, $count))->setCompoundTag($tags);
+				}
 			}
 		}catch(\RuntimeException $e){
 			return (new Item($id, $meta, $count))->setCompoundTag($tags);
@@ -531,10 +532,26 @@ class Item implements ItemIds, \JsonSerializable{
 		}
 
 		$tag = $this->getNamedTag();
-		if(isset($tag->ench)){
-			$tag = $tag->ench;
-			if($tag instanceof ListTag){
-				return true;
+
+		return isset($tag->ench) and $tag->ench instanceof ListTag;
+	}
+
+	/**
+	 * @param int $id
+	 * @param int $level
+	 *
+	 * @return bool
+	 */
+	public function hasEnchantment(int $id, int $level = -1) : bool{
+		if(!$this->hasEnchantments()){
+			return false;
+		}
+
+		foreach($this->getNamedTag()->ench as $entry){
+			if($entry["id"] === $id){
+				if($level === -1 or $entry["lvl"] === $level){
+					return true;
+				}
 			}
 		}
 
@@ -554,12 +571,43 @@ class Item implements ItemIds, \JsonSerializable{
 		foreach($this->getNamedTag()->ench as $entry){
 			if($entry["id"] === $id){
 				$e = Enchantment::getEnchantment($entry["id"]);
-				$e->setLevel($entry["lvl"]);
-				return $e;
+				if($e !== null){
+					$e->setLevel($entry["lvl"]);
+					return $e;
+				}
 			}
 		}
 
 		return null;
+	}
+
+	/**
+	 * @param int $id
+	 * @param int $level
+	 */
+	public function removeEnchantment(int $id, int $level = -1){
+		if(!$this->hasEnchantments()){
+			return;
+		}
+
+		$tag = $this->getNamedTag();
+		foreach($tag->ench as $k => $entry){
+			if($entry["id"] === $id){
+				if($level === -1 or $entry["lvl"] === $level){
+					unset($tag->ench[$k]);
+					break;
+				}
+			}
+		}
+		$this->setNamedTag($tag);
+	}
+
+	public function removeEnchantments(){
+		if($this->hasEnchantments()){
+			$tag = $this->getNamedTag();
+			unset($tag->ench);
+			$this->setNamedTag($tag);
+		}
 	}
 
 	/**
@@ -572,26 +620,26 @@ class Item implements ItemIds, \JsonSerializable{
 			$tag = $this->getNamedTag();
 		}
 
+		$found = false;
+
 		if(!isset($tag->ench)){
 			$tag->ench = new ListTag("ench", []);
 			$tag->ench->setTagType(NBT::TAG_Compound);
-		}
-
-		$found = false;
-
-		foreach($tag->ench as $k => $entry){
-			if($entry["id"] === $ench->getId()){
-				$tag->ench->{$k} = new CompoundTag("", [
-					new ShortTag("id", $ench->getId()),
-					new ShortTag("lvl", $ench->getLevel())
-				]);
-				$found = true;
-				break;
+		}else{
+			foreach($tag->ench as $k => $entry){
+				if($entry["id"] === $ench->getId()){
+					$tag->ench->{$k} = new CompoundTag("", [
+						new ShortTag("id", $ench->getId()),
+						new ShortTag("lvl", $ench->getLevel())
+					]);
+					$found = true;
+					break;
+				}
 			}
 		}
 
 		if(!$found){
-			$tag->ench->{count($tag->ench) + 1} = new CompoundTag("", [
+			$tag->ench->{count($tag->ench)} = new CompoundTag("", [
 				new ShortTag("id", $ench->getId()),
 				new ShortTag("lvl", $ench->getLevel())
 			]);
@@ -604,16 +652,16 @@ class Item implements ItemIds, \JsonSerializable{
 	 * @return Enchantment[]
 	 */
 	public function getEnchantments() : array{
-		if(!$this->hasEnchantments()){
-			return [];
-		}
-
 		$enchantments = [];
 
-		foreach($this->getNamedTag()->ench as $entry){
-			$e = Enchantment::getEnchantment($entry["id"]);
-			$e->setLevel($entry["lvl"]);
-			$enchantments[] = $e;
+		if($this->hasEnchantments()){
+			foreach($this->getNamedTag()->ench as $entry){
+				$e = Enchantment::getEnchantment($entry["id"]);
+				if($e !== null){
+					$e->setLevel($entry["lvl"]);
+					$enchantments[] = $e;
+				}
+			}
 		}
 
 		return $enchantments;
@@ -1037,11 +1085,26 @@ class Item implements ItemIds, \JsonSerializable{
 	 */
 	final public function jsonSerialize(){
 		return [
-			"id" => $this->id,
-			"damage" => $this->meta,
-			"count" => $this->count, //TODO: separate items and stacks
-			"nbt" => $this->tags
+			"id" => $this->getId(),
+			"damage" => $this->getDamage(),
+			"count" => $this->getCount(),
+			"nbt_hex" => bin2hex($this->getCompoundTag())
 		];
+	}
+
+	/**
+	 * Returns an Item from properties created in an array by {@link Item#jsonSerialize}
+	 *
+	 * @param array $data
+	 * @return Item
+	 */
+	final public static function jsonDeserialize(array $data) : Item{
+		return Item::get(
+			(int) $data["id"],
+			(int) $data["damage"],
+			(int) $data["count"],
+			(string) ($data["nbt"] ?? hex2bin($data["nbt_hex"])) //`nbt` key might contain old raw data
+		);
 	}
 
 	/**

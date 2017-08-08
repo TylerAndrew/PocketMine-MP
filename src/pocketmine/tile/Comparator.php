@@ -30,19 +30,12 @@ use pocketmine\nbt\tag\StringTag;
 class Comparator extends Spawnable{
 
 	public function __construct(Level $level, CompoundTag $nbt){
+		$nbt->OutputSignal = new IntTag("OutputSignal", (int) 0);
 		parent::__construct($level, $nbt);
 	}
 
-	public function getSpawnCompound(): CompoundTag{
-        $c = new CompoundTag("", [
-            new IntTag("OutputSignal", (int) 0),
-			new StringTag("id", Tile::COMPARATOR),
-            new ByteTag("isMovable", (bool) true),
-            new IntTag("x", (int) $this->x),
-            new IntTag("y", (int) $this->y),
-            new IntTag("z", (int) $this->z),
-		]);
-
-		return $c;
+	public function addAdditionalSpawnData(CompoundTag $nbt){
+		$nbt->OutputSignal = $this->namedtag->OutputSignal;
+		//TODO: isMovable
 	}
 }

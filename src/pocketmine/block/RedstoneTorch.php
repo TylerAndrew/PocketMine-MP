@@ -27,11 +27,7 @@ use pocketmine\item\Item;
 
 class RedstoneTorch extends Torch{
 
-	protected $id = self::REDSTONE_TORCH;
-
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
+	protected $id = self::LIT_REDSTONE_TORCH;
 
     public function getLightLevel(){
         return 0;
