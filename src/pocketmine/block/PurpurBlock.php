@@ -30,7 +30,7 @@ use pocketmine\Player;
 
 class PurpurBlock extends Solid{
 
-	protected $id = self::PURPUR;
+	protected $id = self::PURPUR_BLOCK;
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;

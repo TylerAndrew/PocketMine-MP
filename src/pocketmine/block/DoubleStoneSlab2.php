@@ -23,12 +23,12 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 
-class DoubleSlab2 extends DoubleSlab{
+class DoubleStoneSlab2 extends DoubleStoneSlab{
 
     const RED_SANDSTONE = 1;
     const PURPUR = 1;
 
-    protected $id = Block::DOUBLE_SLAB2;
+    protected $id = Block::DOUBLE_STONE_SLAB2;
 
     public function __construct($meta = 0){
         $this->meta = $meta;
@@ -45,7 +45,7 @@ class DoubleSlab2 extends DoubleSlab{
 	public function getDrops(Item $item) : array {
 		if($item->isPickaxe() >= 1){
 			return [
-				[Item::SLAB2, $this->meta, 2],
+				[Item::STONE_SLAB2, $this->meta, 2],
 			];
 		}else{
 			return [];

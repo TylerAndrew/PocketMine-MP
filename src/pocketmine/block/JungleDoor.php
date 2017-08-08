@@ -23,7 +23,7 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 
-class JungleDoor extends WoodDoor {
+class JungleDoor extends WoodenDoor {
 
 	protected $id = self::JUNGLE_DOOR_BLOCK;
 

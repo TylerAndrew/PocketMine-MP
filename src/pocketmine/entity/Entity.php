@@ -259,7 +259,6 @@ abstract class Entity extends Location implements Metadatable{
 		Entity::registerEntity(ThrownExpBottle::class);
 		Entity::registerEntity(LingeringPotion::class);
 		Entity::registerEntity(ThrownPotion::class);
-		Entity::registerEntity(TripoidCamera::class);
 		Entity::registerEntity(Villager::class);
 		Entity::registerEntity(Witch::class);
 		Entity::registerEntity(Wither::class);

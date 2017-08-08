@@ -189,6 +189,7 @@ class Beacon extends Spawnable implements Nameable, InventoryHolder{
 	public function applyEffects(Vector3 $pos){
 		//TODO: Apply stronger effects on secondary.
 		$layers = $this->getLayers();
+		/** @var Player $player */
 		foreach ($this->getLevel()->getCollidingEntities(new AxisAlignedBB($pos->x - (10 + 10 * $layers), 0, $pos->z - (10 + 10 * $layers), $pos->x + (10 + 10 * $layers), Level::Y_MAX, $pos->z + (10 + 10 * $layers))) as $player)
 			foreach ($this->getEffects() as $effectId){
 				if ($this->isEffectAvailable($effectId)){

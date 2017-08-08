@@ -26,7 +26,7 @@ use pocketmine\entity\Effect;
 class PufferFish extends Food {
 
 	public function __construct($meta = 0, $count = 1) {
-		parent::__construct(self::PUFFER_FISH, $meta, $count, 'Puffer Fish');
+		parent::__construct(self::PUFFERFISH, $meta, $count, 'Puffer Fish');
 	}
 
 	public function getFoodRestore(): int {

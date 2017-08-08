@@ -40,6 +40,7 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\network\mcpe\protocol\MobEffectPacket;
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\utils\Binary;
 use pocketmine\utils\BlockIterator;
 

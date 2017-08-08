@@ -85,7 +85,7 @@ class EndPortalFrame extends Solid{
 
     public function onActivate(Item $item, Player $player = null){
         if(($this->getDamage() & 0x04) === 0 && $player instanceof Player){
-            if($item->getId() === Item::EYE_OF_ENDER){
+            if($item->getId() === Item::ENDER_EYE){
                 $this->setDamage($this->getDamage() + 4);
                 $this->getLevel()->setBlock($this, $this, true, true);
                 $this->createPortal();
