@@ -1,5 +1,6 @@
 <?php
 
+
 /*
  *
  *  ____            _        _   __  __ _                  __  __ ____
@@ -25,45 +26,39 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
+use pocketmine\Player;
 
-class DoubleSlab extends Solid{
-
-	protected $id = self::DOUBLE_SLAB;
-
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
+class GlazedTerracotta extends Solid{
 
 	public function getHardness(){
-		return 2;
+		return 1.4;
 	}
 
 	public function getToolType(){
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getName(){
-		static $names = [
-			0 => "Stone",
-			1 => "Sandstone",
-			2 => "Wooden",
-			3 => "Cobblestone",
-			4 => "Brick",
-			5 => "Stone Brick",
-			6 => "Quartz",
-			7 => "Nether Brick",
-		];
-		return "Double " . $names[$this->meta & 0x07] . " Slab";
+	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+		if($player !== null){
+			$faces = [
+				0 => 4,
+				1 => 3,
+				2 => 5,
+				3 => 2
+			];
+			$this->meta = $faces[(~($player->getDirection() - 1)) & 0x03];
+		}
+
+		return $this->getLevel()->setBlock($block, $this, true, true);
 	}
 
 	public function getDrops(Item $item){
 		if($item->isPickaxe() >= Tool::TIER_WOODEN){
 			return [
-				[Item::SLAB, $this->meta & 0x07, 2],
+				[$this->getId(), 0, 1],
 			];
 		}else{
 			return [];
 		}
 	}
-
 }

@@ -23,52 +23,58 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+
+use pocketmine\event\block\BlockGrowEvent;
 use pocketmine\item\Item;
-use pocketmine\item\Tool;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
-class RedstoneOre extends Solid{
-
-	protected $id = self::REDSTONE_ORE;
+class NetherWartPlant extends Flowable{
+	protected $id = Block::NETHER_WART_PLANT;
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getName(){
-		return "Redstone Ore";
-	}
-
-	public function getHardness(){
-		return 3;
-	}
-
 	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		return $this->getLevel()->setBlock($this, $this, true, false);
-	}
+		$down = $this->getSide(Vector3::SIDE_DOWN);
+		if($down->getId() === Block::SOUL_SAND){
+			$this->getLevel()->setBlock($block, $this, false, true);
 
-	public function onUpdate($type){
-		if($type === Level::BLOCK_UPDATE_NORMAL or $type === Level::BLOCK_UPDATE_TOUCH){
-			$this->getLevel()->setBlock($this, Block::get(Block::GLOWING_REDSTONE_ORE, $this->meta));
-
-			return Level::BLOCK_UPDATE_WEAK;
+			return true;
 		}
 
 		return false;
 	}
 
-	public function getToolType(){
-		return Tool::TYPE_PICKAXE;
+	public function onUpdate($type){
+		switch($type){
+			case Level::BLOCK_UPDATE_RANDOM:
+				if($this->meta < 3 and mt_rand(0, 10) === 0){ //Still growing
+					$block = clone $this;
+					$block->meta++;
+					$this->getLevel()->getServer()->getPluginManager()->callEvent($ev = new BlockGrowEvent($this, $block));
+
+					if(!$ev->isCancelled()){
+						$this->getLevel()->setBlock($this, $ev->getNewState(), false, true);
+
+						return $type;
+					}
+				}
+				break;
+			case Level::BLOCK_UPDATE_NORMAL:
+				if($this->getSide(Vector3::SIDE_DOWN)->getId() !== Block::SOUL_SAND){
+					$this->getLevel()->useBreakOn($this);
+					return $type;
+				}
+				break;
+		}
+
+		return false;
 	}
 
 	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_IRON){
-			return [
-				[Item::REDSTONE_DUST, 0, mt_rand(4, 5)],
-			];
-		}else{
-			return [];
-		}
+		return [[Item::NETHER_WART, 0, ($this->meta === 3 ? mt_rand(2, 4) : 1)]];
 	}
 }

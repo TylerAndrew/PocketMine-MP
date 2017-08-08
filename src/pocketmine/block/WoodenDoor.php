@@ -21,13 +21,24 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\item;
+namespace pocketmine\block;
 
-use pocketmine\block\Block;
+use pocketmine\item\Item;
+use pocketmine\item\Tool;
 
-class MobHead extends Item{
-	public function __construct($meta = 0, $count = 1){
-		$this->block = Block::get(Item::SKULL_BLOCK);
-		parent::__construct(self::MOB_HEAD, $meta, $count, "Mob Head");
+class WoodenDoor extends Door{
+
+	public function getHardness(){
+		return 3;
+	}
+
+	public function getToolType(){
+		return Tool::TYPE_AXE;
+	}
+
+	public function getDrops(Item $item){
+		return [
+			[$this->getItemId(), 0, 1],
+		];
 	}
 }

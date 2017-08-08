@@ -21,14 +21,13 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\block;
+namespace pocketmine\item;
 
+use pocketmine\block\Block;
 
-class FenceGateSpruce extends FenceGate{
-
-	protected $id = self::FENCE_GATE_SPRUCE;
-
-	public function getName(){
-		return "Spruce Fence Gate";
+class Skull extends Item{
+	public function __construct($meta = 0, $count = 1){
+		$this->block = Block::get(Block::SKULL_BLOCK);
+		parent::__construct(self::SKULL, $meta, $count, "Mob Head");
 	}
 }

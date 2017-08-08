@@ -23,12 +23,15 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+class RedstoneTorchUnlit extends Torch{
 
-class FenceGateAcacia extends FenceGate{
-
-	protected $id = self::FENCE_GATE_ACACIA;
+	protected $id = self::UNLIT_REDSTONE_TORCH;
 
 	public function getName(){
-		return "Acacia Fence Gate";
+		return "Unlit Redstone Torch";
+	}
+
+	public function getLightLevel(){
+		return 0;
 	}
 }
