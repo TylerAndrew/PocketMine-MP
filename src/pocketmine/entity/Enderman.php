@@ -2,6 +2,7 @@
 
 namespace pocketmine\entity;
 
+use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
@@ -50,8 +51,8 @@ class Enderman extends Monster{
 	}*/
 
 	public function setAngry($angry = true){
-		$this->namedtag->Angry = new IntTag("Angry", $angry);
-		$this->setDataProperty(18, self::DATA_TYPE_BYTE, $angry);
+		$this->namedtag->Angry = new ByteTag("Angry", intval($angry));
+		$this->setDataProperty(self::DATA_FLAG_ANGRY, self::DATA_TYPE_BYTE, intval($angry));
 	}
 
 	public function getAngry(){

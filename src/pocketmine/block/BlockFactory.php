@@ -167,8 +167,8 @@ class BlockFactory{
 			self::registerBlock(new Trapdoor());
 			//TODO: MONSTER_EGG
 			self::registerBlock(new StoneBricks());
-			self::registerBlock(new BrownMushroom());
-			self::registerBlock(new RedMushroom());
+			//TODO: BROWN_MUSHROOM_BLOCK
+			//TODO: RED_MUSHROOM_BLOCK
 			self::registerBlock(new IronBars());
 			self::registerBlock(new GlassPane());
 			self::registerBlock(new Melon());

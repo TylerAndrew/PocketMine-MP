@@ -75,7 +75,7 @@ class Boat extends Item{
 				new FloatTag("", 0),
 				new FloatTag("", 0)
 			]),
-			new IntTag("woodID", $this->getDamage()),
+			new IntTag("WoodID", $this->getDamage()),
 		]));
 		$boat->spawnToAll();
 		if ($player->isSurvival()){

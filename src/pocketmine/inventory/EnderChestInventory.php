@@ -30,7 +30,7 @@ use pocketmine\Player;
 
 class EnderChestInventory extends ContainerInventory {
 	public function __construct(Position $pos){
-        parent::__construct(new FakeBlockMenu($this, $pos), InventoryType::get(InventoryType::ENDER_CHEST));
+        parent::__construct(new FakeBlockMenu($this, $pos));
 	}
 
 	/**

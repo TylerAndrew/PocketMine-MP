@@ -19,8 +19,8 @@ class Boat extends Vehicle{
 	protected $maxHealth = 4;
 
 	public function __construct(Level $level, CompoundTag $nbt){
-		if (!isset($nbt->woodID)){
-			$nbt->woodID = new ByteTag("woodID", 0);
+		if (!isset($nbt->WoodID)){
+			$nbt->WoodID = new ByteTag("WoodID", 0);
 		}
 		parent::__construct($level, $nbt);
 	}
@@ -44,42 +44,8 @@ class Boat extends Vehicle{
 	}
 
 	public function getWoodID(){
-		return $this->namedtag["woodID"];
+		return $this->namedtag["WoodID"];
 	}
-
-	/*public function onUpdate($currentTick){
-		if($this->isAlive()){
-			$this->timings->startTiming();
-			$hasUpdate = false;
-			
-			if($this->isInsideOfWater()){
-				$hasUpdate = true;
-				$this->move(0,0.1, 0);
-				$this->updateMovement();
-			}
-			if($this->isLinked() && $this->getlinkedTarget() !== null){
-				if(($player = $this->getlinkedTarget()) instanceof Player){
-					$newyaw = $player->getYaw();
-					$deltayaw = $newyaw - $this->getYaw();
-					if($deltayaw < 0.1) $deltayaw * -1;
-					$hasUpdate = $newyaw - $this->getYaw() > 0.1;
-				}
-				if($hasUpdate){
-					$this->setRotation($newyaw, $this->pitch);
-					$this->move(0, 1, 0);
-				}
-				$this->updateMovement();
-			}
-			if($this->getHealth() < $this->getMaxHealth()){
-				$this->heal(0.1, new EntityRegainHealthEvent($this, 0.1, EntityRegainHealthEvent::CAUSE_CUSTOM));
-				$hasUpdate = true;
-			}
-			
-			$this->timings->stopTiming();
-
-			return $hasUpdate;
-		}
-	}*/
 
 	public function getDrops(): array{
 		return [
