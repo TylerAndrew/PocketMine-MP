@@ -28,31 +28,31 @@ class EndBricks extends Solid{
 
 	protected $id = self::END_BRICKS;
 
-	public function __construct(){}
+	public function __construct(){ }
 
-    public function getHardness() {
-        return 0.8;
-    }
+	public function getHardness(): float{
+		return 0.8;
+	}
 
-    public function getResistance() {
-        return 4;
-    }
+	public function getResistance(): float{
+		return 4.0;
+	}
 
-	public function getToolType(){
-        return Tool::TYPE_PICKAXE;
-    }
+	public function getToolType(): int{
+		return Tool::TYPE_PICKAXE;
+	}
 
-    public function getName(){
-        return "End Bricks";
-    }
+	public function getName(): string{
+		return "End Bricks";
+	}
 
-    public function getDrops(Item $item){
-        if ($item->isPickaxe() >= Tool::TIER_WOODEN) {
-            return [
-                [$this->id, $this->meta & 0x0f, 1]
-            ];
-        } else {
-            return [];
-        }
-    }
+	public function getDrops(Item $item): array{
+		if ($item->isPickaxe() >= Tool::TIER_WOODEN){
+			return [
+				[$this->id, $this->meta & 0x0f, 1]
+			];
+		} else{
+			return [];
+		}
+	}
 }

@@ -31,52 +31,52 @@ class Snake extends Entity{
 	// Have fun guessing why
 	protected $attackTime = 0;
 
-	public function attack($damage, EntityDamageEvent $source){
-		if($this->attackTime > 0 or $this->noDamageTicks > 0){
+	public function attack(EntityDamageEvent $source){
+		if ($this->attackTime > 0 or $this->noDamageTicks > 0){
 			$lastCause = $this->getLastDamageCause();
-			if($lastCause !== null and $lastCause->getDamage() >= $damage){
+			if ($lastCause !== null and $lastCause->getDamage() >= $source->getDamage()){
 				$source->setCancelled();
 			}
 		}
-		
-		parent::attack($damage, $source);
-		
-		if($source->isCancelled()){
+
+		parent::attack($source);
+
+		if ($source->isCancelled()){
 			return;
 		}
-		
-		if($source instanceof EntityDamageByEntityEvent){
+
+		if ($source instanceof EntityDamageByEntityEvent){
 			$e = $source->getDamager();
-			if($source instanceof EntityDamageByChildEntityEvent){
+			if ($source instanceof EntityDamageByChildEntityEvent){
 				$e = $source->getChild();
 			}
-			
-			if($e->isOnFire() > 0){
+
+			if ($e->isOnFire() > 0){
 				$this->setOnFire(2 * $this->server->getDifficulty());
 			}
 		}
 		$pk = new EntityEventPacket();
 		$pk->entityRuntimeId = $this->getId();
-		$pk->event = $this->getHealth() <= 0?EntityEventPacket::DEATH_ANIMATION:EntityEventPacket::HURT_ANIMATION; // Ouch!
+		$pk->event = $this->getHealth() <= 0 ? EntityEventPacket::DEATH_ANIMATION : EntityEventPacket::HURT_ANIMATION; // Ouch!
 		Server::getInstance()->broadcastPacket($this->hasSpawned, $pk);
-		
+
 		$this->attackTime = 0; // 0.5 seconds cooldown
 	}
 
 	public function kill(){
-		if(!$this->isAlive()){
+		if (!$this->isAlive()){
 			return;
 		}
 		parent::kill();
-		foreach($this->getDrops() as $item){
+		foreach ($this->getDrops() as $item){
 			$this->getLevel()->dropItem($this, $item);
 		}
-		if(!$this->closed){
+		if (!$this->closed){
 			$this->close();
 		}
 	}
 
-	public function getDrops() : array {
+	public function getDrops(): array{
 		return [];
 	}
 }

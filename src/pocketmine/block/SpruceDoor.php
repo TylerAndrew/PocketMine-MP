@@ -23,7 +23,7 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 
-class SpruceDoor extends WoodenDoor {
+class SpruceDoor extends WoodenDoor{
 
 	protected $id = self::SPRUCE_DOOR_BLOCK;
 
@@ -31,11 +31,11 @@ class SpruceDoor extends WoodenDoor {
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Spruce Door Block";
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item): array{
 		return [
 			[Item::SPRUCE_DOOR, 0, 1],
 		];

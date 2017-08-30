@@ -22,8 +22,8 @@
 namespace pocketmine\item;
 
 class EyeOfEnder extends Item{
-    public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::ENDER_EYE, $meta, $count, "Eye Of Ender");
+	public function __construct($meta = 0){
+		parent::__construct(self::ENDER_EYE, $meta, "Eye Of Ender");
 	}
 
 }

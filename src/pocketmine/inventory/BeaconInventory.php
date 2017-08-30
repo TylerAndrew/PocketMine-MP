@@ -21,6 +21,7 @@
 
 namespace pocketmine\inventory;
 
+use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\tile\Beacon;
 
 class BeaconInventory extends ContainerInventory {
@@ -33,5 +34,21 @@ class BeaconInventory extends ContainerInventory {
      */
 	public function getHolder() {
 		return $this->holder;
+	}
+
+	public function getName(): string{
+		return "Beacon";
+	}
+
+	/**
+	 * Returns the Minecraft PE inventory type used to show the inventory window to clients.
+	 * @return int
+	 */
+	public function getNetworkType(): int{
+		return WindowTypes::BEACON;
+	}
+
+	public function getDefaultSize(): int{
+		return 1;//TODO: check
 	}
 }

@@ -28,7 +28,7 @@ use pocketmine\math\Vector3;
 
 abstract class Thin extends Transparent{
 
-	public function isSolid(){
+	public function isSolid(): bool{
 		return false;
 	}
 
@@ -44,24 +44,24 @@ abstract class Thin extends Transparent{
 		$flag2 = $this->canConnect($this->getSide(Vector3::SIDE_WEST));
 		$flag3 = $this->canConnect($this->getSide(Vector3::SIDE_EAST));
 
-		if((!$flag2 or !$flag3) and ($flag2 or $flag3 or $flag or $flag1)){
-			if($flag2 and !$flag3){
+		if ((!$flag2 or !$flag3) and ($flag2 or $flag3 or $flag or $flag1)){
+			if ($flag2 and !$flag3){
 				$f = 0;
-			}elseif(!$flag2 and $flag3){
+			} elseif (!$flag2 and $flag3){
 				$f1 = 1;
 			}
-		}else{
+		} else{
 			$f = 0;
 			$f1 = 1;
 		}
 
-		if((!$flag or !$flag1) and ($flag2 or $flag3 or $flag or $flag1)){
-			if($flag and !$flag1){
+		if ((!$flag or !$flag1) and ($flag2 or $flag3 or $flag or $flag1)){
+			if ($flag and !$flag1){
 				$f2 = 0;
-			}elseif(!$flag and $flag1){
+			} elseif (!$flag and $flag1){
 				$f3 = 1;
 			}
-		}else{
+		} else{
 			$f2 = 0;
 			$f3 = 1;
 		}

@@ -25,34 +25,34 @@ namespace pocketmine\block;
 use pocketmine\entity\Entity;
 use pocketmine\math\AxisAlignedBB;
 
-class SlimeBlock extends Transparent { //Partial (does not block light, mob spawning possible)
+class SlimeBlock extends Transparent{ //Partial (does not block light, mob spawning possible)
 
 	protected $id = self::SLIME_BLOCK;
 
-	public function __construct() {	}
+	public function __construct(){ }
 
-	public function getName() {
+	public function getName(): string{
 		return "Slime Block";
 	}
 
-	public function getHardness() {
-		return 0;
+	public function getHardness(): float{
+		return 0.0;
 	}
 
-	public function getResistance() {
-		return 0;
+	public function getResistance(): float{
+		return 0.0;
 	}
 
-	public function hasEntityCollision() {
+	public function hasEntityCollision(): bool{
 		return true;
 	}
 
-	public function isSolid(){
+	public function isSolid(): bool{
 		return false; //todo check
 	}
 
-	public function onEntityCollide(Entity $entity) {
-		if (!$entity->isSneaking()) {
+	public function onEntityCollide(Entity $entity){
+		if (!$entity->isSneaking()){
 			$entity->resetFallDistance();
 			$entity->onGround = true;
 		} else parent::onEntityCollide($entity);
@@ -61,7 +61,7 @@ class SlimeBlock extends Transparent { //Partial (does not block light, mob spaw
 	/**
 	 * @return AxisAlignedBB
 	 */
-	protected function recalculateBoundingBox() { //Temporary fix for fall damage
+	protected function recalculateBoundingBox(){ //Temporary fix for fall damage
 		return new AxisAlignedBB(
 			$this->x,
 			$this->y,

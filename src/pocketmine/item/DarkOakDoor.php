@@ -19,13 +19,16 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\item;
 
 use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 
-class DarkOakDoor extends WoodenDoor{
-	public function __construct($meta = 0, $count = 1){
-		$this->block = Block::get(Item::DARK_OAK_DOOR_BLOCK);
-		Item::__construct(self::DARK_OAK_DOOR, 0, $count, "Dark Oak Door");
+class DarkOakDoor extends Item{
+	public function __construct(int $meta = 0){
+		$this->block = BlockFactory::get(Block::DARK_OAK_DOOR_BLOCK);
+		parent::__construct(self::DARK_OAK_DOOR, $meta, "Dark Oak Door");
 	}
 }

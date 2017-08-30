@@ -26,6 +26,7 @@ namespace pocketmine\block;
 use pocketmine\inventory\EnchantInventory;
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\StringTag;
@@ -36,12 +37,12 @@ class EnchantingTable extends Transparent{
 
 	protected $id = self::ENCHANTING_TABLE;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		$this->getLevel()->setBlock($block, $this, true, true);
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null): bool{
+		$this->getLevel()->setBlock($blockReplace, $this, true, true);
 		$nbt = new CompoundTag("", [
 			new StringTag("id", Tile::ENCHANT_TABLE),
 			new IntTag("x", $this->x),
@@ -49,12 +50,12 @@ class EnchantingTable extends Transparent{
 			new IntTag("z", $this->z)
 		]);
 
-		if($item->hasCustomName()){
+		if ($item->hasCustomName()){
 			$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
 		}
 
-		if($item->hasCustomBlockData()){
-			foreach($item->getCustomBlockData() as $key => $v){
+		if ($item->hasCustomBlockData()){
+			foreach ($item->getCustomBlockData() as $key => $v){
 				$nbt->{$key} = $v;
 			}
 		}
@@ -64,24 +65,24 @@ class EnchantingTable extends Transparent{
 		return true;
 	}
 
-	public function getHardness(){
+	public function getHardness(): float{
 		return 5;
 	}
 
-	public function getResistance(){
+	public function getBlastResistance(): float{
 		return 6000;
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Enchanting Table";
 	}
 
-	public function getToolType(){
+	public function getToolType(): int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function onActivate(Item $item, Player $player = null){
-		if($player instanceof Player){
+	public function onActivate(Item $item, Player $player = null): bool{
+		if ($player instanceof Player){
 			//TODO lock
 
 			$player->addWindow(new EnchantInventory($this));
@@ -90,13 +91,11 @@ class EnchantingTable extends Transparent{
 		return true;
 	}
 
-	public function getDrops(Item $item){
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
-			return [
-				[$this->id, 0, 1],
-			];
-		}else{
-			return [];
+	public function getDrops(Item $item): array{
+		if ($item->isPickaxe() >= Tool::TIER_WOODEN){
+			return parent::getDrops($item);
 		}
+
+		return [];
 	}
 }

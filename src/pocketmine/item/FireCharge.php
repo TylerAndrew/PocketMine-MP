@@ -25,19 +25,20 @@ use pocketmine\block\Block;
 use pocketmine\block\Fire;
 use pocketmine\block\Solid;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
-class FireCharge extends Item {
-	public function __construct($meta = 0, $count = 1) {
-		parent::__construct(self::FIRE_CHARGE, $meta, $count, "Fire Charge");
+class FireCharge extends Item{
+	public function __construct($meta = 0){
+		parent::__construct(self::FIRE_CHARGE, $meta, "Fire Charge");
 	}
 
-	public function canBeActivated() {
+	public function canBeActivated(){
 		return true;
 	}
 
-	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz) {
-		if ($block->getId() === self::AIR and ($target instanceof Solid)) {
+	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos): bool{
+		if ($block->getId() === self::AIR and ($target instanceof Solid)){
 			$level->setBlock($block, new Fire(), true);
 			$this->useOn($block);
 
@@ -47,8 +48,8 @@ class FireCharge extends Item {
 		return false;
 	}
 
-	public function useOn($object) {
-		if ($object instanceof Block) {
+	public function useOn($object){
+		if ($object instanceof Block){
 			$this->count--;
 			return true;
 		} else return false;

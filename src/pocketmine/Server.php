@@ -27,7 +27,7 @@ declare(strict_types=1);
  */
 namespace pocketmine;
 
-use pocketmine\block\Block;
+use pocketmine\block\BlockFactory;
 use pocketmine\command\CommandReader;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
@@ -47,10 +47,9 @@ use pocketmine\event\Timings;
 use pocketmine\event\TimingsHandler;
 use pocketmine\event\TranslationContainer;
 use pocketmine\inventory\CraftingManager;
-use pocketmine\inventory\InventoryType;
 use pocketmine\inventory\Recipe;
 use pocketmine\item\enchantment\Enchantment;
-use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\lang\BaseLang;
 use pocketmine\level\format\io\leveldb\LevelDB;
 use pocketmine\level\format\io\LevelProvider;
@@ -83,6 +82,7 @@ use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PlayerListPacket;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\network\mcpe\protocol\types\PlayerListEntry;
 use pocketmine\network\mcpe\RakLibInterface;
 use pocketmine\network\Network;
 use pocketmine\network\query\QueryHandler;
@@ -253,6 +253,9 @@ class Server{
 
 	/** @var Player[] */
 	private $players = [];
+
+	/** @var Player[] */
+	private $loggedInPlayers = [];
 
 	/** @var Player[] */
 	private $playerList = [];
@@ -428,7 +431,7 @@ class Server{
 	 * @return string
 	 */
 	public static function getGamemodeString(int $mode) : string{
-		switch((int) $mode){
+		switch($mode){
 			case Player::SURVIVAL:
 				return "%gameMode.survival";
 			case Player::CREATIVE:
@@ -687,6 +690,13 @@ class Server{
 	 */
 	public function getCommandMap(){
 		return $this->commandMap;
+	}
+
+	/**
+	 * @return Player[]
+	 */
+	public function getLoggedInPlayers() : array{
+		return $this->loggedInPlayers;
 	}
 
 	/**
@@ -1209,7 +1219,7 @@ class Server{
 			return (int) $v[$variable];
 		}
 
-		return $this->properties->exists($variable) ? (int) $this->properties->get($variable) : (int) $defaultValue;
+		return $this->properties->exists($variable) ? (int) $this->properties->get($variable) : $defaultValue;
 	}
 
 	/**
@@ -1217,7 +1227,7 @@ class Server{
 	 * @param int    $value
 	 */
 	public function setConfigInt(string $variable, int $value){
-		$this->properties->set($variable, (int) $value);
+		$this->properties->set($variable, $value);
 	}
 
 	/**
@@ -1439,6 +1449,18 @@ class Server{
 			}
 			$this->config = new Config($this->dataPath . "pocketmine.yml", Config::YAML, []);
 
+			define('pocketmine\DEBUG', (int) $this->getProperty("debug.level", 1));
+
+			if(((int) ini_get('zend.assertions')) > 0 and ((bool) $this->getProperty("debug.assertions.warn-if-enabled", true)) !== false){
+				$this->logger->warning("Debugging assertions are enabled, this may impact on performance. To disable them, set `zend.assertions = -1` in php.ini.");
+			}
+
+			ini_set('assert.exception', '1');
+
+			if($this->logger instanceof MainLogger){
+				$this->logger->setLogDebug(\pocketmine\DEBUG > 1);
+			}
+
 			$this->logger->info("Loading server properties...");
 			$this->properties = new Config($this->dataPath . "server.properties", Config::PROPERTIES, [
 				"motd" => "Minecraft: PE Server",
@@ -1540,20 +1562,8 @@ class Server{
 				$this->setConfigInt("difficulty", 3);
 			}
 
-			define('pocketmine\DEBUG', (int) $this->getProperty("debug.level", 1));
-
 			if($this->getProperty("settings.use-outdated-plugins", false) == false && $this->getProperty("settings.really-use-outdated-plugins", "") !== "Yes i am 100% really sure!")
 				$this->logger->warning("Loading outdated plugins is DISABLED! Enable in pocketmine.yml if needed.");
-
-			if(((int) ini_get('zend.assertions')) > 0 and ((bool) $this->getProperty("debug.assertions.warn-if-enabled", true)) !== false){
-				$this->logger->warning("Debugging assertions are enabled, this may impact on performance. To disable them, set `zend.assertions = -1` in php.ini.");
-			}
-
-			ini_set('assert.exception', '1');
-
-			if($this->logger instanceof MainLogger){
-				$this->logger->setLogDebug(\pocketmine\DEBUG > 1);
-			}
 
 			if(\pocketmine\DEBUG >= 0){
 				@cli_set_process_title($this->getName() . " " . $this->getPocketMineVersion());
@@ -1585,10 +1595,9 @@ class Server{
 
 			Entity::init();
 			Tile::init();
-			InventoryType::init();
-			Block::init();
+			BlockFactory::init();
 			Enchantment::init();
-			Item::init();
+			ItemFactory::init();
 			Biome::init();
 			Effect::init();
 			Attribute::init();
@@ -2238,8 +2247,16 @@ class Server{
 			$this->uniquePlayers[$player->getRawUniqueId()] = $player->getRawUniqueId();
 		}
 
+		$this->loggedInPlayers[$player->getRawUniqueId()] = $player;
+	}
+
+	public function onPlayerCompleteLoginSequence(Player $player){
 		$this->sendFullPlayerListData($player);
 		$player->dataPacket($this->craftingManager->getCraftingDataPacket());
+	}
+
+	public function onPlayerLogout(Player $player){
+		unset($this->loggedInPlayers[$player->getRawUniqueId()]);
 	}
 
 	public function addPlayer($identifier, Player $player){
@@ -2257,32 +2274,45 @@ class Server{
 		if(isset($this->playerList[$player->getRawUniqueId()])){
 			unset($this->playerList[$player->getRawUniqueId()]);
 
-			$pk = new PlayerListPacket();
-			$pk->type = PlayerListPacket::TYPE_REMOVE;
-			$pk->entries[] = [$player->getUniqueId()];
-			$this->broadcastPacket($this->playerList, $pk);
+			$this->removePlayerListData($player->getUniqueId());
 		}
 	}
 
-	public function updatePlayerListData(UUID $uuid, $entityId, $name, $skinId, $skinData, array $players = null){
+	/**
+	 * @param UUID          $uuid
+	 * @param int           $entityId
+	 * @param string        $name
+	 * @param string        $skinId
+	 * @param string        $skinData
+	 * @param Player[]|null $players
+	 */
+	public function updatePlayerListData(UUID $uuid, int $entityId, string $name, string $skinId, string $skinData, array $players = null){
 		$pk = new PlayerListPacket();
 		$pk->type = PlayerListPacket::TYPE_ADD;
-		$pk->entries[] = [$uuid, $entityId, $name, $skinId, $skinData];
+
+		$pk->entries[] = PlayerListEntry::createAdditionEntry($uuid, $entityId, $name, $skinId, $skinData);
 		$this->broadcastPacket($players ?? $this->playerList, $pk);
 	}
 
+	/**
+	 * @param UUID          $uuid
+	 * @param Player[]|null $players
+	 */
 	public function removePlayerListData(UUID $uuid, array $players = null){
 		$pk = new PlayerListPacket();
 		$pk->type = PlayerListPacket::TYPE_REMOVE;
-		$pk->entries[] = [$uuid];
+		$pk->entries[] = PlayerListEntry::createRemovalEntry($uuid);
 		$this->broadcastPacket($players ?? $this->playerList, $pk);
 	}
 
+	/**
+	 * @param Player $p
+	 */
 	public function sendFullPlayerListData(Player $p){
 		$pk = new PlayerListPacket();
 		$pk->type = PlayerListPacket::TYPE_ADD;
 		foreach($this->playerList as $player){
-			$pk->entries[] = [$player->getUniqueId(), $player->getId(), $player->getDisplayName(), $player->getSkinId(), $player->getSkinData()];
+			$pk->entries[] = PlayerListEntry::createAdditionEntry($player->getUniqueId(), $player->getId(), $player->getDisplayName(), $player->getSkinId(), $player->getSkinData());
 		}
 
 		$p->dataPacket($pk);

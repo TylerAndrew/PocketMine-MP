@@ -26,6 +26,7 @@ use pocketmine\block\Block;
 use pocketmine\entity\EnderCrystal;
 use pocketmine\entity\Entity;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -34,15 +35,15 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 
 class EndCrystal extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::END_CRYSTAL, $meta, $count, "End Crystal");
+	public function __construct($meta = 0){
+		parent::__construct(self::END_CRYSTAL, $meta, "End Crystal");
 	}
 
 	public function canBeActivated(){
 		return true;
 	}
 
-	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos): bool{
 		$entity = null;
 
 		$nbt = new CompoundTag("", [
@@ -62,14 +63,14 @@ class EndCrystal extends Item{
 			]),
 		]);
 
-		if($this->hasCustomName()){
+		if ($this->hasCustomName()){
 			$nbt->CustomName = new StringTag("CustomName", $this->getCustomName());
 		}
 
 		$entity = Entity::createEntity(EnderCrystal::NETWORK_ID, $level, $nbt);
 
-		if($entity instanceof Entity){
-			if($player->isSurvival()){
+		if ($entity instanceof Entity){
+			if ($player->isSurvival()){
 				--$this->count;
 			}
 			$entity->spawnToAll();

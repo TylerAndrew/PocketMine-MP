@@ -33,9 +33,7 @@ class NoteblockSound extends Sound{
 		/* TODO: MAKE THAT PARTICLES ARE BACK AGAIN -> needs both packets */
 		$pk = new LevelSoundEventPacket();
 		$pk->sound = 64;
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
+		$pk->position = $this->asVector3();
 		$pk->extraData = $this->instrument;
 		$pk->pitch = $this->pitch;
 		$pk->unknownBool = true;

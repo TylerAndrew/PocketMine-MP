@@ -22,7 +22,7 @@
 namespace pocketmine\item;
 
 class LeatherHorseArmor extends Item{//Item?
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::LEATHER_HORSE_ARMOR, $meta, $count, "Leather Horse Armor");
+	public function __construct($meta = 0){
+		parent::__construct(self::LEATHER_HORSE_ARMOR, $meta, "Leather Horse Armor");
 	}
 }

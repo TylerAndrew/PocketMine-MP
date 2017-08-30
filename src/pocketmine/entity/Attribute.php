@@ -69,19 +69,19 @@ class Attribute{
 	}
 
 	/**
-	 * @param int    $id
+	 * @param int $id
 	 * @param string $name
-	 * @param float  $minValue
-	 * @param float  $maxValue
-	 * @param float  $defaultValue
-	 * @param bool   $shouldSend
+	 * @param float $minValue
+	 * @param float $maxValue
+	 * @param float $defaultValue
+	 * @param bool $shouldSend
 	 *
 	 * @return Attribute
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public static function addAttribute(int $id, string $name, float $minValue, float $maxValue, float $defaultValue, bool $shouldSend = true) : Attribute{
-		if($minValue > $maxValue or $defaultValue > $maxValue or $defaultValue < $minValue){
+	public static function addAttribute(int $id, string $name, float $minValue, float $maxValue, float $defaultValue, bool $shouldSend = true): Attribute{
+		if ($minValue > $maxValue or $defaultValue > $maxValue or $defaultValue < $minValue){
 			throw new \InvalidArgumentException("Invalid ranges: min value: $minValue, max value: $maxValue, $defaultValue: $defaultValue");
 		}
 
@@ -103,8 +103,8 @@ class Attribute{
 	 * @return Attribute|null
 	 */
 	public static function getAttributeByName(string $name){
-		foreach(self::$attributes as $a){
-			if($a->getName() === $name){
+		foreach (self::$attributes as $a){
+			if ($a->getName() === $name){
 				return clone $a;
 			}
 		}
@@ -123,48 +123,48 @@ class Attribute{
 		$this->currentValue = $this->defaultValue;
 	}
 
-	public function getMinValue() : float{
+	public function getMinValue(): float{
 		return $this->minValue;
 	}
 
 	public function setMinValue(float $minValue){
-		if($minValue > $this->getMaxValue()){
+		if ($minValue > $this->getMaxValue()){
 			throw new \InvalidArgumentException("Value $minValue is bigger than the maxValue!");
 		}
 
-		if($this->minValue != $minValue){
+		if ($this->minValue != $minValue){
 			$this->desynchronized = true;
 			$this->minValue = $minValue;
 		}
 		return $this;
 	}
 
-	public function getMaxValue() : float{
+	public function getMaxValue(): float{
 		return $this->maxValue;
 	}
 
 	public function setMaxValue(float $maxValue){
-		if($maxValue < $this->getMinValue()){
+		if ($maxValue < $this->getMinValue()){
 			throw new \InvalidArgumentException("Value $maxValue is bigger than the minValue!");
 		}
 
-		if($this->maxValue != $maxValue){
+		if ($this->maxValue != $maxValue){
 			$this->desynchronized = true;
 			$this->maxValue = $maxValue;
 		}
 		return $this;
 	}
 
-	public function getDefaultValue() : float{
+	public function getDefaultValue(): float{
 		return $this->defaultValue;
 	}
 
 	public function setDefaultValue(float $defaultValue){
-		if($defaultValue > $this->getMaxValue() or $defaultValue < $this->getMinValue()){
+		if ($defaultValue > $this->getMaxValue() or $defaultValue < $this->getMinValue()){
 			throw new \InvalidArgumentException("Value $defaultValue exceeds the range!");
 		}
 
-		if($this->defaultValue !== $defaultValue){
+		if ($this->defaultValue !== $defaultValue){
 			$this->desynchronized = true;
 			$this->defaultValue = $defaultValue;
 		}
@@ -175,48 +175,48 @@ class Attribute{
 		$this->setValue($this->getDefaultValue());
 	}
 
-	public function getValue() : float{
+	public function getValue(): float{
 		return $this->currentValue;
 	}
 
 	/**
 	 * @param float $value
-	 * @param bool  $fit
-	 * @param bool  $forceSend
+	 * @param bool $fit
+	 * @param bool $forceSend
 	 *
 	 * @return $this
 	 */
 	public function setValue(float $value, bool $fit = false, bool $forceSend = false){
-		if($value > $this->getMaxValue() or $value < $this->getMinValue()){
-			if(!$fit){
+		if ($value > $this->getMaxValue() or $value < $this->getMinValue()){
+			if (!$fit){
 				throw new \InvalidArgumentException("Value $value exceeds the range!");
 			}
 			$value = min(max($value, $this->getMinValue()), $this->getMaxValue());
 		}
 
-		if($this->currentValue != $value){
+		if ($this->currentValue != $value){
 			$this->desynchronized = true;
 			$this->currentValue = $value;
-		}elseif($forceSend){
+		} elseif ($forceSend){
 			$this->desynchronized = true;
 		}
 
 		return $this;
 	}
 
-	public function getName() : string{
+	public function getName(): string{
 		return $this->name;
 	}
 
-	public function getId() : int{
+	public function getId(): int{
 		return $this->id;
 	}
 
-	public function isSyncable() : bool{
+	public function isSyncable(): bool{
 		return $this->shouldSend;
 	}
 
-	public function isDesynchronized() : bool{
+	public function isDesynchronized(): bool{
 		return $this->shouldSend and $this->desynchronized;
 	}
 

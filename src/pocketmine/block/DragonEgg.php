@@ -25,21 +25,21 @@ class DragonEgg extends Fallable{
 
 	protected $id = self::DRAGON_EGG;
 
-	public function __construct(){}
+	public function __construct(){ }
 
-    public function getHardness(){
-        return 3;
-    }
+	public function getHardness(): float{
+		return 3.0;
+	}
 
-    public function getResistance(){
-        return 45;
-    }
+	public function getResistance(): float{
+		return 45.0;
+	}
 
-    public function getLightLevel(){
-        return 1;
-    }
+	public function getLightLevel(): int{
+		return 1;
+	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Dragon Egg";
 	}
 

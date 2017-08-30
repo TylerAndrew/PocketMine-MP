@@ -1,4 +1,5 @@
 <?php
+
 namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
@@ -12,7 +13,7 @@ class Chicken extends Animal{
 	public $width = 1;
 	public $length = 0.5;
 	public $height = 0.8;
-	
+
 	protected $exp_min = 1;
 	protected $exp_max = 3;
 	protected $maxHealth = 4;
@@ -21,20 +22,16 @@ class Chicken extends Animal{
 		parent::initEntity();
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Chicken";
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->type = self::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->type = self::NETWORK_ID;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
@@ -42,13 +39,13 @@ class Chicken extends Animal{
 
 		parent::spawnTo($player);
 	}
-	
-	public function getDrops() : array {
+
+	public function getDrops(): array{
 		$drops = [ItemItem::get(ItemItem::FEATHER, 0, mt_rand(0, 2))];
 
-		if($this->getLastDamageCause() === EntityDamageEvent::CAUSE_FIRE){
+		if ($this->getLastDamageCause() === EntityDamageEvent::CAUSE_FIRE){
 			$drops[] = ItemItem::get(ItemItem::COOKED_CHICKEN, 0, mt_rand(1, 2));
-		}else{
+		} else{
 			$drops[] = ItemItem::get(ItemItem::RAW_CHICKEN, 0, mt_rand(1, 2));
 		}
 		return $drops;

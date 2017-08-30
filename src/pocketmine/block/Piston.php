@@ -22,6 +22,7 @@
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -38,56 +39,48 @@ class Piston extends Transparent{
 		$this->meta = $meta;
 	}
 
-    public function getHardness(){
-        return 0.5;
-    }
+	public function getHardness(): float{
+		return 0.5;
+	}
 
-    public function getResistance(){
-        return 2.5;
-    }
+	public function getResistance(): float{
+		return 2.5;
+	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Piston";
 	}
 
-    public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-        if($player instanceof Player){
-            $pitch = $player->getPitch();
-            if(abs($pitch) >= 45){
-                if($pitch < 0) $f = 0;
-                else $f = 1;
-            }
-            else
-                $f = $player->getDirection() + 2;
-        }
-        else
-            $f = 0;//#TODO: fix direction if used piston:meta
-        $faces = [0 => 0, 1 => 1, 2 => 5, 3 => 3, 4 => 4, 5 => 2];
-        $this->meta = $faces[$f];
-        $this->getLevel()->setBlock($block, $this, true, true);
-        $nbt = new CompoundTag("", [
-            new StringTag("id", Tile::PISTON),
-            new IntTag("x", (int) $this->x),
-            new IntTag("y", (int) $this->y),
-            new IntTag("z", (int) $this->z),
-            new ByteTag("isMovable", (bool) true),
-            new ByteTag("Sticky", (bool) false),
-            new ByteTag("State", 0),
-            new FloatTag("Progress", 0.0),
-            new ByteTag("NewState", 0),
-            new FloatTag("LastProgress", 0.0),
-            new CompoundTag("BreakBlocks", []),
-            new CompoundTag("AttachedBlocks", [])
-        ]);
+	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
+		if ($player instanceof Player){
+			$pitch = $player->getPitch();
+			if (abs($pitch) >= 45){
+				if ($pitch < 0) $f = 0;
+				else $f = 1;
+			} else
+				$f = $player->getDirection() + 2;
+		} else
+			$f = 0;//#TODO: fix direction if used piston:meta
+		$faces = [0 => 0, 1 => 1, 2 => 5, 3 => 3, 4 => 4, 5 => 2];
+		$this->meta = $faces[$f];
+		$this->getLevel()->setBlock($block, $this, true, true);
+		$nbt = new CompoundTag("", [
+			new StringTag("id", Tile::PISTON),
+			new IntTag("x", (int)$this->x),
+			new IntTag("y", (int)$this->y),
+			new IntTag("z", (int)$this->z),
+			new ByteTag("isMovable", (bool)true),
+			new ByteTag("Sticky", (bool)false),
+			new ByteTag("State", 0),
+			new FloatTag("Progress", 0.0),
+			new ByteTag("NewState", 0),
+			new FloatTag("LastProgress", 0.0),
+			new CompoundTag("BreakBlocks", []),
+			new CompoundTag("AttachedBlocks", [])
+		]);
 
-        Tile::createTile(Tile::PISTON, $this->getLevel(), $nbt);
+		Tile::createTile(Tile::PISTON, $this->getLevel(), $nbt);
 
-        return true;
-    }
-
-	public function getDrops(Item $item){
-		return [
-			[$this->id, 0, 1],
-		];
+		return true;
 	}
 }

@@ -21,16 +21,16 @@
 
 namespace pocketmine\item;
 
-class SplashPotion extends Item {
-	
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::SPLASH_POTION, $meta, $count, $this->getNameByMeta($meta));
+class SplashPotion extends Item{
+
+	public function __construct($meta = 0){
+		parent::__construct(self::SPLASH_POTION, $meta, $this->getNameByMeta($meta));
 	}
-	
+
 	public function getNameByMeta($meta){
-		switch($meta){
+		switch ($meta){
 			case Potion::WATER_BOTTLE:
-				return "Splash Water Bottle"; 
+				return "Splash Water Bottle";
 			case Potion::MUNDANE:
 			case Potion::MUNDANE_EXTENDED:
 				return "Splash Mundane Potion";
@@ -73,12 +73,12 @@ class SplashPotion extends Item {
 				return "Splash Potion of Healing";
 			case Potion::HEALING_TWO:
 				return "Splash Potion of Healing II";
-  			case Potion::NIGHT_VISION:
-  			case Potion::NIGHT_VISION_T:
+			case Potion::NIGHT_VISION:
+			case Potion::NIGHT_VISION_T:
 				return "Splash Potion of Night Vision";
 			default:
 				return "Splash Potion";
 		}
 	}
-	
+
 }

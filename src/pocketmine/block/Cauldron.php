@@ -29,6 +29,7 @@ use pocketmine\item\Armor;
 use pocketmine\item\Item;
 use pocketmine\item\Potion;
 use pocketmine\item\Tool;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -49,8 +50,8 @@ class Cauldron extends Solid{
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
-		return 2;
+	public function getHardness(): float{
+		return 2.0;
 	}
 
 	public function getName(): string{
@@ -61,11 +62,11 @@ class Cauldron extends Solid{
 		return true;
 	}
 
-	public function getToolType(){
+	public function getToolType(): int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
 		$nbt = new CompoundTag("", [
 			new StringTag("id", Tile::CAULDRON),
 			new IntTag("x", $block->x),
@@ -87,11 +88,6 @@ class Cauldron extends Solid{
 		return true;
 	}
 
-	public function onBreak(Item $item){
-		$this->getLevel()->setBlock($this, new Air(), true);
-		return true;
-	}
-
 	public function getDrops(Item $item): array{
 		if ($item->isPickaxe() >= 1){
 			return [
@@ -101,7 +97,7 @@ class Cauldron extends Solid{
 		return [];
 	}
 
-	public function onActivate(Item $item, Player $player = null){//TODO: make checks check for potion type
+	public function onActivate(Item $item, Player $player = null): bool{//TODO: make checks check for potion type
 		$tile = $this->getLevel()->getTile($this);
 		if (!($tile instanceof TileCauldron)){
 			return false;
@@ -125,9 +121,7 @@ class Cauldron extends Solid{
 						$ev = new LevelEventPacket();
 						$ev->data = 0;
 						$ev->evid = LevelEventPacket::EVENT_CAULDRON_TAKE_WATER;
-						$ev->x = $this->x + 0.5;
-						$ev->y = $this->y;
-						$ev->z = $this->z + 0.5;
+						$ev->position = $this->add(0.5, 0, 0.5);
 						$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 					}
 				} elseif ($item->getDamage() === 8){//water bucket
@@ -150,9 +144,7 @@ class Cauldron extends Solid{
 							$ev = new LevelEventPacket();
 							$ev->data = 0;
 							$ev->evid = LevelEventPacket::EVENT_CAULDRON_EXPLODE;
-							$ev->x = $this->x + 0.5;
-							$ev->y = $this->y;
-							$ev->z = $this->z + 0.5;
+							$ev->position = $this->add(0.5, 0, 0.5);
 							$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 						} else{
 							$this->meta = 6;//fill
@@ -161,9 +153,7 @@ class Cauldron extends Solid{
 							$ev = new LevelEventPacket();
 							$ev->data = 0;
 							$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_WATER;
-							$ev->x = $this->x + 0.5;
-							$ev->y = $this->y;
-							$ev->z = $this->z + 0.5;
+							$ev->position = $this->add(0.5, 0, 0.5);
 							$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 						}
 						$this->update();
@@ -186,9 +176,7 @@ class Cauldron extends Solid{
 				$ev = new LevelEventPacket();
 				$ev->data = $color->toRGB();
 				$ev->evid = LevelEventPacket::EVENT_CAULDRON_ADD_DYE;
-				$ev->x = $this->x + 0.5;
-				$ev->y = $this->y;
-				$ev->z = $this->z + 0.5;
+				$ev->position = $this->add(0.5, 0, 0.5);
 				$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 				$this->update();
 				break;
@@ -210,9 +198,7 @@ class Cauldron extends Solid{
 					$color = $tile->getCustomColor();
 					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_DYE_ARMOR;
-					$ev->x = $this->x + 0.5;
-					$ev->y = $this->y;
-					$ev->z = $this->z + 0.5;
+					$ev->position = $this->add(0.5, 0, 0.5);
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 					if ($this->isEmpty()){
 						$tile->clearCustomColor();
@@ -228,9 +214,7 @@ class Cauldron extends Solid{
 					$color = $item->getCustomColor();
 					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_CLEAN_ARMOR;
-					$ev->x = $this->x + 0.5;
-					$ev->y = $this->y;
-					$ev->z = $this->z + 0.5;
+					$ev->position = $this->add(0.5, 0, 0.5);
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 				}
 				break;
@@ -252,9 +236,7 @@ class Cauldron extends Solid{
 					$ev = new LevelEventPacket();
 					$ev->data = 0;
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_EXPLODE;
-					$ev->x = $this->x + 0.5;
-					$ev->y = $this->y;
-					$ev->z = $this->z + 0.5;
+					$ev->position = $this->add(0.5, 0, 0.5);
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 				} elseif ($item->getDamage() === Potion::WATER_BOTTLE){
 					$this->meta += 2;
@@ -269,9 +251,7 @@ class Cauldron extends Solid{
 					$ev = new LevelEventPacket();
 					$ev->data = 0;
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
-					$ev->x = $this->x + 0.5;
-					$ev->y = $this->y;
-					$ev->z = $this->z + 0.5;
+					$ev->position = $this->add(0.5, 0, 0.5);
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 				} elseif (!$this->isFull()){
 					$this->meta += 2;
@@ -288,9 +268,7 @@ class Cauldron extends Solid{
 					$color = new Color($color[0], $color[1], $color[2]);
 					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
-					$ev->x = $this->x + 0.5;
-					$ev->y = $this->y;
-					$ev->z = $this->z + 0.5;
+					$ev->position = $this->add(0.5, 0, 0.5);
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 				}
 				break;
@@ -317,9 +295,7 @@ class Cauldron extends Solid{
 					$ev = new LevelEventPacket();
 					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_FILL_POTION;
-					$ev->x = $this->x + 0.5;
-					$ev->y = $this->y;
-					$ev->z = $this->z + 0.5;
+					$ev->position = $this->add(0.5, 0, 0.5);
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 				} else{
 					$this->meta -= 2;
@@ -332,9 +308,7 @@ class Cauldron extends Solid{
 					$color = $tile->getCustomColor();
 					$ev->data = $color->toRGB();
 					$ev->evid = LevelEventPacket::EVENT_CAULDRON_TAKE_POTION;
-					$ev->x = $this->x + 0.5;
-					$ev->y = $this->y;
-					$ev->z = $this->z + 0.5;
+					$ev->position = $this->add(0.5, 0, 0.5);
 					$this->getLevel()->addChunkPacket($this->x >> 4, $this->z >> 4, $ev);
 				}
 				break;

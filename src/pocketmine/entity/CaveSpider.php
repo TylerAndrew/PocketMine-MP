@@ -1,4 +1,5 @@
 <?php
+
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
@@ -11,7 +12,7 @@ class CaveSpider extends Monster{
 	public $width = 1.438;
 	public $length = 1.188;
 	public $height = 0.547;
-	
+
 	protected $exp_min = 5;
 	protected $exp_max = 5;
 	protected $maxHealth = 12;
@@ -20,20 +21,16 @@ class CaveSpider extends Monster{
 		parent::initEntity();
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Cave Spider";
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->type = self::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->type = self::NETWORK_ID;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
@@ -42,11 +39,11 @@ class CaveSpider extends Monster{
 		parent::spawnTo($player);
 	}
 
-	public function getDrops() : array {
-		return[
+	public function getDrops(): array{
+		return [
 			ItemItem::get(ItemItem::STRING, 0, mt_rand(0, 2)),
 			ItemItem::get(ItemItem::SPIDER_EYE, 0, mt_rand(0, 1))
 		];
-	 }
-  	
+	}
+
 }

@@ -22,7 +22,7 @@
 namespace pocketmine\item;
 
 class RabbitHide extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::RABBIT_HIDE, $meta, $count, "Rabbit Hide");
+	public function __construct($meta = 0){
+		parent::__construct(self::RABBIT_HIDE, $meta, "Rabbit Hide");
 	}
 }

@@ -20,29 +20,27 @@
  * 
  *
 */
+
 namespace pocketmine\block;
 
 use pocketmine\item\Tool;
 
-class PurpurStairs extends Stair
-{
+class PurpurStairs extends Stair{
 	protected $id = self::PURPUR_STAIRS;
 
 	public function __construct($meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness(): float{
 		return 0.8;
 	}
 
-	public function getToolType()
-	{
+	public function getToolType(): int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getName()
-	{
+	public function getName(): string{
 		return "Purpur Stairs";
 	}
 }

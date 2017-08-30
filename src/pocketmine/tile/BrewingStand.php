@@ -256,7 +256,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 				$windowId = $player->getWindowId($this->getInventory());
 				if($windowId > 0){
 					$pk = new ContainerSetDataPacket();
-					$pk->windowid = $windowId;
+					$pk->windowId = $windowId;
 					$pk->property = 0; //Brew
 					$pk->value = $this->namedtag["CookTime"];
 					$player->dataPacket($pk);
@@ -285,7 +285,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 				$windowId = $player->getWindowId($this->getInventory());
 				if($windowId > 0){
 					$pk = new ContainerSetDataPacket();
-					$pk->windowid = $windowId;
+					$pk->windowId = $windowId;
 					$pk->property = 0; //Brew
 					$pk->value = 0;
 					$player->dataPacket($pk);

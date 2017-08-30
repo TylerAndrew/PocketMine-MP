@@ -22,17 +22,18 @@
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
-class PoweredRepeater extends Transparent {
+class PoweredRepeater extends Transparent{
 
 	protected $id = self::POWERED_REPEATER;
 
-	public function __construct($meta = 0) {
+	public function __construct($meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null) {
+	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
 		if (!$this->canStay()) return false;
 		$faces = [
 			2 => 3,
@@ -45,31 +46,31 @@ class PoweredRepeater extends Transparent {
 		return true;
 	}
 
-	public function canBeActivated() {
+	public function canBeActivated(){
 		return true;
 	}
 
-	public function getName() {
+	public function getName(): string{
 		return "Repeater";
 	}
 
-	public function onActivate(Item $item, Player $player = null) {
+	public function onActivate(Item $item, Player $player = null): bool{
 		$this->meta += 4;
 		$this->meta = $this->meta & 15;
 		$this->getLevel()->setBlock($this, $this);
 		return true;
 	}
 
-	public function onUpdate($type) {
+	public function onUpdate(int $type){
 		if (!$this->canStay()) $this->getLevel()->useBreakOn($this);
 		return $type;
 	}
 
-	public function getDrops(Item $item) {
+	public function getDrops(Item $item): array{
 		return [[Item::REPEATER, 0, 1]];
 	}
 
-	private function canStay() {
+	private function canStay(){
 		if ($this->getSide(0)->isTransparent())
 			return ((in_array($this->getSide(0)->getId(), [Item::STONE_SLAB, Item::STONE_SLAB2, Item::WOODEN_SLAB]) && (($this->getSide(0)->getDamage() & 0x08) > 0)) || ($this->getSide(0) instanceof Stair && (($this->getSide(0)->getDamage() & 0x04) > 0)));
 		return true;

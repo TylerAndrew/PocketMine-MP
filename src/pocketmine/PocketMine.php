@@ -145,6 +145,12 @@ namespace pocketmine {
 		exit(1);
 	}
 
+	if(version_compare(RakLib::VERSION, "0.8.1") < 0){
+		echo "[CRITICAL] RakLib version 0.8.1 is required, while you have version " . RakLib::VERSION . "." . PHP_EOL;
+		echo "[CRITICAL] Please update your submodules or use provided builds." . PHP_EOL;
+		exit(1);
+	}
+
 	set_time_limit(0); //Who set it to 30 seconds?!?!
 
 	ini_set("allow_url_fopen", '1');
@@ -475,7 +481,7 @@ namespace pocketmine {
 		}
 
 		$gitHash = str_repeat("00", 20);
-#ifndef COMPILE
+
 		if(\Phar::running(true) === ""){
 			if(Utils::execute("git rev-parse HEAD", $out) === 0){
 				$gitHash = trim($out);
@@ -483,8 +489,14 @@ namespace pocketmine {
 					$gitHash .= "-dirty";
 				}
 			}
+		}else{
+			$phar = new \Phar(\Phar::running(false));
+			$meta = $phar->getMetadata();
+			if(isset($meta["git"])){
+				$gitHash = $meta["git"];
+			}
 		}
-#endif
+
 		define('pocketmine\GIT_COMMIT', $gitHash);
 
 

@@ -23,21 +23,21 @@ namespace pocketmine\item;
 
 use pocketmine\entity\Effect;
 
-class PufferFish extends Food {
+class PufferFish extends Food{
 
-	public function __construct($meta = 0, $count = 1) {
-		parent::__construct(self::PUFFERFISH, $meta, $count, 'Puffer Fish');
+	public function __construct($meta = 0){
+		parent::__construct(self::PUFFERFISH, $meta, 'Puffer Fish');
 	}
 
-	public function getFoodRestore(): int {
+	public function getFoodRestore(): int{
 		return 1.0;
 	}
 
-	public function getSaturationRestore(): float {
+	public function getSaturationRestore(): float{
 		return 0.2;
 	}
 
-	public function getAdditionalEffects(): array {
+	public function getAdditionalEffects(): array{
 		return [
 			Effect::getEffect(Effect::HUNGER)->setDuration(300)->setAmplifier(2),
 			Effect::getEffect(Effect::NAUSEA)->setDuration(300)->setAmplifier(1),

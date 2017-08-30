@@ -32,20 +32,20 @@ class Torch extends Flowable{
 
 	protected $id = self::TORCH;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getLightLevel(){
+	public function getLightLevel(): int{
 		return 14;
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Torch";
 	}
 
-	public function onUpdate($type){
-		if($type === Level::BLOCK_UPDATE_NORMAL){
+	public function onUpdate(int $type){
+		if ($type === Level::BLOCK_UPDATE_NORMAL){
 			$below = $this->getSide(Vector3::SIDE_DOWN);
 			$side = $this->getDamage();
 			$faces = [
@@ -57,7 +57,7 @@ class Torch extends Flowable{
 				5 => 0
 			];
 
-			if($this->getSide($faces[$side])->isTransparent() === true and !($side === Vector3::SIDE_DOWN && ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall)){
+			if ($this->getSide($faces[$side])->isTransparent() === true and !($side === Vector3::SIDE_DOWN && ($below instanceof StoneSlab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall)){
 				$this->getLevel()->useBreakOn($this);
 
 				return Level::BLOCK_UPDATE_NORMAL;
@@ -67,24 +67,24 @@ class Torch extends Flowable{
 		return false;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null): bool{
 		$below = $this->getSide(Vector3::SIDE_DOWN);
 
-		if($target->isTransparent() === false and $face !== 0){
+		if ($blockClicked->isTransparent() === false and $face !== Vector3::SIDE_DOWN){
 			$faces = [
-				1 => 5,
-				2 => 4,
-				3 => 3,
-				4 => 2,
-				5 => 1,
+				Vector3::SIDE_UP => 5,
+				Vector3::SIDE_NORTH => 4,
+				Vector3::SIDE_SOUTH => 3,
+				Vector3::SIDE_WEST => 2,
+				Vector3::SIDE_EAST => 1
 			];
 			$this->meta = $faces[$face];
-			$this->getLevel()->setBlock($block, $this, true, true);
+			$this->getLevel()->setBlock($blockReplace, $this, true, true);
 
 			return true;
-		}elseif($below->isTransparent() === false or ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall){
+		} elseif ($below->isTransparent() === false or ($below instanceof StoneSlab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall){
 			$this->meta = 0;
-			$this->getLevel()->setBlock($block, $this, true, true);
+			$this->getLevel()->setBlock($blockReplace, $this, true, true);
 
 			return true;
 		}
@@ -92,9 +92,7 @@ class Torch extends Flowable{
 		return false;
 	}
 
-	public function getDrops(Item $item){
-		return [
-			[$this->getId(), 0, 1]
-		];
+	public function getVariantBitmask(): int{
+		return 0;
 	}
 }

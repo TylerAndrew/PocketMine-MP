@@ -19,42 +19,42 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
 
-class NetherQuartzOre extends Solid {
+class NetherQuartzOre extends Solid{
 
-	protected $id = self::NETHER_QUARTZ_ORE;
+	protected $id = Block::NETHER_QUARTZ_ORE;
 
-	public function __construct() {
-
+	public function __construct(int $meta = 0){
+		$this->meta = $meta;
 	}
 
-	public function getName() {
+	public function getName(): string{
 		return "Nether Quartz Ore";
 	}
 
-	public function getToolType() {
-		return Tool::TYPE_PICKAXE;
-	}
-
-	public function getHardness() {
+	public function getHardness(): float{
 		return 3;
 	}
 
-	public function getResistance() {
-		return 15;
+	public function getToolType(): int{
+		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getDrops(Item $item) {
-		if ($item->isPickaxe()) {
+	public function getDrops(Item $item): array{
+		if ($item->isPickaxe() >= Tool::TIER_WOODEN){
 			return [
-				[Item::NETHER_QUARTZ, 0, 1],
+				ItemFactory::get(Item::QUARTZ, 0, 1)
 			];
-		} else {
-			return [];
 		}
+
+		return [];
 	}
+
 }

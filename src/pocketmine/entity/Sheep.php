@@ -18,27 +18,23 @@ class Sheep extends Animal implements Colorable{
 
 	public function initEntity(){
 		parent::initEntity();
-		
-		if(!isset($this->namedtag->Color) || $this->getVariant() > 15){
+
+		if (!isset($this->namedtag->Color) || $this->getVariant() > 15){
 			$this->setVariant(mt_rand(0, 15));
 		}
 		$this->setDataProperty(16, self::DATA_TYPE_BYTE, $this->getVariant());
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Sheep";
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->type = self::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->type = self::NETWORK_ID;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
@@ -56,12 +52,12 @@ class Sheep extends Animal implements Colorable{
 		return $this->namedtag["Color"];
 	}
 
-	public function getDrops() : array {
+	public function getDrops(): array{
 		return [ItemItem::get(ItemItem::WOOL, $this->getVariant(), 1)];
 	}
 
 	public function sheer(){
-		for($i = 0; $i <= mt_rand(0, 2); $i++){
+		for ($i = 0; $i <= mt_rand(0, 2); $i++){
 			$this->getLevel()->dropItem($this, new ItemItem(ItemItem::WOOL, $this->getVariant()));//TODO: check amount
 		}
 	}

@@ -26,6 +26,7 @@ namespace pocketmine\item;
 use pocketmine\block\Block;
 use pocketmine\entity\Boat as BoatEntity;
 use pocketmine\level\Level;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
@@ -34,30 +35,30 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\Player;
 
 class Boat extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::BOAT, $meta, $count, "Oak Boat");
-		if($this->meta === 1){
+	public function __construct($meta = 0){
+		parent::__construct(self::BOAT, $meta, "Oak Boat");
+		if ($this->meta === 1){
 			$this->name = "Spruce Boat";
-		}elseif($this->meta === 2){
+		} elseif ($this->meta === 2){
 			$this->name = "Birch Boat";
-		}elseif($this->meta === 3){
+		} elseif ($this->meta === 3){
 			$this->name = "Jungle Boat";
-		}elseif($this->meta === 4){
+		} elseif ($this->meta === 4){
 			$this->name = "Acacia Boat";
-		}elseif($this->meta === 5){
+		} elseif ($this->meta === 5){
 			$this->name = "Dark Oak Boat";
 		}
 	}
-	
-	public function getMaxStackSize(){
+
+	public function getMaxStackSize(): int{
 		return 1;
 	}
-	
+
 	public function canBeActivated(){
 		return true;
 	}
 
-	public function onActivate(Level $level, Player $player, Block $block, Block $target, $face, $fx, $fy, $fz){
+	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facepos): bool{
 		$realPos = $target->getSide($face)->add(0.5, 0.4, 0.5);
 		$boat = new BoatEntity($player->getLevel(), new CompoundTag("", [
 			new ListTag("Pos", [
@@ -74,13 +75,19 @@ class Boat extends Item{
 				new FloatTag("", 0),
 				new FloatTag("", 0)
 			]),
-			new IntTag("WoodID",$this->getDamage()),
+			new IntTag("woodID", $this->getDamage()),
 		]));
 		$boat->spawnToAll();
-		if($player->isSurvival()){
+		if ($player->isSurvival()){
 			--$this->count;
 		}
-		
+
 		return true;
 	}
+
+	public function getFuelTime(): int{
+		return 1200; //400 in PC
+	}
+
+	//TODO
 }

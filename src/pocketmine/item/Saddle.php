@@ -24,8 +24,8 @@ declare(strict_types=1);
 namespace pocketmine\item;
 
 class Saddle extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::SADDLE, $meta, $count, "Saddle");
+	public function __construct($meta = 0){
+		parent::__construct(self::SADDLE, $meta, "Saddle");
 	}
 
 }

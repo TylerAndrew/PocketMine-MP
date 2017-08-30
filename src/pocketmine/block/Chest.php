@@ -40,19 +40,19 @@ class Chest extends Transparent{
 
 	protected $id = self::CHEST;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(){
+	public function getHardness(): float{
 		return 2.5;
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Chest";
 	}
 
-	public function getToolType(){
+	public function getToolType(): int{
 		return Tool::TYPE_AXE;
 	}
 
@@ -67,34 +67,34 @@ class Chest extends Transparent{
 		);
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null): bool{
 		$faces = [
 			0 => 4,
 			1 => 2,
 			2 => 5,
-			3 => 3,
+			3 => 3
 		];
 
 		$chest = null;
 		$this->meta = $faces[$player instanceof Player ? $player->getDirection() : 0];
 
-		for($side = 2; $side <= 5; ++$side){
-			if(($this->meta === 4 or $this->meta === 5) and ($side === 4 or $side === 5)){
+		for ($side = 2; $side <= 5; ++$side){
+			if (($this->meta === 4 or $this->meta === 5) and ($side === 4 or $side === 5)){
 				continue;
-			}elseif(($this->meta === 3 or $this->meta === 2) and ($side === 2 or $side === 3)){
+			} elseif (($this->meta === 3 or $this->meta === 2) and ($side === 2 or $side === 3)){
 				continue;
 			}
 			$c = $this->getSide($side);
-			if($c->getId() === $this->id and $c->getDamage() === $this->meta){
+			if ($c->getId() === $this->id and $c->getDamage() === $this->meta){
 				$tile = $this->getLevel()->getTile($c);
-				if($tile instanceof TileChest and !$tile->isPaired()){
+				if ($tile instanceof TileChest and !$tile->isPaired()){
 					$chest = $tile;
 					break;
 				}
 			}
 		}
 
-		$this->getLevel()->setBlock($block, $this, true, true);
+		$this->getLevel()->setBlock($blockReplace, $this, true, true);
 		$nbt = new CompoundTag("", [
 			new ListTag("Items", []),
 			new StringTag("id", Tile::CHEST),
@@ -104,19 +104,19 @@ class Chest extends Transparent{
 		]);
 		$nbt->Items->setTagType(NBT::TAG_Compound);
 
-		if($item->hasCustomName()){
+		if ($item->hasCustomName()){
 			$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
 		}
 
-		if($item->hasCustomBlockData()){
-			foreach($item->getCustomBlockData() as $key => $v){
+		if ($item->hasCustomBlockData()){
+			foreach ($item->getCustomBlockData() as $key => $v){
 				$nbt->{$key} = $v;
 			}
 		}
 
 		$tile = Tile::createTile("Chest", $this->getLevel(), $nbt);
 
-		if($chest instanceof TileChest and $tile instanceof TileChest){
+		if ($chest instanceof TileChest and $tile instanceof TileChest){
 			$chest->pairWith($tile);
 			$tile->pairWith($chest);
 		}
@@ -124,28 +124,28 @@ class Chest extends Transparent{
 		return true;
 	}
 
-	public function onBreak(Item $item){
+	public function onBreak(Item $item, Player $player = null): bool{
 		$t = $this->getLevel()->getTile($this);
-		if($t instanceof TileChest){
+		if ($t instanceof TileChest){
 			$t->unpair();
 		}
-		$this->getLevel()->setBlock($this, new Air(), true, true);
+		$this->getLevel()->setBlock($this, BlockFactory::get(Block::AIR), true, true);
 
 		return true;
 	}
 
-	public function onActivate(Item $item, Player $player = null){
-		if($player instanceof Player){
+	public function onActivate(Item $item, Player $player = null): bool{
+		if ($player instanceof Player){
 			$top = $this->getSide(Vector3::SIDE_UP);
-			if($top->isTransparent() !== true){
+			if ($top->isTransparent() !== true){
 				return true;
 			}
 
 			$t = $this->getLevel()->getTile($this);
 			$chest = null;
-			if($t instanceof TileChest){
+			if ($t instanceof TileChest){
 				$chest = $t;
-			}else{
+			} else{
 				$nbt = new CompoundTag("", [
 					new ListTag("Items", []),
 					new StringTag("id", Tile::CHEST),
@@ -157,8 +157,8 @@ class Chest extends Transparent{
 				$chest = Tile::createTile("Chest", $this->getLevel(), $nbt);
 			}
 
-			if(isset($chest->namedtag->Lock) and $chest->namedtag->Lock instanceof StringTag){
-				if($chest->namedtag->Lock->getValue() !== $item->getCustomName()){
+			if (isset($chest->namedtag->Lock) and $chest->namedtag->Lock instanceof StringTag){
+				if ($chest->namedtag->Lock->getValue() !== $item->getCustomName()){
 					return true;
 				}
 			}
@@ -169,9 +169,11 @@ class Chest extends Transparent{
 		return true;
 	}
 
-	public function getDrops(Item $item){
-		return [
-			[$this->id, 0, 1],
-		];
+	public function getVariantBitmask(): int{
+		return 0;
+	}
+
+	public function getFuelTime(): int{
+		return 300;
 	}
 }

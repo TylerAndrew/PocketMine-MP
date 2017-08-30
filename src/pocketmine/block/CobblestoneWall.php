@@ -33,24 +33,24 @@ class CobblestoneWall extends Transparent{
 
 	protected $id = self::COBBLESTONE_WALL;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function isSolid(){
+	public function isSolid(): bool{
 		return false;
 	}
 
-	public function getToolType(){
+	public function getToolType(): int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function getHardness(){
+	public function getHardness(): float{
 		return 2;
 	}
 
-	public function getName(){
-		if($this->meta === 0x01){
+	public function getName(): string{
+		if ($this->meta === 0x01){
 			return "Mossy Cobblestone Wall";
 		}
 
@@ -69,10 +69,10 @@ class CobblestoneWall extends Transparent{
 		$w = $west ? 0 : 0.25;
 		$e = $east ? 1 : 0.75;
 
-		if($north and $south and !$west and !$east){
+		if ($north and $south and !$west and !$east){
 			$w = 0.3125;
 			$e = 0.6875;
-		}elseif(!$north and !$south and $west and $east){
+		} elseif (!$north and !$south and $west and $east){
 			$n = 0.3125;
 			$s = 0.6875;
 		}

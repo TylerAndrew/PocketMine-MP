@@ -22,9 +22,9 @@
 namespace pocketmine\item;
 
 
-class CarrotOnAStick extends Item {
-	public function __construct($meta = 0, $count = 1) {
-		parent::__construct(self::CARROT_ON_A_STICK, 0, $count, "Carrot On A Stick");
+class CarrotOnAStick extends Item{
+	public function __construct($meta = 0){
+		parent::__construct(self::CARROT_ON_A_STICK, 0, "Carrot On A Stick");
 	}
 
 }

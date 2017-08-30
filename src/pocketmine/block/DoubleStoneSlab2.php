@@ -25,29 +25,29 @@ use pocketmine\item\Item;
 
 class DoubleStoneSlab2 extends DoubleStoneSlab{
 
-    const RED_SANDSTONE = 1;
-    const PURPUR = 1;
+	const RED_SANDSTONE = 1;
+	const PURPUR = 1;
 
-    protected $id = Block::DOUBLE_STONE_SLAB2;
+	protected $id = Block::DOUBLE_STONE_SLAB2;
 
-    public function __construct($meta = 0){
-        $this->meta = $meta;
-    }
+	public function __construct($meta = 0){
+		$this->meta = $meta;
+	}
 
-	public function getName(){
-        static $names = [
-            self::RED_SANDSTONE => "Double Red Sandstone Slab",
-            self::PURPUR => "Double Purpur Slab",
-        ];
-        return $names[$this->meta & 0x0f];
-    }
+	public function getName(): string{
+		static $names = [
+			self::RED_SANDSTONE => "Double Red Sandstone Slab",
+			self::PURPUR => "Double Purpur Slab",
+		];
+		return $names[$this->meta & 0x0f];
+	}
 
-	public function getDrops(Item $item) : array {
-		if($item->isPickaxe() >= 1){
+	public function getDrops(Item $item): array{
+		if ($item->isPickaxe() >= 1){
 			return [
 				[Item::STONE_SLAB2, $this->meta, 2],
 			];
-		}else{
+		} else{
 			return [];
 		}
 	}

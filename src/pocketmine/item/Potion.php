@@ -65,12 +65,12 @@ class Potion extends Food{
 	const HARMING = 23;
 	const HARMING_TWO = 24;
 
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::POTION, $meta, $count, $this->getNameByMeta($meta));
+	public function __construct($meta = 0){
+		parent::__construct(self::POTION, $meta, $this->getNameByMeta($meta));
 	}
 
 	public static function getColor($meta){
-		switch($meta){
+		switch ($meta){
 			case self::INVISIBILITY:
 			case self::INVISIBILITY_T:
 				return (Effect::getEffect(Effect::INVISIBILITY)->getColor());
@@ -111,8 +111,9 @@ class Potion extends Food{
 				return (Effect::getEffect(Effect::WATER_BREATHING)->getColor());
 		}
 	}
+
 	public function getNameByMeta($meta){
-		switch($meta){
+		switch ($meta){
 			case self::WATER_BOTTLE:
 				return "Water Bottle";
 			case self::MUNDANE:
@@ -165,10 +166,10 @@ class Potion extends Food{
 		}
 	}
 
-	public function getAdditionalEffects($meta = null) : array{
+	public function getAdditionalEffects($meta = null): array{
 		$effect = [];
-		if(is_null($meta)) $meta = $this->meta;
-		switch($meta){
+		if (is_null($meta)) $meta = $this->meta;
+		switch ($meta){
 			case Potion::NIGHT_VISION:
 				$effect[] = Effect::getEffect(Effect::NIGHT_VISION)->setAmplifier(0)->setDuration(3 * 60 * 20);
 				break;
@@ -188,7 +189,7 @@ class Potion extends Food{
 				$effect[] = Effect::getEffect(Effect::JUMP)->setAmplifier(0)->setDuration(8 * 60 * 20);
 				break;
 			case Potion::LEAPING_TWO:
-				$effect[] = Effect::getEffect(Effect::JUMP)->setAmplifier(1)->setDuration((int) 1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::JUMP)->setAmplifier(1)->setDuration((int)1.5 * 60 * 20);
 				break;
 			case Potion::FIRE_RESISTANCE:
 				$effect[] = Effect::getEffect(Effect::FIRE_RESISTANCE)->setAmplifier(0)->setDuration(3 * 60 * 20);
@@ -203,7 +204,7 @@ class Potion extends Food{
 				$effect[] = Effect::getEffect(Effect::SPEED)->setAmplifier(0)->setDuration(8 * 60 * 20);
 				break;
 			case Potion::SPEED_TWO:
-				$effect[] = Effect::getEffect(Effect::SPEED)->setAmplifier(1)->setDuration((int) 1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::SPEED)->setAmplifier(1)->setDuration((int)1.5 * 60 * 20);
 				break;
 			case Potion::SLOWNESS:
 				$effect[] = Effect::getEffect(Effect::SLOWNESS)->setAmplifier(0)->setDuration(1 * 60 * 20);
@@ -242,10 +243,10 @@ class Potion extends Food{
 				$effect[] = Effect::getEffect(Effect::STRENGTH)->setAmplifier(0)->setDuration(8 * 60 * 20);
 				break;
 			case Potion::STRENGTH_TWO:
-				$effect[] = Effect::getEffect(Effect::STRENGTH)->setAmplifier(1)->setDuration((int) 1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::STRENGTH)->setAmplifier(1)->setDuration((int)1.5 * 60 * 20);
 				break;
 			case Potion::WEAKNESS:
-				$effect[] = Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration((int) 1.5 * 60 * 20);
+				$effect[] = Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration((int)1.5 * 60 * 20);
 				break;
 			case Potion::WEAKNESS_T:
 				$effect[] = Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration(4 * 60 * 20);
@@ -269,7 +270,7 @@ class Potion extends Food{
 		return $effect;
 	}
 
-	public function canBeConsumed() : bool{
+	public function canBeConsumed(): bool{
 		return true;
 	}
 
@@ -277,19 +278,19 @@ class Potion extends Food{
 		return Item::get(Item::GLASS_BOTTLE);
 	}
 
-	public function getFoodRestore() : int{
+	public function getFoodRestore(): int{
 		return 0;
 	}
 
-	public function getSaturationRestore() : float {
+	public function getSaturationRestore(): float{
 		return 0.0;
 	}
 
-	public function canBeConsumedBy(Entity $entity) : bool{
+	public function canBeConsumedBy(Entity $entity): bool{
 		return $entity instanceof Human;
 	}
 
-	public function getMaxStackSize() {
+	public function getMaxStackSize(): int{
 		return 1;
 	}
 }

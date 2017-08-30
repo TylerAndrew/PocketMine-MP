@@ -24,7 +24,9 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\math\AxisAlignedBB;
+use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
@@ -37,24 +39,24 @@ class Skull extends Flowable{
 
 	protected $id = self::SKULL_BLOCK;
 
-	public function __construct($meta = 0) {
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness() {
+	public function getHardness(): float{
 		return 1;
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Mob Head Block";
 	}
 
-	protected function recalculateBoundingBox() {
+	protected function recalculateBoundingBox(){
 		$x1 = 0;
 		$x2 = 0;
 		$z1 = 0;
 		$z2 = 0;
-		if ($this->meta === 0 || $this->meta === 1) {
+		if ($this->meta === 0 || $this->meta === 1){
 			return new AxisAlignedBB(
 				$this->x + 0.25,
 				$this->y,
@@ -63,22 +65,22 @@ class Skull extends Flowable{
 				$this->y + 0.5,
 				$this->z + 0.75
 			);
-		} elseif ($this->meta === 2) {
+		} elseif ($this->meta === 2){
 			$x1 = 0.25;
 			$x2 = 0.75;
 			$z1 = 0;
 			$z2 = 0.5;
-		} elseif ($this->meta === 3) {
+		} elseif ($this->meta === 3){
 			$x1 = 0.5;
 			$x2 = 1;
 			$z1 = 0.25;
 			$z2 = 0.75;
-		} elseif ($this->meta === 4) {
+		} elseif ($this->meta === 4){
 			$x1 = 0.25;
 			$x2 = 0.75;
 			$z1 = 0.5;
 			$z2 = 1;
-		} elseif ($this->meta === 5) {
+		} elseif ($this->meta === 5){
 			$x1 = 0;
 			$x2 = 0.5;
 			$z1 = 0.25;
@@ -94,29 +96,25 @@ class Skull extends Flowable{
 		);
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null) {
-		if ($face !== 0) {
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null): bool{
+		if ($face !== Vector3::SIDE_DOWN){
 			$this->meta = $face;
-			if ($face === 1) {
+			if ($face === Vector3::SIDE_UP){
 				$rot = floor(($player->yaw * 16 / 360) + 0.5) & 0x0F;
-			} else {
+			} else{
 				$rot = 0;
 			}
-			$this->getLevel()->setBlock($block, $this, true);
-			$moveMouth = false;
-			if($item->getDamage() === SkullTile::TYPE_DRAGON){
-				if(in_array($target->getId(), [Block::LIT_REDSTONE_TORCH, Block::REDSTONE_BLOCK])) $moveMouth = true; //Temp-hacking Dragon Head Mouth Move
-			}
+			$this->getLevel()->setBlock($blockReplace, $this, true);
 			$nbt = new CompoundTag("", [
 				new StringTag("id", Tile::SKULL),
 				new ByteTag("SkullType", $item->getDamage()),
 				new ByteTag("Rot", $rot),
-				new ByteTag("MouthMoving", (int) $moveMouth),
+				//TODO new ByteTag("MouthMoving", (int) $moveMouth),
 				new IntTag("x", (int)$this->x),
 				new IntTag("y", (int)$this->y),
 				new IntTag("z", (int)$this->z)
 			]);
-			if ($item->hasCustomName()) {
+			if ($item->hasCustomName()){
 				$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
 			}
 			Tile::createTile("Skull", $this->getLevel(), $nbt);
@@ -125,11 +123,11 @@ class Skull extends Flowable{
 		return false;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item): array{
 		$tile = $this->level->getTile($this);
-		if($tile instanceof SkullTile){
+		if ($tile instanceof SkullTile){
 			return [
-				[Item::SKULL, $tile->getType(), 1]
+				ItemFactory::get(Item::SKULL, $tile->getType(), 1)
 			];
 		}
 

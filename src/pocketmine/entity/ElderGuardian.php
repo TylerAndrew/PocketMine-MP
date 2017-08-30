@@ -1,4 +1,5 @@
 <?php
+
 namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
@@ -12,7 +13,7 @@ class ElderGuardian extends Guardian{
 	public $width = 0.75;
 	public $length = 0.75;
 	public $height = 1;
-	
+
 	protected $exp_min = 10;
 	protected $exp_max = 10;
 	protected $maxHealth = 80;
@@ -22,20 +23,16 @@ class ElderGuardian extends Guardian{
 		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_ELDER, true, self::DATA_TYPE_BYTE);
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Elder Guardian";
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->type = self::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->type = self::NETWORK_ID;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
@@ -44,23 +41,22 @@ class ElderGuardian extends Guardian{
 		parent::spawnTo($player);
 	}
 
-    public function getDrops() : array {
+	public function getDrops(): array{
 		$drops = [ItemItem::get(ItemItem::PRISMARINE_SHARD, 0, mt_rand(0, 2))];
-		
-		if($this->getLastDamageCause() === EntityDamageEvent::CAUSE_FIRE){//#TODO these are random
+
+		if ($this->getLastDamageCause() === EntityDamageEvent::CAUSE_FIRE){//#TODO these are random
 			$drops[] = ItemItem::get(ItemItem::COOKED_FISH, 0, mt_rand(0, 1));
-		}
-		else{
+		} else{
 			$drops[] = ItemItem::get(ItemItem::RAW_FISH, 0, mt_rand(0, 1));
 		}
 
-		$drops[] = ItemItem::get(ItemItem::PRISMARINE_CRYSTALS, 0, mt_rand(0, 100) < 33?1:0);
-		
+		$drops[] = ItemItem::get(ItemItem::PRISMARINE_CRYSTALS, 0, mt_rand(0, 100) < 33 ? 1 : 0);
+
 		$drops[] = ItemItem::get(ItemItem::SPONGE, 1);
-		
+
 		return $drops;
 	}
-	
+
 	public function isLeashableType(){
 		return false;
 	}

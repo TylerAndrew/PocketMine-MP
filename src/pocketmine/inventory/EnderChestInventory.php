@@ -25,6 +25,7 @@ use pocketmine\entity\Human;
 use pocketmine\level\Level;
 use pocketmine\level\Position;
 use pocketmine\network\mcpe\protocol\BlockEventPacket;
+use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\Player;
 
 class EnderChestInventory extends ContainerInventory {
@@ -70,5 +71,21 @@ class EnderChestInventory extends ContainerInventory {
 			}
 		}
 		parent::onClose($who);
+	}
+
+	public function getName(): string{
+		return "Ender Chest";
+	}
+
+	/**
+	 * Returns the Minecraft PE inventory type used to show the inventory window to clients.
+	 * @return int
+	 */
+	public function getNetworkType(): int{
+		return WindowTypes::CONTAINER;
+	}
+
+	public function getDefaultSize(): int{
+		return 27;
 	}
 }

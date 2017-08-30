@@ -21,8 +21,8 @@
 
 namespace pocketmine\item;
 
-class DiamondHorseArmor extends Item{//Item?
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::DIAMOND_HORSE_ARMOR, $meta, $count, "Diamond Horse Armor");
+class DiamondHorseArmor extends Item{//TODO: Item? Armor?
+	public function __construct($meta = 0){
+		parent::__construct(self::DIAMOND_HORSE_ARMOR, $meta, "Diamond Horse Armor");
 	}
 }

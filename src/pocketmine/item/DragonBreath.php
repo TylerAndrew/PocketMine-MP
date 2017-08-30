@@ -22,7 +22,7 @@
 namespace pocketmine\item;
 
 class DragonBreath extends Item{
-	public function __construct($meta = 0, $count = 1){
-		parent::__construct(self::DRAGON_BREATH, $meta, $count, "Dragon's Breath");
+	public function __construct($meta = 0){
+		parent::__construct(self::DRAGON_BREATH, $meta, "Dragon's Breath");
 	}
 }

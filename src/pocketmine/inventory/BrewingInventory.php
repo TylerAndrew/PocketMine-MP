@@ -3,6 +3,7 @@
 namespace pocketmine\inventory;
 
 use pocketmine\item\Item;
+use pocketmine\network\mcpe\protocol\types\WindowTypes;
 use pocketmine\Server;
 use pocketmine\tile\BrewingStand;
 
@@ -32,8 +33,8 @@ class BrewingInventory extends ContainerInventory{
 		return $this->getItem(0);
 	}
 
-	public function onSlotChange($index, $before){
-		parent::onSlotChange($index, $before);
+	public function onSlotChange(int $index, Item $before, bool $send){
+		parent::onSlotChange($index, $before, $send);
 		$this->getHolder()->scheduleUpdate();
 		$this->getHolder()->updateSurface();
 	}
@@ -44,5 +45,21 @@ class BrewingInventory extends ContainerInventory{
 			if($canbrew) return $brew->getResult();
 		}
 		return Item::get(Item::AIR, 0, 1);
+	}
+
+	public function getName(): string{
+		return "Brewing";
+	}
+
+	/**
+	 * Returns the Minecraft PE inventory type used to show the inventory window to clients.
+	 * @return int
+	 */
+	public function getNetworkType(): int{
+		return WindowTypes::BREWING_STAND;
+	}
+
+	public function getDefaultSize(): int{
+		return 4; //1 input, 3 outputs
 	}
 }

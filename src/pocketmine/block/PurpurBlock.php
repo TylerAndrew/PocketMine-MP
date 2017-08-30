@@ -26,6 +26,7 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 use pocketmine\item\Tool;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class PurpurBlock extends Solid{
@@ -36,7 +37,7 @@ class PurpurBlock extends Solid{
 		$this->meta = $meta;
 	}
 
-	public function getName(){
+	public function getName(): string{
 		static $names = [
 			0 => "Purpur Block",
 			1 => "Unknown",
@@ -45,16 +46,16 @@ class PurpurBlock extends Solid{
 		return $names[$this->meta & 0x0f]??"Unknown";
 	}
 
-    public function getHardness(){
-        return 1.5;
-    }
+	public function getHardness(): float{
+		return 1.5;
+	}
 
-    public function getResistance(){
-        return 30;
-    }
-	
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		if($this->meta === 2){
+	public function getResistance(): float{
+		return 30.0;
+	}
+
+	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
+		if ($this->meta === 2){
 			$faces = [
 				0 => 0,
 				1 => 0,
@@ -69,17 +70,17 @@ class PurpurBlock extends Solid{
 		return true;
 	}
 
-	public function getToolType(){
+	public function getToolType(): int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-    public function getDrops(Item $item){
-        if ($item->isPickaxe() >= Tool::TIER_WOODEN) {
-            return [
-                [$this->id, $this->meta & 0x0f, 1]
-            ];
-        } else {
-            return [];
-        }
-    }
+	public function getDrops(Item $item): array{
+		if ($item->isPickaxe() >= Tool::TIER_WOODEN){
+			return [
+				[$this->id, $this->meta & 0x0f, 1]
+			];
+		} else{
+			return [];
+		}
+	}
 }

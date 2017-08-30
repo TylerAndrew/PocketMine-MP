@@ -10,7 +10,7 @@ use pocketmine\nbt\tag\ShortTag;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class ThrownPotion extends Projectile {
+class ThrownPotion extends Projectile{
 	const NETWORK_ID = 86;
 	const DATA_POTION_ID = 16;//TODO: update this
 	public $width = 0.25;
@@ -19,8 +19,8 @@ class ThrownPotion extends Projectile {
 	protected $gravity = 0.1;
 	protected $drag = 0.05;
 
-	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null) {
-		if (!isset($nbt->PotionId)) {
+	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null){
+		if (!isset($nbt->PotionId)){
 			$nbt->PotionId = new ShortTag("PotionId", Potion::AWKWARD);
 		}
 		parent::__construct($level, $nbt, $shootingEntity);
@@ -28,18 +28,18 @@ class ThrownPotion extends Projectile {
 		$this->setDataProperty(self::DATA_POTION_ID, self::DATA_TYPE_SHORT, $this->getPotionId());
 	}
 
-	public function getPotionId() {
+	public function getPotionId(){
 		return $this->namedtag["PotionId"];
 	}
 
-	public function onUpdate($currentTick) {
-		if ($this->closed) {
+	public function onUpdate(int $currentTick): bool{
+		if ($this->closed){
 			return false;
 		}
 		$this->timings->startTiming();
 		$hasUpdate = parent::onUpdate($currentTick);
 		$this->age++;
-		if ($this->age > 1200 or $this->isCollided) {
+		if ($this->age > 1200 or $this->isCollided){
 			$this->kill();
 			$this->close();
 			$hasUpdate = true;
@@ -48,14 +48,14 @@ class ThrownPotion extends Projectile {
 		return $hasUpdate;
 	}
 
-	public function kill() {
-		if ($this->isAlive()) {
+	public function kill(){
+		if ($this->isAlive()){
 			$color = Potion::getColor($this->getPotionId());
 			$this->getLevel()->addParticle(new SpellParticle($this, $color[0], $color[1], $color[2]));
 			$players = $this->getViewers();
-			foreach ($players as $p) {
-				if ($p->distance($this) <= 6) {
-					switch ($this->getPotionId()) {
+			foreach ($players as $p){
+				if ($p->distance($this) <= 6){
+					switch ($this->getPotionId()){
 						case Potion::NIGHT_VISION:
 							$p->addEffect(Effect::getEffect(Effect::NIGHT_VISION)->setAmplifier(0)->setDuration(3 * 60 * 20));
 							break;
@@ -105,32 +105,32 @@ class ThrownPotion extends Projectile {
 							$p->addEffect(Effect::getEffect(Effect::WATER_BREATHING)->setAmplifier(0)->setDuration(8 * 60 * 20));
 							break;
 						case Potion::POISON:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(0)->setDuration(45 * 20));
 							}
 							break;
 						case Potion::POISON_T:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(0)->setDuration(2 * 60 * 20));
 							}
 							break;
 						case Potion::POISON_TWO:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::POISON)->setAmplifier(0)->setDuration(22 * 20));
 							}
 							break;
 						case Potion::REGENERATION:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(0)->setDuration(45 * 20));
 							}
 							break;
 						case Potion::REGENERATION_T:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(0)->setDuration(2 * 60 * 20));
 							}
 							break;
 						case Potion::REGENERATION_TWO:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::REGENERATION)->setAmplifier(1)->setDuration(22 * 20));
 							}
 							break;
@@ -150,22 +150,22 @@ class ThrownPotion extends Projectile {
 							$p->addEffect(Effect::getEffect(Effect::WEAKNESS)->setAmplifier(0)->setDuration(4 * 60 * 20));
 							break;
 						case Potion::HEALING:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::HEALING)->setAmplifier(0)->setDuration(1));
 							}
 							break;
 						case Potion::HEALING_TWO:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::HEALING)->setAmplifier(1)->setDuration(1));
 							}
 							break;
 						case Potion::HARMING:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::HARMING)->setAmplifier(0)->setDuration(1));
 							}
 							break;
 						case Potion::HARMING_TWO:
-							if ($p->isSurvival()) {
+							if ($p->isSurvival()){
 								$p->addEffect(Effect::getEffect(Effect::HARMING)->setAmplifier(1)->setDuration(1));
 							}
 							break;
@@ -176,16 +176,14 @@ class ThrownPotion extends Projectile {
 		}
 	}
 
-	public function spawnTo(Player $player) {
+	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->type = self::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->type = self::NETWORK_ID;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
+		$pk->yaw = $this->yaw;
+		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 

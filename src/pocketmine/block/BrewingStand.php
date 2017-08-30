@@ -39,7 +39,7 @@ class BrewingStand extends Transparent{
 
 	protected $id = self::BREWING_STAND_BLOCK;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
@@ -47,30 +47,29 @@ class BrewingStand extends Transparent{
 		return true;
 	}
 
-	public function getHardness(){
-		return 0.5;
-	}
-
-	public function getResistance(){
-		return 2.5;
-	}
-
-	public function getLightLevel(){
-		return 1;
-	}
-
-	public function getName(){
+	public function getName(): string{
 		return "Brewing Stand";
 	}
 
-	public function onActivate(Item $item, Player $player = null){
-		if($player instanceof Player){
+	public function getHardness(): float{
+		return 0.5;
+	}
+
+	public function getResistance(): float{
+		return 2.5;
+	}
+
+	public function getLightLevel(): int{
+		return 1;
+	}
+
+	public function onActivate(Item $item, Player $player = null): bool{
+		if ($player instanceof Player){
 			//TODO lock
 			$t = $this->getLevel()->getTile($this);
-			//$brewingStand = false;
-			if($t instanceof TileBrewingStand){
+			if ($t instanceof TileBrewingStand){
 				$brewingStand = $t;
-			}else{
+			} else{
 				$nbt = new CompoundTag("", [
 					new ListTag("Items", []),
 					new StringTag("id", Tile::BREWING_STAND),
@@ -86,9 +85,9 @@ class BrewingStand extends Transparent{
 		return true;
 	}
 
-	public function getDrops(Item $item){
+	public function getDrops(Item $item): array{
 		$drops = [];
-		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+		if ($item->isPickaxe() >= Tool::TIER_WOODEN){
 			$drops[] = [Item::BREWING_STAND, 0, 1];
 		}
 		return $drops;
@@ -106,6 +105,15 @@ class BrewingStand extends Transparent{
 			$list[] = $bb2;
 		}
 	}*/
+
+	public function getToolType(): int{
+		return Tool::TYPE_PICKAXE;
+	}
+
+	public function getVariantBitmask(): int{
+		return 0;
+	}
+
 	protected function recalculateBoundingBox(){
 		$thin = new AxisAlignedBB(
 			$this->x + 0.4375,

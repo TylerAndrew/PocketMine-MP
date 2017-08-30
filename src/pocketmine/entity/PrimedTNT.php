@@ -35,7 +35,6 @@ class PrimedTNT extends Entity implements Explosive{
 	const NETWORK_ID = 65;
 
 	public $width = 0.98;
-	public $length = 0.98;
 	public $height = 0.98;
 
 	protected $baseOffset = 0.49;
@@ -48,29 +47,29 @@ class PrimedTNT extends Entity implements Explosive{
 	public $canCollide = false;
 
 
-	public function attack($damage, EntityDamageEvent $source){
-		if($source->getCause() === EntityDamageEvent::CAUSE_VOID){
-			parent::attack($damage, $source);
+	public function attack(EntityDamageEvent $source){
+		if ($source->getCause() === EntityDamageEvent::CAUSE_VOID){
+			parent::attack($source);
 		}
 	}
 
 	protected function initEntity(){
 		parent::initEntity();
 
-		if(isset($this->namedtag->Fuse)){
+		if (isset($this->namedtag->Fuse)){
 			$this->fuse = $this->namedtag["Fuse"];
-		}else{
+		} else{
 			$this->fuse = 80;
 		}
 
-		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_IGNITED, true);
+		$this->setGenericFlag(self::DATA_FLAG_IGNITED, true);
 		$this->setDataProperty(self::DATA_FUSE_LENGTH, self::DATA_TYPE_INT, $this->fuse);
 
 		$this->level->broadcastLevelEvent($this, LevelEventPacket::EVENT_SOUND_IGNITE);
 	}
 
 
-	public function canCollideWith(Entity $entity){
+	public function canCollideWith(Entity $entity): bool{
 		return false;
 	}
 
@@ -79,65 +78,34 @@ class PrimedTNT extends Entity implements Explosive{
 		$this->namedtag->Fuse = new ByteTag("Fuse", $this->fuse);
 	}
 
-	public function onUpdate($currentTick){
-
-		if($this->closed){
+	public function entityBaseTick(int $tickDiff = 1): bool{
+		if ($this->closed){
 			return false;
 		}
 
-		$this->timings->startTiming();
+		$hasUpdate = parent::entityBaseTick($tickDiff);
 
-		$tickDiff = $currentTick - $this->lastUpdate;
-		if($tickDiff <= 0 and !$this->justCreated){
-			return true;
-		}
-
-		if($this->fuse % 5 === 0){ //don't spam it every tick, it's not necessary
+		if ($this->fuse % 5 === 0){ //don't spam it every tick, it's not necessary
 			$this->setDataProperty(self::DATA_FUSE_LENGTH, self::DATA_TYPE_INT, $this->fuse);
 		}
 
-		$this->lastUpdate = $currentTick;
-
-		$hasUpdate = $this->entityBaseTick($tickDiff);
-
-		if($this->isAlive()){
-
-			$this->motionY -= $this->gravity;
-
-			$this->move($this->motionX, $this->motionY, $this->motionZ);
-
-			$friction = 1 - $this->drag;
-
-			$this->motionX *= $friction;
-			$this->motionY *= $friction;
-			$this->motionZ *= $friction;
-
-			$this->updateMovement();
-
-			if($this->onGround){
-				$this->motionY *= -0.5;
-				$this->motionX *= 0.7;
-				$this->motionZ *= 0.7;
-			}
-
+		if ($this->isAlive()){
 			$this->fuse -= $tickDiff;
 
-			if($this->fuse <= 0){
+			if ($this->fuse <= 0){
 				$this->kill();
 			}
-
 		}
 
-
-		return $hasUpdate or $this->fuse >= 0 or abs($this->motionX) > 0.00001 or abs($this->motionY) > 0.00001 or abs($this->motionZ) > 0.00001;
+		return $hasUpdate or $this->fuse >= 0;
 	}
 
 	public function kill(){
-		if(!$this->isAlive()){
+		if (!$this->isAlive()){
 			return;
 		}
 		$this->explode();
-		if(!$this->closed){
+		if (!$this->closed){
 			$this->close();
 		}
 	}
@@ -145,9 +113,9 @@ class PrimedTNT extends Entity implements Explosive{
 	public function explode(){
 		$this->server->getPluginManager()->callEvent($ev = new ExplosionPrimeEvent($this, 3));
 
-		if(!$ev->isCancelled()){
+		if (!$ev->isCancelled()){
 			$explosion = new Explosion($this, $ev->getForce(), $this);
-			if($ev->isBlockBreaking()){
+			if ($ev->isBlockBreaking()){
 				$explosion->explodeA();
 			}
 			$explosion->explodeB();
@@ -155,20 +123,16 @@ class PrimedTNT extends Entity implements Explosive{
 		$this->close();
 	}
 
-    public function getName(){
-        return "Primed TNT";
-    }
+	public function getName(){
+		return "Primed TNT";
+	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->type = PrimedTNT::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 

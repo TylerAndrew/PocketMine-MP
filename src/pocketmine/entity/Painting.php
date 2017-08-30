@@ -48,10 +48,9 @@ class Painting extends Hanging{
 	public function initEntity(){
 		parent::initEntity();
 
-		if(isset($this->namedtag->Motive)){
+		if (isset($this->namedtag->Motive)){
 			$this->motive = $this->namedtag["Motive"];
-		}
-		else{
+		} else{
 			$this->close();
 		}
 	}
@@ -60,9 +59,9 @@ class Painting extends Hanging{
 		return $this->motive;
 	}
 
-	public function attack($damage, EntityDamageEvent $source){
-		parent::attack($damage, $source);
-		if($source->isCancelled()) return;
+	public function attack(EntityDamageEvent $source){
+		parent::attack($source);
+		if ($source->isCancelled()) return;
 		$this->level->addParticle(new DestroyBlockParticle($this->add(0.5), Block::get(Block::LADDER)));
 		$this->kill();
 	}
@@ -74,16 +73,16 @@ class Painting extends Hanging{
 	public function spawnTo(Player $player){
 		$pk = new AddPaintingPacket();
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = (int) $this->x;
-		$pk->y = (int) $this->y;
-		$pk->z = (int) $this->z;
+		$pk->x = (int)$this->x;
+		$pk->y = (int)$this->y;
+		$pk->z = (int)$this->z;
 		$pk->direction = $this->getDirection();
 		$pk->title = $this->motive;
 		$player->dataPacket($pk);
 		parent::spawnTo($player);
 	}
 
-	public function getDrops() : array {
+	public function getDrops(): array{
 		return [ItemItem::get(ItemItem::PAINTING, 0, 1)];
 	}
 }

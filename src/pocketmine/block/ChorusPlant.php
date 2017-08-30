@@ -8,47 +8,43 @@ use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
-class ChorusPlant extends Transparent
-{
-    protected $id = self::CHORUS_PLANT;
+class ChorusPlant extends Transparent{
+	protected $id = self::CHORUS_PLANT;
 
-    public function __construct(){}
+	public function __construct(){ }
 
-    public function getHardness()
-    {
-        return 0.4;
-    }
+	public function getHardness(): float{
+		return 0.4;
+	}
 
-    public function getToolType()
-    {
-        return Tool::TYPE_AXE;
-    }
+	public function getToolType(): int{
+		return Tool::TYPE_AXE;
+	}
 
-    public function getName()
-    {
-        return "Chorus Plant";
-    }
+	public function getName(): string{
+		return "Chorus Plant";
+	}
 
-    public function getDrops(Item $item){
-        return [[Item::CHORUS_FRUIT, 0, mt_rand(0,1)]];
-    }
+	public function getDrops(Item $item): array{
+		return [[Item::CHORUS_FRUIT, 0, mt_rand(0, 1)]];
+	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-		if($this->shouldBreak(false)) {
-			print 'You can\'t place there!'.PHP_EOL;
+	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
+		if ($this->shouldBreak(false)){
+			print 'You can\'t place there!' . PHP_EOL;
 			return false;
 		}
 		return $this->getLevel()->setBlock($this, $this, true, true);
 	}
 
-	public function onUpdate($type){
-		print 'Got update: '.$type.PHP_EOL;
-		if($type === Level::BLOCK_UPDATE_NORMAL || $type === Level::BLOCK_UPDATE_RANDOM){
-			if($this->shouldBreak()){
-				print 'invalid, break it'.PHP_EOL;
+	public function onUpdate(int $type){
+		print 'Got update: ' . $type . PHP_EOL;
+		if ($type === Level::BLOCK_UPDATE_NORMAL || $type === Level::BLOCK_UPDATE_RANDOM){
+			if ($this->shouldBreak()){
+				print 'invalid, break it' . PHP_EOL;
 				$this->getLevel()->scheduleDelayedBlockUpdate($this, 20);
 			}
-		}elseif($type === Level::BLOCK_UPDATE_SCHEDULED){
+		} elseif ($type === Level::BLOCK_UPDATE_SCHEDULED){
 			$this->getLevel()->useBreakOn($this, $item, null, true);
 		}
 	}
@@ -107,10 +103,10 @@ class ChorusPlant extends Transparent
 		return false;
 	}
 
-    public function countHorizontalStems(){
+	public function countHorizontalStems(){
 		$count = 0;
-		foreach([Vector3::SIDE_NORTH,Vector3::SIDE_SOUTH,Vector3::SIDE_WEST,Vector3::SIDE_EAST] as $side){
-			if($this->getSide($side)->getId() === self::CHORUS_PLANT){
+		foreach ([Vector3::SIDE_NORTH, Vector3::SIDE_SOUTH, Vector3::SIDE_WEST, Vector3::SIDE_EAST] as $side){
+			if ($this->getSide($side)->getId() === self::CHORUS_PLANT){
 				$count++;
 			}
 		}

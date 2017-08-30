@@ -37,21 +37,30 @@ class ClientboundMapItemDataPacket extends DataPacket{
 	const BITFLAG_DECORATION_UPDATE = 0x04;
 	const BITFLAG_ENTITY_UPDATE = 0x08;
 
+	/** @var int */
 	public $mapId;
+	/** @var int */
 	public $type;
 
+	/** @var int[] */
 	public $eids = [];
+	/** @var int */
 	public $scale;
+	/** @var array */
 	public $decorations = [];
 
+	/** @var int */
 	public $width;
+	/** @var int */
 	public $height;
+	/** @var int */
 	public $xOffset = 0;
+	/** @var int */
 	public $yOffset = 0;
 	/** @var Color[][] */
 	public $colors = [];
 
-	public function decodePayload(){
+	protected function decodePayload(){
 		$this->mapId = $this->getEntityUniqueId();
 		$this->type = $this->getUnsignedVarInt();
 
@@ -94,7 +103,7 @@ class ClientboundMapItemDataPacket extends DataPacket{
 		}
 	}
 
-	public function encodePayload(){
+	protected function encodePayload(){
 		$this->putEntityUniqueId($this->mapId);
 
 		$type = 0;

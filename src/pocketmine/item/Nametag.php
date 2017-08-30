@@ -25,23 +25,23 @@ use pocketmine\entity\Animal;
 use pocketmine\entity\Monster;
 use pocketmine\entity\NPC;
 
-class Nametag extends Item {
-	public function __construct($meta = 0, $count = 1) {
-		parent::__construct(self::NAMETAG, 0, $count, "Nametag");
+class Nametag extends Item{
+	public function __construct($meta = 0){
+		parent::__construct(self::NAMETAG, $meta, "Nametag");
 	}
 
 	/**
 	 * @param \pocketmine\block\Block|\pocketmine\entity\Entity $object
 	 * @return bool
 	 */
-	public function useOn($object) {
+	public function useOn($object){
 		if (!$object instanceof Animal && !$object instanceof Monster && !$object instanceof NPC) return false;//TODO: All types
-		elseif ($this->hasCustomName()) {
+		elseif ($this->hasCustomName()){
 			if ($this->getCustomName() === $object->getNameTag()) return false;
 			$object->setNameTag($this->getCustomName());
 			$object->setNameTagVisible(true);
 			$object->setNameTagAlwaysVisible(false);
-		} else {
+		} else{
 			return false;
 		}
 		return true;

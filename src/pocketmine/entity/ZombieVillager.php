@@ -1,4 +1,5 @@
 <?php
+
 namespace pocketmine\entity;
 
 use pocketmine\nbt\tag\IntTag;
@@ -7,7 +8,7 @@ use pocketmine\Player;
 
 class ZombieVillager extends Zombie{
 	const NETWORK_ID = 44;
-	
+
 	public $width = 1.031;
 	public $length = 0.891;
 	public $height = 2.125;
@@ -15,26 +16,22 @@ class ZombieVillager extends Zombie{
 
 	public function initEntity(){
 		parent::initEntity();
-		if(!isset($this->namedtag->Profession) || $this->getVariant() > 4){
+		if (!isset($this->namedtag->Profession) || $this->getVariant() > 4){
 			$this->setVariant(mt_rand(0, 4));
 		}
 		$this->setDataProperty(16, self::DATA_TYPE_BYTE, $this->getVariant());
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "Zombie Villager";
 	}
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->type = self::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->type = self::NETWORK_ID;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
 		$pk->yaw = $this->yaw;
 		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
@@ -42,7 +39,6 @@ class ZombieVillager extends Zombie{
 
 		parent::spawnTo($player);
 	}
-	
 
 	/**
 	 * Sets the Zombie Villager's profession

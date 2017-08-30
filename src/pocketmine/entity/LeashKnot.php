@@ -1,4 +1,5 @@
 <?php
+
 namespace pocketmine\entity;
 
 use pocketmine\nbt\tag\CompoundTag;
@@ -19,34 +20,46 @@ class LeashKnot extends Entity{
 
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
-		$pk->type = self::NETWORK_ID;
 		$pk->entityRuntimeId = $this->getId();
-		$pk->x = $this->x;
-		$pk->y = $this->y;
-		$pk->z = $this->z;
-		$pk->speedX = $this->motionX;
-		$pk->speedY = $this->motionY;
-		$pk->speedZ = $this->motionZ;
+		$pk->type = self::NETWORK_ID;
+		$pk->position = $this->asVector3();
+		$pk->motion = $this->getMotion();
+		$pk->yaw = $this->yaw;
+		$pk->pitch = $this->pitch;
 		$pk->metadata = $this->dataProperties;
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
 	}
-	
-	public function numberofAnimalsAttached(){}
-	public function isPickable(){}
-	public function removeAnimals(Player $player){}
-	public function interactWithPlayer(Player $player){}
-	public function addAdditionalSaveData(CompoundTag $compound){}
-	public function readAdditionalSaveData(CompoundTag $compound){}
-	public function recalculateBoundingBox(){}
-	public function shouldRenderAtSqrDistance(){}
-	public function remove(){}
-	public function setDir(int $dir){}
-	public function dropItem(){}
-	public function getWidth(){}
-	public function survives(){}
-	public function getHeight(){}
-	public function getEyeHeight(){}
-	
+
+	public function numberofAnimalsAttached(){ }
+
+	public function isPickable(){ }
+
+	public function removeAnimals(Player $player){ }
+
+	public function interactWithPlayer(Player $player){ }
+
+	public function addAdditionalSaveData(CompoundTag $compound){ }
+
+	public function readAdditionalSaveData(CompoundTag $compound){ }
+
+	public function recalculateBoundingBox(){ }
+
+	public function shouldRenderAtSqrDistance(){ }
+
+	public function remove(){ }
+
+	public function setDir(int $dir){ }
+
+	public function dropItem(){ }
+
+	public function getWidth(){ }
+
+	public function survives(){ }
+
+	public function getHeight(){ }
+
+	public function getEyeHeight(): float{ return 0.0; }//TODO
+
 }

@@ -30,25 +30,25 @@ use pocketmine\network\mcpe\protocol\EntityEventPacket;
 use pocketmine\Player;
 
 abstract class Food extends Item implements FoodSource{
-	public function canBeConsumed() : bool{
+	public function canBeConsumed(): bool{
 		return true;
 	}
 
-	public function canBeConsumedBy(Entity $entity) : bool{
+	public function canBeConsumedBy(Entity $entity): bool{
 		return $entity instanceof Human and $entity->getFood() < $entity->getMaxFood();
 	}
 
 	public function getResidue(){
-		if($this->getCount() === 1){
-			return Item::get(0);
-		}else{
+		if ($this->getCount() === 1){
+			return ItemFactory::get(0);
+		} else{
 			$new = clone $this;
 			$new->count--;
 			return $new;
 		}
 	}
 
-	public function getAdditionalEffects() : array{
+	public function getAdditionalEffects(): array{
 		return [];
 	}
 
@@ -56,7 +56,7 @@ abstract class Food extends Item implements FoodSource{
 		$pk = new EntityEventPacket();
 		$pk->entityRuntimeId = $human->getId();
 		$pk->event = EntityEventPacket::USE_ITEM;
-		if($human instanceof Player){
+		if ($human instanceof Player){
 			$human->dataPacket($pk);
 		}
 		$human->getLevel()->getServer()->broadcastPacket($human->getViewers(), $pk);
@@ -65,7 +65,7 @@ abstract class Food extends Item implements FoodSource{
 
 		$human->addSaturation($ev->getSaturationRestore());
 		$human->addFood($ev->getFoodRestore());
-		foreach($ev->getAdditionalEffects() as $effect){
+		foreach ($ev->getAdditionalEffects() as $effect){
 			$human->addEffect($effect);
 		}
 

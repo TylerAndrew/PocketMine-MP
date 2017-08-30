@@ -37,7 +37,7 @@ abstract class Button extends Flowable{
 		return 0.5;
 	}
 
-	public function getResistance(){
+	public function getResistance(): float{
 		return 2.5;
 	}
 
@@ -45,9 +45,9 @@ abstract class Button extends Flowable{
 		return false;
 	}
 
-	public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
+	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
 		$below = $this->getSide(Vector3::SIDE_DOWN);
-		if ($target->isSolid() || ($face === Vector3::SIDE_DOWN && ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall)){
+		if ($target->isSolid() || ($face === Vector3::SIDE_DOWN && ($below instanceof StoneSlab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall)){
 			$this->meta = $face;
 			$this->getLevel()->setBlock($block, $this, true, true);
 			return true;
@@ -56,17 +56,17 @@ abstract class Button extends Flowable{
 		return false;
 	}
 
-/*	public function onUpdate($type){
-		if ($type === Level::BLOCK_UPDATE_NORMAL){
-			$below = $this->getSide(Vector3::SIDE_DOWN);
-			if($this->getSide($this->meta)->isSolid()) return false;
-			if (!($this->meta === 0 && ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof StoneWall)){
-				$this->getLevel()->useBreakOn($this);
+	/*	public function onUpdate($type){
+			if ($type === Level::BLOCK_UPDATE_NORMAL){
+				$below = $this->getSide(Vector3::SIDE_DOWN);
+				if($this->getSide($this->meta)->isSolid()) return false;
+				if (!($this->meta === 0 && ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof StoneWall)){
+					$this->getLevel()->useBreakOn($this);
 
-				return Level::BLOCK_UPDATE_NORMAL;
+					return Level::BLOCK_UPDATE_NORMAL;
+				}
 			}
-		}
 
-		return false;
-	}*/
+			return false;
+		}*/
 }

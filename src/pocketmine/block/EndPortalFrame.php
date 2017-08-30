@@ -25,37 +25,38 @@ namespace pocketmine\block;
 
 use pocketmine\item\Item;
 use pocketmine\math\AxisAlignedBB;
+use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class EndPortalFrame extends Solid{
 
 	protected $id = self::END_PORTAL_FRAME;
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getLightLevel(){
+	public function getLightLevel(): int{
 		return 1;
 	}
 
-	public function getName(){
+	public function getName(): string{
 		return "End Portal Frame";
 	}
 
-    public function canBeActivated(){
-        return true;
-    }
+	public function canBeActivated(){
+		return true;
+	}
 
-	public function getHardness(){
+	public function getHardness(): float{
 		return -1;
 	}
 
-	public function getResistance(){
+	public function getBlastResistance(): float{
 		return 18000000;
 	}
 
-	public function isBreakable(Item $item){
+	public function isBreakable(Item $item): bool{
 		return false;
 	}
 
@@ -71,32 +72,32 @@ class EndPortalFrame extends Solid{
 		);
 	}
 
-    public function place(Item $item, Block $block, Block $target, $face, $fx, $fy, $fz, Player $player = null){
-        $faces = [
-            0 => 3,
-            1 => 0,
-            2 => 1,
-            3 => 2,
-        ];
-        $this->meta = $faces[$player instanceof Player ? $player->getDirection() : 0];
-        $this->getLevel()->setBlock($block, $this, true, true);
-        return true;
-    }
+	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
+		$faces = [
+			0 => 3,
+			1 => 0,
+			2 => 1,
+			3 => 2,
+		];
+		$this->meta = $faces[$player instanceof Player ? $player->getDirection() : 0];
+		$this->getLevel()->setBlock($block, $this, true, true);
+		return true;
+	}
 
-    public function onActivate(Item $item, Player $player = null){
-        if(($this->getDamage() & 0x04) === 0 && $player instanceof Player){
-            if($item->getId() === Item::ENDER_EYE){
-                $this->setDamage($this->getDamage() + 4);
-                $this->getLevel()->setBlock($this, $this, true, true);
-                $this->createPortal();
-                return true;
-            }
-        }
+	public function onActivate(Item $item, Player $player = null): bool{
+		if (($this->getDamage() & 0x04) === 0 && $player instanceof Player){
+			if ($item->getId() === Item::ENDER_EYE){
+				$this->setDamage($this->getDamage() + 4);
+				$this->getLevel()->setBlock($this, $this, true, true);
+				$this->createPortal();
+				return true;
+			}
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    private function createPortal(){
-        return;
-    }
+	private function createPortal(){
+		return;
+	}
 }
