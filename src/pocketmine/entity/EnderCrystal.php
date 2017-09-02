@@ -16,45 +16,14 @@ class EnderCrystal extends Living implements Explosive{
 	public $height = 1;
 	public $width = 1;
 	public $length = 1;//TODO: Size
-	protected $maxHealth = 1;
-
-	public function __construct(Level $level, CompoundTag $nbt){
-		parent::__construct($level, $nbt);
-	}
 
 	public function initEntity(){
+		$this->setMaxHealth(1);
 		parent::initEntity();
 	}
 
 	public function getName(): string{
 		return "Ender Crystal";
-	}
-
-	public function kill(){
-		if (!$this->isAlive()){
-			return;
-		}
-		$this->explode();
-		if (!$this->closed){
-			$this->close();
-		}
-	}
-
-	public function setMotion(Vector3 $motion){
-		return;
-	}
-
-	public function explode(){
-		$this->server->getPluginManager()->callEvent($ev = new ExplosionPrimeEvent($this, 6));
-
-		if (!$ev->isCancelled()){
-			$explosion = new Explosion($this, $ev->getForce(), $this);
-			if ($ev->isBlockBreaking()){
-				$explosion->explodeA();
-			}
-			$explosion->explodeB();
-		}
-		$this->close();
 	}
 
 	public function spawnTo(Player $player){
@@ -69,5 +38,31 @@ class EnderCrystal extends Living implements Explosive{
 		$player->dataPacket($pk);
 
 		parent::spawnTo($player);
+	}
+
+	public function kill(){
+		if (!$this->isAlive()){
+			return;
+		}
+		$this->explode();
+		if (!$this->closed){
+			$this->close();
+		}
+	}
+
+	protected function applyGravity(){}
+
+	public function explode(){
+		$this->server->getPluginManager()->callEvent($ev = new ExplosionPrimeEvent($this, 6));
+
+		if (!$ev->isCancelled()){
+			$pos = $this->asPosition();
+			$explosion = new Explosion($pos, $ev->getForce(), $this);
+			$this->close();
+			if ($ev->isBlockBreaking()){
+				$explosion->explodeA();
+			}
+			$explosion->explodeB();
+		}
 	}
 }

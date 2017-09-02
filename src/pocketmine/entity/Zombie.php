@@ -43,7 +43,7 @@ class Zombie extends Monster{
 	public function spawnTo(Player $player){
 		$pk = new AddEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
-		$pk->type = Zombie::NETWORK_ID;
+		$pk->type = self::NETWORK_ID;
 		$pk->position = $this->asVector3();
 		$pk->motion = $this->getMotion();
 		$pk->yaw = $this->yaw;

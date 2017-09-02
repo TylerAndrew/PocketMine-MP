@@ -20,6 +20,8 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\item;
 
 use pocketmine\block\Block;
@@ -35,17 +37,11 @@ use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 
 class EndCrystal extends Item{
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		parent::__construct(self::END_CRYSTAL, $meta, "End Crystal");
 	}
 
-	public function canBeActivated(){
-		return true;
-	}
-
 	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos): bool{
-		$entity = null;
-
 		$nbt = new CompoundTag("", [
 			new ListTag("Pos", [
 				new DoubleTag("", $block->getX() + 0.5),
@@ -58,7 +54,7 @@ class EndCrystal extends Item{
 				new DoubleTag("", 0)
 			]),
 			new ListTag("Rotation", [
-				new FloatTag("", 0),
+				new FloatTag("", lcg_value() * 360),
 				new FloatTag("", 0)
 			]),
 		]);
