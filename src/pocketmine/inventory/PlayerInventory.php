@@ -178,14 +178,14 @@ class PlayerInventory extends BaseInventory{
 	public function resetHotbar(bool $send = true){
 		$this->hotbar = \SplFixedArray::fromArray(range(0, $this->getHotbarSize() - 1, 1));
 		if($send){
-			$this->sendContents($this->getHolder());
+			$this->sendHotbar();
 		}
 	}
 
 	public function sendHotbar(){
 		$pk = new PlayerHotbarPacket();
 		$pk->windowId = ContainerIds::INVENTORY;
-		$pk->selectedSlot = $this->getHeldItemIndex();
+		$pk->selectedHotbarSlot = $this->getHeldItemIndex();
 		$pk->slots = array_map(function(int $link){ return $link + $this->getHotbarSize(); }, $this->getHotbar());
 		$this->getHolder()->dataPacket($pk);
 	}

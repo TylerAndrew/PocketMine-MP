@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace pocketmine\plugin;
 
+use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\permission\Permission;
 use pocketmine\Server;
 
@@ -30,6 +31,8 @@ class PluginDescription{
 	private $name;
 	private $main;
 	private $api;
+	/** @var int[] */
+	private $compatibleMcpeProtocols = [];
 	private $extensions = [];
 	private $depend = [];
 	private $softDepend = [];
@@ -72,10 +75,12 @@ class PluginDescription{
 		$this->name = str_replace(" ", "_", $this->name);
 		$this->version = (string) $plugin["version"];
 		$this->main = $plugin["main"];
-		$this->api = array_map(function($v){ return (string) $v; }, !is_array($plugin["api"]) ? [$plugin["api"]] : $plugin["api"]);
 		if(stripos($this->main, "pocketmine\\") === 0){
 			throw new PluginException("Invalid PluginDescription main, cannot start within the PocketMine namespace");
 		}
+
+		$this->api = array_map("strval", (array) $plugin["api"] ?? []);
+		$this->compatibleMcpeProtocols = array_map("intval", (array) ($plugin["mcpe-protocol"] ?? []));
 
 		if(isset($plugin["commands"]) and is_array($plugin["commands"])){
 			$this->commands = $plugin["commands"];
@@ -95,22 +100,17 @@ class PluginDescription{
 				$this->extensions[$k] = is_array($v) ? $v : [$v];
 			}
 		}
-		if(isset($plugin["softdepend"])){
-			$this->softDepend = (array) $plugin["softdepend"];
-		}
-		if(isset($plugin["loadbefore"])){
-			$this->loadBefore = (array) $plugin["loadbefore"];
-		}
 
-		if(isset($plugin["website"])){
-			$this->website = $plugin["website"];
-		}
-		if(isset($plugin["description"])){
-			$this->description = $plugin["description"];
-		}
-		if(isset($plugin["prefix"])){
-			$this->prefix = $plugin["prefix"];
-		}
+		$this->softDepend = (array) ($plugin["softdepend"] ?? $this->softDepend);
+
+		$this->loadBefore = (array) ($plugin["loadbefore"] ?? $this->loadBefore);
+
+		$this->website = (string) ($plugin["website"] ?? $this->website);
+
+		$this->description = (string) ($plugin["description"] ?? $this->description);
+
+		$this->prefix = (string) ($plugin["prefix"] ?? $this->prefix);
+
 		if(isset($plugin["load"])){
 			$order = strtoupper($plugin["load"]);
 			if(!defined(PluginLoadOrder::class . "::" . $order)){
@@ -149,6 +149,13 @@ class PluginDescription{
 		if(Server::getInstance()->getProperty("settings.use-outdated-plugins", false) == true && Server::getInstance()->getProperty("settings.really-use-outdated-plugins", "") === "Yes i am 100% really sure!")
 			array_push($api, \pocketmine\API_VERSION);
 		return $api;
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public function getCompatibleMcpeProtocols() : array{
+		return $this->compatibleMcpeProtocols;
 	}
 
 	/**

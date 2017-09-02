@@ -201,10 +201,13 @@ abstract class Entity extends Location implements Metadatable{
 	const DATA_FLAG_IDLING = 39;
 	const DATA_FLAG_EVOKER_SPELL = 40;
 	const DATA_FLAG_CHARGE_ATTACK = 41;
-
+	const DATA_FLAG_WASD_CONTROLLED = 42;
+	const DATA_FLAG_CAN_POWER_JUMP = 43;
 	const DATA_FLAG_LINGER = 44;
 	const DATA_FLAG_HAS_COLLISION = 45;
 	const DATA_FLAG_AFFECTED_BY_GRAVITY = 46;
+	const DATA_FLAG_FIRE_IMMUNE = 47;
+	const DATA_FLAG_DANCING = 48;
 
 	public static $entityCount = 1;
 	/** @var Entity[] */
@@ -365,8 +368,8 @@ abstract class Entity extends Location implements Metadatable{
 	/** @var float */
 	protected $baseOffset = 0.0;
 
-	/** @var int */
-	private $health = 20;
+	/** @var float */
+	private $health = 20.0;
 	private $maxHealth = 20;
 
 	/** @var float */
@@ -998,9 +1001,9 @@ abstract class Entity extends Location implements Metadatable{
 	}
 
 	/**
-	 * @return int
+	 * @return float
 	 */
-	public function getHealth(){
+	public function getHealth() : float{
 		return $this->health;
 	}
 
@@ -1011,11 +1014,10 @@ abstract class Entity extends Location implements Metadatable{
 	/**
 	 * Sets the health of the Entity. This won't send any update to the players
 	 *
-	 * @param int $amount
+	 * @param float $amount
 	 */
-	public function setHealth($amount){
-		$amount = (int) $amount;
-		if($amount === $this->health){
+	public function setHealth(float $amount){
+		if($amount == $this->health){
 			return;
 		}
 
@@ -1024,7 +1026,7 @@ abstract class Entity extends Location implements Metadatable{
 				$this->kill();
 			}
 		}elseif($amount <= $this->getMaxHealth() or $amount < $this->health){
-			$this->health = (int) $amount;
+			$this->health = $amount;
 		}else{
 			$this->health = $this->getMaxHealth();
 		}
@@ -1059,15 +1061,15 @@ abstract class Entity extends Location implements Metadatable{
 	/**
 	 * @return int
 	 */
-	public function getMaxHealth(){
+	public function getMaxHealth() : int{
 		return $this->maxHealth;
 	}
 
 	/**
 	 * @param int $amount
 	 */
-	public function setMaxHealth($amount){
-		$this->maxHealth = (int) $amount;
+	public function setMaxHealth(int $amount){
+		$this->maxHealth = $amount;
 	}
 
 	public function canCollideWith(Entity $entity) : bool{

@@ -57,8 +57,10 @@ class Item extends Entity{
 
 	protected function initEntity(){
 		parent::initEntity();
-		$this->setHealth($this->namedtag["Health"]);
-		if (isset($this->namedtag->Age)){
+
+		$this->setMaxHealth(5);
+		$this->setHealth((int) $this->namedtag["Health"]);
+		if(isset($this->namedtag->Age)){
 			$this->age = $this->namedtag["Age"];
 		}
 		if (isset($this->namedtag->PickupDelay)){
@@ -138,7 +140,7 @@ class Item extends Entity{
 	public function saveNBT(){
 		parent::saveNBT();
 		$this->namedtag->Item = $this->item->nbtSerialize(-1, "Item");
-		$this->namedtag->Health = new ShortTag("Health", $this->getHealth());
+		$this->namedtag->Health = new ShortTag("Health", (int) $this->getHealth());
 		$this->namedtag->Age = new ShortTag("Age", $this->age);
 		$this->namedtag->PickupDelay = new ShortTag("PickupDelay", $this->pickupDelay);
 		if ($this->owner !== null){
