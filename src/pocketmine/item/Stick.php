@@ -29,8 +29,8 @@ class Stick extends Item{
 		parent::__construct(self::STICK, $meta, "Stick");
 	}
 
-	public function getFuelTime(): int{
-		return 5;
+	public function getFuelTime() : int{
+		return 100;
 	}
 
 }

@@ -50,15 +50,15 @@ class Bucket extends Item{
 		return 0;
 	}
 
-	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos): bool{
-		$targetBlock = BlockFactory::get($this->meta);
+	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos) : bool{
+		$resultBlock = BlockFactory::get($this->meta);
 
-		if ($targetBlock instanceof Air){
-			if ($target instanceof Liquid and $target->getDamage() === 0){
-				$result = clone $this;
-				$result->setDamage($target->getId());
-				$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketFillEvent($player, $block, $face, $this, $result));
-				if (!$ev->isCancelled()){
+		if($resultBlock instanceof Air){
+			if($target instanceof Liquid and $target->getDamage() === 0){
+				$resultItem = clone $this;
+				$resultItem->setDamage($target->getId());
+				$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketFillEvent($player, $block, $face, $this, $resultItem));
+				if(!$ev->isCancelled()){
 					$player->getLevel()->setBlock($target, BlockFactory::get(Block::AIR), true, true);
 					if ($player->isSurvival()){
 						$player->getInventory()->setItemInHand($ev->getItem());
@@ -68,13 +68,13 @@ class Bucket extends Item{
 					$player->getInventory()->sendContents($player);
 				}
 			}
-		} elseif ($targetBlock instanceof Liquid){
-			$result = clone $this;
-			$result->setDamage(0);
-			$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketEmptyEvent($player, $block, $face, $this, $result));
+		}elseif($resultBlock instanceof Liquid){
+			$resultItem = clone $this;
+			$resultItem->setDamage(0);
+			$player->getServer()->getPluginManager()->callEvent($ev = new PlayerBucketEmptyEvent($player, $block, $face, $this, $resultItem));
 			if(!$ev->isCancelled()){
-				$player->getLevel()->setBlock($block, $targetBlock, true, true);
-				if ($player->isSurvival()){
+				$player->getLevel()->setBlock($block, $resultBlock, true, true);
+				if($player->isSurvival()){
 					$player->getInventory()->setItemInHand($ev->getItem());
 				}
 				return true;

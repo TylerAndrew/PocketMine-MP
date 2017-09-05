@@ -151,7 +151,7 @@ class ItemFactory{
 			self::registerItem(new RottenFlesh());
 			self::registerItem(new EnderPearl());
 			self::registerItem(new BlazeRod());
-			self::registerItem(new GhastTear());
+			self::registerItem(new Item(Item::GHAST_TEAR, 0, "Ghast Tear"));
 			self::registerItem(new Item(Item::GOLD_NUGGET, 0, "Gold Nugget"));
 			self::registerItem(new NetherWart());
 			self::registerItem(new Potion());
@@ -193,7 +193,7 @@ class ItemFactory{
 			self::registerItem(new RawRabbit());
 			self::registerItem(new CookedRabbit());
 			self::registerItem(new RabbitStew());
-			self::registerItem(new RabbitFoot());
+			self::registerItem(new Item(Item::RABBIT_FOOT, 0, "Rabbit's Foot"));
 			self::registerItem(new RabbitHide());
 			self::registerItem(new LeatherHorseArmor());
 			self::registerItem(new IronHorseArmor());
@@ -212,7 +212,7 @@ class ItemFactory{
 			self::registerItem(new AcaciaDoor());
 			self::registerItem(new DarkOakDoor());
 			//TODO: CHORUS_FRUIT
-			self::registerItem(new PoppedChorusFruit());
+			self::registerItem(new Item(Item::CHORUS_FRUIT_POPPED, 0, "Popped Chorus Fruit"));
 
 			self::registerItem(new DragonBreath());
 			self::registerItem(new SplashPotion());
@@ -221,7 +221,7 @@ class ItemFactory{
 
 			//TODO: COMMAND_BLOCK_MINECART
 			self::registerItem(new Elytra());
-			self::registerItem(new ShulkerShell());
+			self::registerItem(new Item(Item::SHULKER_SHELL, 0, "Shulker Shell"));
 
 			//TODO: TOTEM
 
