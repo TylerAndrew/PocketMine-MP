@@ -7,7 +7,7 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Egg extends Projectile{
+class ThrownEgg extends Projectile{
 	const NETWORK_ID = 82;
 
 	public $width = 0.25;

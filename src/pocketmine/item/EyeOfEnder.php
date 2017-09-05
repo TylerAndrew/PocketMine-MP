@@ -26,5 +26,6 @@ class EyeOfEnder extends Item{
 		parent::__construct(self::ENDER_EYE, $meta, "Eye Of Ender");
 	}
 
+	//TODO
 }
 

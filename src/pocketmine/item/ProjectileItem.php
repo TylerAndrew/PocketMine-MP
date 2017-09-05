@@ -36,9 +36,13 @@ use pocketmine\Player;
 
 abstract class ProjectileItem extends Item{
 
-	abstract public function getProjectileEntityType() : string;
+	public function getProjectileEntityType() : string{
+		return "Snowball";
+	}
 
-	abstract public function getThrowForce() : float;
+	public function getThrowForce() : float{
+		return 1.5;
+	}
 
 	public function onClickAir(Player $player, Vector3 $directionVector) : bool{
 		$nbt = new CompoundTag("", [

@@ -21,8 +21,7 @@
 
 namespace pocketmine\item;
 
-
-class EnderPearl extends Item{
+class EnderPearl extends ProjectileItem{
 	public function __construct($meta = 0){
 		parent::__construct(self::ENDER_PEARL, 0, "Ender Pearl");
 	}
@@ -31,4 +30,11 @@ class EnderPearl extends Item{
 		return 16;
 	}
 
+	public function getProjectileEntityType(): string{
+		return "ThrownEnderPearl";
+	}
+
+	public function getThrowForce(): float{
+		return 1.5;
+	}
 }

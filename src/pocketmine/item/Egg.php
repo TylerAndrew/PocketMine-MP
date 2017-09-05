@@ -23,12 +23,17 @@ declare(strict_types=1);
 
 namespace pocketmine\item;
 
-class Egg extends Item{
+class Egg extends ProjectileItem{
 	public function __construct(int $meta = 0){
 		parent::__construct(self::EGG, $meta, "Egg");
 	}
 
-	//TODO
+	public function getProjectileEntityType(): string{
+		return "ThrownEgg";
+	}
 
+	public function getThrowForce(): float{
+		return 1.5;
+	}
 }
 
