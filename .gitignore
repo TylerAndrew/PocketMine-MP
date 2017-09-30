@@ -27,4 +27,10 @@ Desktop.ini
 
 # Sphinx-doc
 /docs/build/
+<<<<<<< HEAD
 !/docs/requirements.txt
+=======
+!/docs/requirements.txt
+
+vendor/*
+>>>>>>> master

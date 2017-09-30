@@ -43,14 +43,21 @@ class Dirt extends Solid{
 		return Tool::TYPE_SHOVEL;
 	}
 
-	public function getName(): string{
+	public function getName() : string{
+		if($this->meta === 1){
+			return "Coarse Dirt";
+		}
 		return "Dirt";
 	}
 
 	public function onActivate(Item $item, Player $player = null): bool{
 		if ($item->isHoe()){
 			$item->useOn($this);
-			$this->getLevel()->setBlock($this, BlockFactory::get(Block::FARMLAND, 0), true);
+			if($this->meta === 1){
+				$this->getLevel()->setBlock($this, BlockFactory::get(Block::DIRT), true);
+			}else{
+				$this->getLevel()->setBlock($this, BlockFactory::get(Block::FARMLAND), true);
+			}
 
 			return true;
 		}

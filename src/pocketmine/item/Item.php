@@ -644,6 +644,25 @@ class Item implements ItemIds, \JsonSerializable{
 		return $this;
 	}
 
+	/**
+	 * Pops an item from the stack and returns it, decreasing the stack count of this item stack by one.
+	 * @return Item
+	 *
+	 * @throws \InvalidStateException if the count is less than or equal to zero, or if the stack is air.
+	 */
+	public function pop() : Item{
+		if($this->isNull()){
+			throw new \InvalidStateException("Cannot pop an item from a null stack");
+		}
+
+		$item = clone $this;
+		$item->setCount(1);
+
+		$this->count--;
+
+		return $item;
+	}
+
 	public function isNull() : bool{
 		return $this->count <= 0 or $this->id === Item::AIR;
 	}
@@ -882,6 +901,16 @@ class Item implements ItemIds, \JsonSerializable{
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns whether the specified item stack has the same ID, damage, NBT and count as this item stack.
+	 * @param Item $other
+	 *
+	 * @return bool
+	 */
+	final public function equalsExact(Item $other) : bool{
+		return $this->equals($other, true, true) and $this->count === $other->count;
 	}
 
 	/**

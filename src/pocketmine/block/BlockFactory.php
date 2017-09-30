@@ -154,7 +154,7 @@ class BlockFactory{
 			self::registerBlock(new Cactus());
 			self::registerBlock(new Clay());
 			self::registerBlock(new Sugarcane());
-
+			//TODO: JUKEBOX
 			self::registerBlock(new Fence());
 			self::registerBlock(new Pumpkin());
 			self::registerBlock(new Netherrack());
@@ -169,8 +169,8 @@ class BlockFactory{
 			self::registerBlock(new Trapdoor());
 			//TODO: MONSTER_EGG
 			self::registerBlock(new StoneBricks());
-			//TODO: BROWN_MUSHROOM_BLOCK
-			//TODO: RED_MUSHROOM_BLOCK
+			self::registerBlock(new BrownMushroomBlock());
+			self::registerBlock(new RedMushroomBlock());
 			self::registerBlock(new IronBars());
 			self::registerBlock(new GlassPane());
 			self::registerBlock(new Melon());
@@ -246,7 +246,8 @@ class BlockFactory{
 			self::registerBlock(new Coal());
 			self::registerBlock(new PackedIce());
 			self::registerBlock(new DoublePlant());
-
+			//TODO: STANDING_BANNER
+			//TODO: WALL_BANNER
 			//TODO: DAYLIGHT_DETECTOR_INVERTED
 			//TODO: RED_SANDSTONE
 			//TODO: RED_SANDSTONE_STAIRS
@@ -272,7 +273,9 @@ class BlockFactory{
 
 			self::registerBlock(new PurpurStairs());
 
+			//TODO: UNDYED_SHULKER_BOX
 			self::registerBlock(new EndBricks());
+
 			//TODO: FROSTED_ICE
 			self::registerBlock(new EndRod());
 			//TODO: END_GATEWAY
@@ -301,7 +304,7 @@ class BlockFactory{
 			self::registerBlock(new GlazedTerracotta(Block::RED_GLAZED_TERRACOTTA, 0, "Red Glazed Terracotta"));
 			self::registerBlock(new GlazedTerracotta(Block::BLACK_GLAZED_TERRACOTTA, 0, "Black Glazed Terracotta"));
 			self::registerBlock(new Concrete());
-			//TODO: CONCRETEPOWDER
+			self::registerBlock(new ConcretePowder());
 
 			self::registerBlock(new ChorusPlant());
 			self::registerBlock(new StainedGlass());
@@ -315,6 +318,7 @@ class BlockFactory{
 			//TODO: INFO_UPDATE2
 			//TODO: MOVING_BLOCK
 			//TODO: OBSERVER
+			//TODO: STRUCTURE_BLOCK
 
 			//TODO: RESERVED6
 
@@ -342,7 +346,7 @@ class BlockFactory{
 	public static function registerBlock(Block $block, bool $override = false){
 		$id = $block->getId();
 
-		if(self::$list[$id] !== null and !(self::$list[$id] instanceof UnknownBlock) and !$override){
+		if(!$override and self::isRegistered($id)){
 			throw new \RuntimeException("Trying to overwrite an already registered block");
 		}
 
@@ -403,5 +407,16 @@ class BlockFactory{
 	 */
 	public static function getBlockStatesArray() : \SplFixedArray{
 		return self::$fullList;
+	}
+
+	/**
+	 * Returns whether a specified block ID is already registered in the block factory.
+	 *
+	 * @param int $id
+	 * @return bool
+	 */
+	public static function isRegistered(int $id) : bool{
+		$b = self::$list[$id];
+		return $b !== null and !($b instanceof UnknownBlock);
 	}
 }

@@ -78,11 +78,7 @@ class WoodenSlab extends Transparent{
 		}
 	}
 
-	public function canBeReplaced(Block $with = null): bool{
-		return $with !== null and $with->getId() === $this->getId() and ($with->getDamage() & 0x07) === ($this->getDamage() & 0x07);
-	}
-
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null): bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
 		$this->meta &= 0x07;
 		if ($face === Vector3::SIDE_DOWN){
 			if ($blockClicked->getId() === $this->id and ($blockClicked->getDamage() & 0x08) === 0x08 and ($blockClicked->getDamage() & 0x07) === $this->meta){

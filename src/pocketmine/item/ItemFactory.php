@@ -167,7 +167,8 @@ class ItemFactory{
 			self::registerItem(new SpawnEgg());
 			//TODO: BOTTLE_O_ENCHANTING
 			self::registerItem(new FireCharge());
-
+			//TODO: WRITABLE_BOOK
+			//TODO: WRITTEN_BOOK
 			self::registerItem(new Item(Item::EMERALD, 0, "Emerald"));
 			self::registerItem(new ItemFrame());
 			self::registerItem(new FlowerPot());
@@ -181,7 +182,8 @@ class ItemFactory{
 			self::registerItem(new CarrotOnAStick());
 			self::registerItem(new Item(Item::NETHER_STAR, 0, "Nether Star"));
 			self::registerItem(new PumpkinPie());
-
+			//TODO: FIREWORKS
+			//TODO: FIREWORKSCHARGE
 			//TODO: ENCHANTED_BOOK
 			self::registerItem(new Comparator());
 			self::registerItem(new Item(Item::NETHER_BRICK, 0, "Nether Brick"));
@@ -204,7 +206,7 @@ class ItemFactory{
 			self::registerItem(new Item(Item::PRISMARINE_CRYSTALS, 0, "Prismarine Crystals"));
 			self::registerItem(new RawMutton());
 			self::registerItem(new CookedMutton());
-
+			//TODO: ARMOR_STAND
 			self::registerItem(new EndCrystal());
 			self::registerItem(new SpruceDoor());
 			self::registerItem(new BirchDoor());
@@ -222,6 +224,7 @@ class ItemFactory{
 			//TODO: COMMAND_BLOCK_MINECART
 			self::registerItem(new Elytra());
 			self::registerItem(new Item(Item::SHULKER_SHELL, 0, "Shulker Shell"));
+			//TODO: BANNER
 
 			//TODO: TOTEM
 
@@ -236,6 +239,19 @@ class ItemFactory{
 			self::registerItem(new CookedSalmon());
 
 			self::registerItem(new GoldenAppleEnchanted());
+
+			//TODO: RECORD_13
+			//TODO: RECORD_CAT
+			//TODO: RECORD_BLOCKS
+			//TODO: RECORD_CHIRP
+			//TODO: RECORD_FAR
+			//TODO: RECORD_MALL
+			//TODO: RECORD_MELLOHI
+			//TODO: RECORD_STAL
+			//TODO: RECORD_STRAD
+			//TODO: RECORD_WARD
+			//TODO: RECORD_11
+			//TODO: RECORD_WAIT
 		}
 
 		Item::initCreativeItems();
@@ -256,7 +272,7 @@ class ItemFactory{
 	 */
 	public static function registerItem(Item $item, bool $override = false){
 		$id = $item->getId();
-		if(!$override and self::$list[$id] !== null){
+		if(!$override and self::isRegistered($id)){
 			throw new \RuntimeException("Trying to overwrite an already registered item");
 		}
 
@@ -338,14 +354,29 @@ class ItemFactory{
 
 			if(defined(Item::class . "::" . strtoupper($b[0]))){
 				$item = self::get(constant(Item::class . "::" . strtoupper($b[0])), $meta);
-				if($item->getId() === Item::AIR and strtoupper($b[0]) !== "AIR"){
-					$item = self::get($b[0] & 0xFFFF, $meta);
+				if($item->getId() === Item::AIR and strtoupper($b[0]) !== "AIR" and is_numeric($b[0])){
+					$item = self::get(((int) $b[0]) & 0xFFFF, $meta);
 				}
+			}elseif(is_numeric($b[0])){
+				$item = self::get(((int) $b[0]) & 0xFFFF, $meta);
 			}else{
-				$item = self::get($b[0] & 0xFFFF, $meta);
+				$item = self::get(Item::AIR, 0, 0);
 			}
 
 			return $item;
 		}
+	}
+
+	/**
+	 * Returns whether the specified item ID is already registered in the item factory.
+	 *
+	 * @param int $id
+	 * @return bool
+	 */
+	public static function isRegistered(int $id) : bool{
+		if($id < 256){
+			return BlockFactory::isRegistered($id);
+		}
+		return self::$list[$id] !== null;
 	}
 }

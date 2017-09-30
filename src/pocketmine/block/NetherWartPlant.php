@@ -40,7 +40,11 @@ class NetherWartPlant extends Flowable{
 		$this->meta = $meta;
 	}
 
-	public function ticksRandomly(): bool{
+	public function getName() : string{
+		return "Nether Wart";
+	}
+
+	public function ticksRandomly() : bool{
 		return true;
 	}
 

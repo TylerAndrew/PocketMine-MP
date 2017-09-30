@@ -23,6 +23,9 @@ declare(strict_types=1);
 
 namespace pocketmine\inventory;
 
-class BigShapedRecipe extends ShapedRecipe{
+class BigCraftingGrid extends CraftingGrid{
 
+	public function getDefaultSize() : int{
+		return 9;
+	}
 }

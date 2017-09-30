@@ -21,12 +21,30 @@
 
 declare(strict_types=1);
 
+namespace pocketmine\event\server;
+
+use pocketmine\network\SourceInterface;
+
 /**
- * All the different object classes used in populators
+ * Called when a network interface crashes, with relevant crash information.
  */
-namespace pocketmine\level\generator\object;
+class NetworkInterfaceCrashEvent extends NetworkInterfaceEvent{
+	public static $handlerList = null;
 
+	/**
+	 * @var \Throwable
+	 */
+	private $exception;
 
-abstract class Object{
+	public function __construct(SourceInterface $interface, \Throwable $throwable){
+		parent::__construct($interface);
+		$this->exception = $throwable;
+	}
 
+	/**
+	 * @return \Throwable
+	 */
+	public function getCrashInformation() : \Throwable{
+		return $this->exception;
+	}
 }
