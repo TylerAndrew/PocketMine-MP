@@ -25,7 +25,7 @@ use pocketmine\item\Item;
 
 class DoubleStoneSlab2 extends DoubleStoneSlab{
 
-	const RED_SANDSTONE = 1;
+	const RED_SANDSTONE = 0;
 	const PURPUR = 1;
 
 	protected $id = Block::DOUBLE_STONE_SLAB2;
