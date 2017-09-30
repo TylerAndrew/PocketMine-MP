@@ -27,15 +27,9 @@ cd tests/plugins/PocketMine-DevTools
 "$PHP_BINARY" -dphar.readonly=0 ./src/DevTools/ConsoleScript.php --make ./ --relative ./ --out ../../../DevTools.phar
 cd ../../..
 
-<<<<<<< HEAD
-echo -e "version\nmakeserver\nstop\n" | "$PHP_BINARY" src/pocketmine/PocketMine.php --no-wizard --disable-ansi --disable-readline --debug.level=2
-if ls plugins/DevTools/*PocketMine*.phar >/dev/null 2>&1; then
-    echo Server phar created successfully.
-=======
 "$PHP_BINARY" -dphar.readonly=0 DevTools.phar --make src,vendor --relative ./ --entry src/pocketmine/PocketMine.php --out PocketMine-MP.phar
-if [ -f PocketMine-MP.phar ]; then
+if [ -f *PocketMine-MP*.phar ]; then
 	echo Server phar created successfully.
->>>>>>> master
 else
 	echo Server phar was not created!
 	exit 1
