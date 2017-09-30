@@ -38,6 +38,7 @@ use pocketmine\nbt\tag\{
 	ByteTag, CompoundTag, FloatTag, IntTag, LongTag, StringTag
 };
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
+use pocketmine\Player;
 use pocketmine\tile\Tile;
 use pocketmine\utils\Binary;
 use pocketmine\utils\BinaryStream;
@@ -167,7 +168,7 @@ class LevelDB extends BaseLevelProvider{
 		$levelData = new CompoundTag("", [
 			//Vanilla fields
 			new IntTag("DayCycleStopTime", -1),
-			new IntTag("Difficulty", 2),
+			new IntTag("Difficulty", Level::getDifficultyFromString((string) ($options["difficulty"] ?? "normal"))),
 			new ByteTag("ForceGameType", 0),
 			new IntTag("GameType", 0),
 			new IntTag("Generator", $generatorType),
@@ -196,7 +197,7 @@ class LevelDB extends BaseLevelProvider{
 
 			//Additional PocketMine-MP fields
 			new CompoundTag("GameRules", []),
-			new ByteTag("hardcore", 0),
+			new ByteTag("hardcore", ($options["hardcore"] ?? false) === true ? 1 : 0),
 			new StringTag("generatorName", Generator::getGeneratorName($generator)),
 			new StringTag("generatorOptions", $options["preset"] ?? "")
 		]);
@@ -250,6 +251,14 @@ class LevelDB extends BaseLevelProvider{
 
 	public function getGeneratorOptions() : array{
 		return ["preset" => $this->levelData["generatorOptions"]];
+	}
+
+	public function getDifficulty() : int{
+		return isset($this->levelData->Difficulty) ? $this->levelData->Difficulty->getValue() : Level::DIFFICULTY_NORMAL;
+	}
+
+	public function setDifficulty(int $difficulty){
+		$this->levelData->Difficulty = new IntTag("Difficulty", $difficulty);
 	}
 
 	public function getLoadedChunks() : array{
@@ -501,7 +510,9 @@ class LevelDB extends BaseLevelProvider{
 		$this->db->put($index . self::TAG_STATE_FINALISATION, chr(self::FINALISATION_DONE));
 
 		$this->writeTags($chunk->getTiles(), $index . self::TAG_BLOCK_ENTITY);
-		$this->writeTags($chunk->getEntities(), $index . self::TAG_ENTITY);
+		$this->writeTags(array_filter($chunk->getEntities(), function(Entity $entity) : bool{
+				return !($entity instanceof Player);
+		}), $index . self::TAG_ENTITY);
 
 		$this->db->delete($index . self::TAG_DATA_2D_LEGACY);
 		$this->db->delete($index . self::TAG_LEGACY_TERRAIN);
@@ -514,8 +525,9 @@ class LevelDB extends BaseLevelProvider{
 	private function writeTags(array $targets, string $index){
 		$nbt = new NBT(NBT::LITTLE_ENDIAN);
 		$out = [];
+		/** @var Entity|Tile $target */
 		foreach($targets as $target){
-			if(!$target->closed){
+			if(!$target->isClosed()){
 				$target->saveNBT();
 				$out[] = $target->namedtag;
 			}
@@ -599,11 +611,7 @@ class LevelDB extends BaseLevelProvider{
 	}
 
 	public function isChunkGenerated(int $chunkX, int $chunkZ) : bool{
-		if($this->chunkExists($chunkX, $chunkZ) and ($chunk = $this->getChunk($chunkX, $chunkZ, false)) !== null){
-			return true;
-		}
-
-		return false;
+		return $this->chunkExists($chunkX, $chunkZ) and ($chunk = $this->getChunk($chunkX, $chunkZ, false)) !== null;
 	}
 
 	public function isChunkPopulated(int $chunkX, int $chunkZ) : bool{

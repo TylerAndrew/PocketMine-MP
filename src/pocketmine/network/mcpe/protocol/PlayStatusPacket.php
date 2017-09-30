@@ -39,9 +39,16 @@ class PlayStatusPacket extends DataPacket{
 	const LOGIN_FAILED_VANILLA_EDU = 5;
 	const LOGIN_FAILED_EDU_VANILLA = 6;
 
+	/** @var int */
 	public $status;
 
-	public function decodePayload(){
+	/**
+	 * @var int
+	 * Used to determine how to write the packet when we disconnect incompatible clients.
+	 */
+	public $protocol;
+
+	protected function decodePayload(){
 		$this->status = $this->getInt();
 	}
 
@@ -49,7 +56,15 @@ class PlayStatusPacket extends DataPacket{
 		return true;
 	}
 
-	public function encodePayload(){
+	protected function encodeHeader(){
+		if($this->protocol < 130){ //MCPE <= 1.1
+			$this->putByte(static::NETWORK_ID);
+		}else{
+			parent::encodeHeader();
+		}
+	}
+
+	protected function encodePayload(){
 		$this->putInt($this->status);
 	}
 

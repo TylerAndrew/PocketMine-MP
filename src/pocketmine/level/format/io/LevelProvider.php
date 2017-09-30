@@ -177,24 +177,24 @@ interface LevelProvider{
 	public function getName() : string;
 
 	/**
-	 * @return int|string int, or the string numeric representation of a long in 32-bit systems
+	 * @return int
 	 */
-	public function getTime();
+	public function getTime() : int;
 
 	/**
-	 * @param int|string $value int, or the string numeric representation of a long in 32-bit systems
+	 * @param int
 	 */
-	public function setTime($value);
+	public function setTime(int $value);
 
 	/**
-	 * @return int|string int, or the string numeric representation of a long in 32-bit systems
+	 * @return int
 	 */
-	public function getSeed();
+	public function getSeed() : int;
 
 	/**
-	 * @param int|string $value int, or the string numeric representation of a long in 32-bit systems
+	 * @param int
 	 */
-	public function setSeed($value);
+	public function setSeed(int $value);
 
 	/**
 	 * @return Vector3
@@ -205,6 +205,18 @@ interface LevelProvider{
 	 * @param Vector3 $pos
 	 */
 	public function setSpawn(Vector3 $pos);
+
+	/**
+	 * Returns the world difficulty. This will be one of the Level constants.
+	 * @return int
+	 */
+	public function getDifficulty() : int;
+
+	/**
+	 * Sets the world difficulty.
+	 * @param int $difficulty
+	 */
+	public function setDifficulty(int $difficulty);
 
 	/**
 	 * @return Chunk[]
