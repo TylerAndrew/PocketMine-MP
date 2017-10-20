@@ -40,7 +40,7 @@ class EnderChestInventory extends ContainerInventory {
 		return $this->holder;
 	}
 
-	public function onOpen(Player $who){
+	public function onOpen(Player $who) : void{
 	    $this->setContents($who->getEnderChestInventory()->getContents());
 		parent::onOpen($who);
 
@@ -57,7 +57,7 @@ class EnderChestInventory extends ContainerInventory {
 		}
 	}
 
-	public function onClose(Player $who){
+	public function onClose(Player $who) : void{
         $who->getEnderChestInventory()->setContents($this->getContents());
 		if(count($this->getViewers()) === 1){
 			$pk = new BlockEventPacket();
