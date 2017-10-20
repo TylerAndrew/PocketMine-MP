@@ -24,8 +24,6 @@ declare(strict_types=1);
 namespace pocketmine\entity;
 
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class Villager extends Creature implements NPC, Ageable{
 	const PROFESSION_FARMER = 0;
@@ -33,9 +31,8 @@ class Villager extends Creature implements NPC, Ageable{
 	const PROFESSION_PRIEST = 2;
 	const PROFESSION_BLACKSMITH = 3;
 	const PROFESSION_BUTCHER = 4;
-	const PROFESSION_GENERIC = 5;
 
-	const NETWORK_ID = 15;
+	const NETWORK_ID = self::VILLAGER;
 
 	public $width = 0.6;
 	public $height = 1.8;
@@ -47,23 +44,20 @@ class Villager extends Creature implements NPC, Ageable{
 
 	protected function initEntity(){
 		parent::initEntity();
-		if (!isset($this->namedtag->Profession)){
-			$this->setProfession(self::PROFESSION_GENERIC);
+
+		/** @var int $profession */
+		$profession = $this->namedtag["Profession"] ?? self::PROFESSION_FARMER;
+
+		if($profession > 4 or $profession < 0){
+			$profession = self::PROFESSION_FARMER;
 		}
+
+		$this->setProfession($profession);
 	}
 
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = Villager::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
+	public function saveNBT(){
+		parent::saveNBT();
+		$this->namedtag->Profession = new IntTag("Profession", $this->getProfession());
 	}
 
 	/**
@@ -72,11 +66,11 @@ class Villager extends Creature implements NPC, Ageable{
 	 * @param int $profession
 	 */
 	public function setProfession(int $profession){
-		$this->namedtag->Profession = new IntTag("Profession", $profession);
+		$this->setDataProperty(self::DATA_VARIANT, self::DATA_TYPE_INT, $profession);
 	}
 
-	public function getProfession(): int{
-		return (int)$this->namedtag["Profession"];
+	public function getProfession() : int{
+		return $this->getDataProperty(self::DATA_VARIANT);
 	}
 
 	public function isBaby(): bool{

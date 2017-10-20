@@ -27,6 +27,7 @@ use pocketmine\inventory\AnvilInventory;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
+use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
 use pocketmine\Player;
 
@@ -38,15 +39,15 @@ class Anvil extends Fallable{
 
 	protected $id = self::ANVIL;
 
-	public function isSolid(): bool{
-		return false;
-	}
-
 	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(): float{
+	public function isTransparent() : bool{
+		return true;
+	}
+
+	public function getHardness() : float{
 		return 5;
 	}
 
@@ -67,8 +68,32 @@ class Anvil extends Fallable{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	public function onActivate(Item $item, Player $player = null): bool{
-		if ($player instanceof Player){
+	public function recalculateBoundingBox() : ?AxisAlignedBB{
+		$inset = 0.125;
+
+		if($this->meta & 0x01){ //east/west
+			return new AxisAlignedBB(
+				$this->x,
+				$this->y,
+				$this->z + $inset,
+				$this->x + 1,
+				$this->y + 1,
+				$this->z + 1 - $inset
+			);
+		}else{
+			return new AxisAlignedBB(
+				$this->x + $inset,
+				$this->y,
+				$this->z,
+				$this->x + 1 - $inset,
+				$this->y + 1,
+				$this->z + 1
+			);
+		}
+	}
+
+	public function onActivate(Item $item, Player $player = null) : bool{
+		if($player instanceof Player){
 			$player->addWindow(new AnvilInventory($this));
 		}
 

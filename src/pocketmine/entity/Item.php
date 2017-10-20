@@ -34,7 +34,7 @@ use pocketmine\network\mcpe\protocol\AddItemEntityPacket;
 use pocketmine\Player;
 
 class Item extends Entity{
-	const NETWORK_ID = 64;
+	const NETWORK_ID = self::ITEM;
 
 	/** @var string */
 	protected $owner = "";
@@ -204,19 +204,14 @@ class Item extends Entity{
 		$this->thrower = $thrower;
 	}
 
-	public function isFireProof(): bool{
-		return $this->item->getId() === ItemItem::NETHER_STAR;
-	}
-
-	public function spawnTo(Player $player){
+	protected function sendSpawnPacket(Player $player) : void{
 		$pk = new AddItemEntityPacket();
 		$pk->entityRuntimeId = $this->getId();
 		$pk->position = $this->asVector3();
 		$pk->motion = $this->getMotion();
 		$pk->item = $this->getItem();
 		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
 
-		parent::spawnTo($player);
+		$player->dataPacket($pk);
 	}
 }

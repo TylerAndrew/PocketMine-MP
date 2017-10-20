@@ -36,12 +36,8 @@ class IronDoor extends Door{
 		$this->meta = $meta;
 	}
 
-	public function canBeActivated(){
-		return false;
-	}
-
-	public function getName(): string{
-		return "Iron Door Block";
+	public function getName() : string{
+		return "Iron Door";
 	}
 
 	public function getToolType(): int{

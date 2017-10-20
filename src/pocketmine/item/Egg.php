@@ -28,11 +28,15 @@ class Egg extends ProjectileItem{
 		parent::__construct(self::EGG, $meta, "Egg");
 	}
 
-	public function getProjectileEntityType(): string{
-		return "ThrownEgg";
+	public function getMaxStackSize() : int{
+		return 16;
 	}
 
-	public function getThrowForce(): float{
+	public function getProjectileEntityType() : string{
+		return "Egg";
+	}
+
+	public function getThrowForce() : float{
 		return 1.5;
 	}
 }

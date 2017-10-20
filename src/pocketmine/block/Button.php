@@ -29,44 +29,23 @@ use pocketmine\Player;
 
 abstract class Button extends Flowable{
 
-	public function __construct($meta = 0){
+	public function __construct(int $meta = 0){
 		$this->meta = $meta;
 	}
 
-	public function getHardness(): float{
-		return 0.5;
+	public function getVariantBitmask() : int{
+		return 0;
 	}
 
-	public function getResistance(): float{
-		return 2.5;
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+		//TODO: check valid target block
+		$this->meta = $face;
+
+		return $this->level->setBlock($this, $this, true, true);
 	}
 
-	public function canBeActivated(){ //TODO: Redstone
-		return false;
+	public function onActivate(Item $item, Player $player = null) : bool{
+		//TODO
+		return true;
 	}
-
-	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
-		$below = $this->getSide(Vector3::SIDE_DOWN);
-		if ($target->isSolid() || ($face === Vector3::SIDE_DOWN && ($below instanceof StoneSlab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof CobblestoneWall)){
-			$this->meta = $face;
-			$this->getLevel()->setBlock($block, $this, true, true);
-			return true;
-		}
-
-		return false;
-	}
-
-	/*	public function onUpdate($type){
-			if ($type === Level::BLOCK_UPDATE_NORMAL){
-				$below = $this->getSide(Vector3::SIDE_DOWN);
-				if($this->getSide($this->meta)->isSolid()) return false;
-				if (!($this->meta === 0 && ($below instanceof Slab && ($below->meta & 0x08) === 0x08) || ($below instanceof Stair && ($below->meta & 0x04) === 0x04) || $below instanceof Fence || $below instanceof StoneWall)){
-					$this->getLevel()->useBreakOn($this);
-
-					return Level::BLOCK_UPDATE_NORMAL;
-				}
-			}
-
-			return false;
-		}*/
 }

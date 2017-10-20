@@ -32,5 +32,12 @@ Desktop.ini
 =======
 !/docs/requirements.txt
 
+# Composer
 vendor/*
+<<<<<<< HEAD
+>>>>>>> master
+=======
+
+# Travis files
+test_data/*
 >>>>>>> master

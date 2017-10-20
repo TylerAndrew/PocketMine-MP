@@ -59,54 +59,35 @@ class Ladder extends Transparent{
 		return true;
 	}
 
-	public function onEntityCollide(Entity $entity){
+	public function onEntityCollide(Entity $entity) : void{
 		$entity->resetFallDistance();
 		$entity->onGround = true;
 	}
 
-	protected function recalculateBoundingBox(){
-
+	protected function recalculateBoundingBox() : ?AxisAlignedBB{
 		$f = 0.1875;
 
-		if ($this->meta === 2){
-			return new AxisAlignedBB(
-				$this->x,
-				$this->y,
-				$this->z + 1 - $f,
-				$this->x + 1,
-				$this->y + 1,
-				$this->z + 1
-			);
-		} elseif ($this->meta === 3){
-			return new AxisAlignedBB(
-				$this->x,
-				$this->y,
-				$this->z,
-				$this->x + 1,
-				$this->y + 1,
-				$this->z + $f
-			);
-		} elseif ($this->meta === 4){
-			return new AxisAlignedBB(
-				$this->x + 1 - $f,
-				$this->y,
-				$this->z,
-				$this->x + 1,
-				$this->y + 1,
-				$this->z + 1
-			);
-		} elseif ($this->meta === 5){
-			return new AxisAlignedBB(
-				$this->x,
-				$this->y,
-				$this->z,
-				$this->x + $f,
-				$this->y + 1,
-				$this->z + 1
-			);
+		$minX = $minZ = 0;
+		$maxX = $maxZ = 1;
+
+		if($this->meta === 2){
+			$minZ = 1 - $f;
+		}elseif($this->meta === 3){
+			$maxZ = $f;
+		}elseif($this->meta === 4){
+			$minX = 1 - $f;
+		}elseif($this->meta === 5){
+			$maxX = $f;
 		}
 
-		return null;
+		return new AxisAlignedBB(
+			$this->x + $minX,
+			$this->y,
+			$this->z + $minZ,
+			$this->x + $maxX,
+			$this->y + 1,
+			$this->z + $maxZ
+		);
 	}
 
 
@@ -130,14 +111,8 @@ class Ladder extends Transparent{
 	}
 
 	public function onUpdate(int $type){
-		if ($type === Level::BLOCK_UPDATE_NORMAL){
-			$sides = [
-				2 => 3,
-				3 => 2,
-				4 => 5,
-				5 => 4
-			];
-			if (!$this->getSide($sides[$this->meta])->isSolid()){ //Replace with common break method
+		if($type === Level::BLOCK_UPDATE_NORMAL){
+			if(!$this->getSide($this->meta ^ 0x01)->isSolid()){ //Replace with common break method
 				$this->level->useBreakOn($this);
 				return Level::BLOCK_UPDATE_NORMAL;
 			}

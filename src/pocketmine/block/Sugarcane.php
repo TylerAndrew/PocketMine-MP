@@ -48,12 +48,12 @@ class Sugarcane extends Flowable{
 		return true;
 	}
 
-	public function onActivate(Item $item, Player $player = null): bool{
-		if ($item->getId() === Item::DYE and $item->getDamage() === 0x0F){ //Bonemeal
-			if ($this->getSide(Vector3::SIDE_DOWN)->getId() !== self::SUGARCANE_BLOCK){
-				for ($y = 1; $y < 3; ++$y){
-					$b = $this->getLevel()->getBlock(new Vector3($this->x, $this->y + $y, $this->z));
-					if ($b->getId() === self::AIR){
+	public function onActivate(Item $item, Player $player = null) : bool{
+		if($item->getId() === Item::DYE and $item->getDamage() === 0x0F){ //Bonemeal
+			if($this->getSide(Vector3::SIDE_DOWN)->getId() !== self::SUGARCANE_BLOCK){
+				for($y = 1; $y < 3; ++$y){
+					$b = $this->getLevel()->getBlockAt($this->x, $this->y + $y, $this->z);
+					if($b->getId() === self::AIR){
 						Server::getInstance()->getPluginManager()->callEvent($ev = new BlockGrowEvent($b, BlockFactory::get(Block::SUGARCANE_BLOCK)));
 						if (!$ev->isCancelled()){
 							$this->getLevel()->setBlock($b, $ev->getNewState(), true);
@@ -81,12 +81,12 @@ class Sugarcane extends Flowable{
 
 				return Level::BLOCK_UPDATE_NORMAL;
 			}
-		} elseif ($type === Level::BLOCK_UPDATE_RANDOM){
-			if ($this->getSide(Vector3::SIDE_DOWN)->getId() !== self::SUGARCANE_BLOCK){
-				if ($this->meta === 0x0F){
-					for ($y = 1; $y < 3; ++$y){
-						$b = $this->getLevel()->getBlock(new Vector3($this->x, $this->y + $y, $this->z));
-						if ($b->getId() === self::AIR){
+		}elseif($type === Level::BLOCK_UPDATE_RANDOM){
+			if($this->getSide(Vector3::SIDE_DOWN)->getId() !== self::SUGARCANE_BLOCK){
+				if($this->meta === 0x0F){
+					for($y = 1; $y < 3; ++$y){
+						$b = $this->getLevel()->getBlockAt($this->x, $this->y + $y, $this->z);
+						if($b->getId() === self::AIR){
 							$this->getLevel()->setBlock($b, BlockFactory::get(Block::SUGARCANE_BLOCK), true);
 							break;
 						}

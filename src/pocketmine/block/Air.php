@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\block;
 
 use pocketmine\item\Item;
+use pocketmine\math\AxisAlignedBB;
 
 
 /**
@@ -66,11 +67,15 @@ class Air extends Transparent{
 		return false;
 	}
 
-	public function getBoundingBox(){
+	public function getBoundingBox() : ?AxisAlignedBB{
 		return null;
 	}
 
-	public function getHardness(): float{
+	public function getCollisionBoxes() : array{
+		return [];
+	}
+
+	public function getHardness() : float{
 		return -1;
 	}
 

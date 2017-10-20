@@ -21,14 +21,26 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\item;
+namespace pocketmine\block;
 
-use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
+use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 
-class IronDoor extends Item{
+abstract class DoubleSlab extends Solid{
+
 	public function __construct(int $meta = 0){
-		$this->block = BlockFactory::get(Block::IRON_DOOR_BLOCK);
-		parent::__construct(self::IRON_DOOR, $meta, "Iron Door");
+		$this->meta = $meta;
+	}
+
+	abstract public function getSlabId() : int;
+
+	public function getName() : string{
+		return "Double " . BlockFactory::get($this->getSlabId(), $this->getVariant())->getName() . " Slab";
+	}
+
+	public function getDrops(Item $item) : array{
+		return [
+			ItemFactory::get($this->getSlabId(), $this->getVariant(), 2)
+		];
 	}
 }

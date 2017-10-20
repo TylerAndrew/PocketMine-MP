@@ -37,11 +37,11 @@ class WoodenButton extends Button{
 		return "Wooden Button";
 	}
 
-	public function getToolType(): int{
-		return Tool::TYPE_AXE;
+	public function getHardness() : float{
+		return 0.5;
 	}
 
-	public function getVariantBitmask(): int{
-		return 0;
+	public function getToolType() : int{
+		return Tool::TYPE_AXE;
 	}
 }

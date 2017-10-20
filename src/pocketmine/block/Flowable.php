@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace pocketmine\block;
 
+use pocketmine\math\AxisAlignedBB;
+
 abstract class Flowable extends Transparent{
 
 	public function canBeFlowedInto(): bool{
@@ -33,19 +35,15 @@ abstract class Flowable extends Transparent{
 		return 0;
 	}
 
-	public function getBlastResistance(): float{
-		return 0;
-	}
-
-	public function isSolid(): bool{
+	public function isSolid() : bool{
 		return false;
 	}
 
-	protected function recalculateBoundingBox(){
+	protected function recalculateBoundingBox() : ?AxisAlignedBB{
 		return null;
 	}
 
-	public function getBoundingBox(){
+	public function getBoundingBox():AxisAlignedBB{
 		return null;
 	}
 }

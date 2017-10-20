@@ -39,8 +39,8 @@ class Painting extends Item{
 		parent::__construct(self::PAINTING, $meta, "Painting");
 	}
 
-	public function onActivate(Level $level, Player $player, Block $block, Block $target, int $face, Vector3 $facePos): bool{
-		if ($target->isTransparent() === false and $face > 1 and $block->isSolid() === false){
+	public function onActivate(Level $level, Player $player, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos) : bool{
+		if($blockClicked->isTransparent() === false and $face > 1 and $blockReplace->isSolid() === false){
 			$faces = [
 				2 => 1,
 				3 => 3,
@@ -67,10 +67,10 @@ class Painting extends Item{
 				$searchedMotives[$rand] = true;
 				for ($x = 0; $x < $motive[1] && $foundApplicableMotive; $x++){
 					for ($z = 0; $z < $motive[2] && $foundApplicableMotive; $z++){
-						if ($target->getSide($face2side[$face - 2], $x)->isTransparent() ||
-							$target->getSide(Vector3::SIDE_UP, $z)->isTransparent() ||
-							$block->getSide($face2side[$face - 2], $x)->isSolid() ||
-							$block->getSide(Vector3::SIDE_UP, $z)->isSolid()
+						if ($blockClicked->getSide($face2side[$face - 2], $x)->isTransparent() ||
+							$blockClicked->getSide(Vector3::SIDE_UP, $z)->isTransparent() ||
+							$blockReplace->getSide($face2side[$face - 2], $x)->isSolid() ||
+							$blockReplace->getSide(Vector3::SIDE_UP, $z)->isSolid()
 						){
 							$foundApplicableMotive = false;
 						}
@@ -94,9 +94,9 @@ class Painting extends Item{
 			}*/
 
 			$data = [
-				"x" => $target->x,
-				"y" => $target->y - 0.1,
-				"z" => $target->z,
+				"x" => $blockClicked->x,
+				"y" => $blockClicked->y,
+				"z" => $blockClicked->z,
 				"yaw" => $faces[$face] * 90,
 				"Motive" => $motive[0],
 			];

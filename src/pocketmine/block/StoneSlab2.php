@@ -2,87 +2,43 @@
 
 /*
  *
- *  _____   _____   __   _   _   _____  __    __  _____
- * /  ___| | ____| |  \ | | | | /  ___/ \ \  / / /  ___/
- * | |     | |__   |   \| | | | | |___   \ \/ /  | |___
- * | |  _  |  __|  | |\   | | | \___  \   \  /   \___  \
- * | |_| | | |___  | | \  | | |  ___| |   / /     ___| |
- * \_____/ |_____| |_|  \_| |_| /_____/  /_/     /_____/
+ *  ____            _        _   __  __ _                  __  __ ____
+ * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \
+ * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
+ * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * @author iTX Technologies
- * @link https://itxtech.org
+ * @author PocketMine Team
+ * @link http://www.pocketmine.net/
  *
- */
+ *
+*/
+
+declare(strict_types=1);
 
 namespace pocketmine\block;
 
-use pocketmine\item\Item;
-use pocketmine\math\Vector3;
-use pocketmine\Player;
-
 class StoneSlab2 extends StoneSlab{
+	const TYPE_RED_SANDSTONE = 0;
+	const TYPE_PURPUR = 1;
 
-	const RED_SANDSTONE = 0;
-	const PURPUR = 1;
+	protected $id = self::STONE_SLAB2;
 
-	protected $id = Block::STONE_SLAB2;
-
-	public function __construct($meta = 0){
-		$this->meta = $meta;
+	public function getDoubleSlabId() : int{
+		return self::DOUBLE_STONE_SLAB2;
 	}
 
-	public function getName(): string{
+	public function getName() : string{
 		static $names = [
-			self::RED_SANDSTONE => "Red Sandstone",
-			self::PURPUR => "Purpur",
+			self::TYPE_RED_SANDSTONE => "Red Sandstone",
+			self::TYPE_PURPUR => "Purpur"
 		];
-		return (($this->meta & 0x08) > 0 ? "Upper " : "") . $names[$this->meta & 0x07] . " Slab";
-	}
 
-	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
-		if ($face === 0){
-			if ($target->getId() === self::STONE_SLAB2 and ($target->getDamage() & 0x08) === 0x08){
-				$this->getLevel()->setBlock($target, Block::get(Item::DOUBLE_STONE_SLAB2, $this->meta), true);
-
-				return true;
-			} elseif ($block->getId() === self::STONE_SLAB2){
-				$this->getLevel()->setBlock($block, Block::get(Item::DOUBLE_STONE_SLAB2, $this->meta), true);
-
-				return true;
-			} else{
-				$this->meta |= 0x08;
-			}
-		} elseif ($face === 1){
-			if ($target->getId() === self::STONE_SLAB2 and ($target->getDamage() & 0x08) === 0){
-				$this->getLevel()->setBlock($target, Block::get(Item::DOUBLE_STONE_SLAB2, $this->meta), true);
-
-				return true;
-			} elseif ($block->getId() === self::STONE_SLAB2){
-				$this->getLevel()->setBlock($block, Block::get(Item::DOUBLE_STONE_SLAB2, $this->meta), true);
-
-				return true;
-			}
-			//TODO: check for collision
-		} else{
-			if ($block->getId() === self::STONE_SLAB2){
-				$this->getLevel()->setBlock($block, Block::get(Item::DOUBLE_STONE_SLAB2, $this->meta), true);
-			} else{
-				if ($facePos->getY() > 0.5){
-					$this->meta |= 0x08;
-				}
-			}
-		}
-
-		if ($block->getId() === self::STONE_SLAB2 and ($target->getDamage() & 0x07) !== ($this->meta & 0x07)){
-			return false;
-		}
-		$this->getLevel()->setBlock($block, $this, true, true);
-
-		return true;
+		return (($this->meta & 0x08) > 0 ? "Upper " : "") . ($names[$this->getVariant()] ?? "") . " Slab";
 	}
 }

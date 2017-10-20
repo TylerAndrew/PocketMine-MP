@@ -21,14 +21,29 @@
 
 declare(strict_types=1);
 
-namespace pocketmine\item;
+namespace pocketmine\entity\projectile;
 
-use pocketmine\block\Block;
-use pocketmine\block\BlockFactory;
+abstract class Throwable extends Projectile{
 
-class WoodenDoor extends Item{
-	public function __construct(int $meta = 0){
-		$this->block = BlockFactory::get(Block::WOODEN_DOOR_BLOCK);
-		parent::__construct(self::WOODEN_DOOR, $meta, "Wooden Door");
+	public $width = 0.25;
+	public $height = 0.25;
+
+	protected $gravity = 0.03;
+	protected $drag = 0.01;
+
+	public function entityBaseTick(int $tickDiff = 1) : bool{
+		if($this->closed){
+			return false;
+		}
+
+		$hasUpdate = parent::entityBaseTick($tickDiff);
+
+		if($this->age > 1200 or $this->isCollided){
+			//TODO: hit particles
+			$this->kill();
+			$hasUpdate = true;
+		}
+
+		return $hasUpdate;
 	}
 }
