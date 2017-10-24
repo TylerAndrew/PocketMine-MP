@@ -107,7 +107,7 @@ class Cauldron extends Spawnable{
 		$this->onChanged();
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt){
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
 		$nbt->PotionId = (int)($this->namedtag["PotionId"] >= (2 ** 15) ? $this->namedtag["PotionId"] -= (2 ** 16) : $this->namedtag["PotionId"]);
 		$nbt->PotionType = (int)($this->namedtag["PotionType"] >= (2 ** 15) ? $this->namedtag["PotionType"] -= (2 ** 16) : $this->namedtag["PotionType"]);//TODO: check if this was fixed
 		$nbt->SplashPotion = (int)$this->namedtag["SplashPotion"];

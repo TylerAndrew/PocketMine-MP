@@ -47,14 +47,7 @@ class PoweredComparator extends Transparent{
 		];
 		$this->meta = $faces[$player != null ? $player->getDirection() : $this->meta];
 		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = new CompoundTag("", [
-			new StringTag("id", Tile::COMPARATOR),
-			new IntTag("x", $this->x),
-			new IntTag("y", $this->y),
-			new IntTag("z", $this->z),
-			new IntTag("OutputSignal", 0)
-		]);
-		Tile::createTile(Tile::COMPARATOR, $this->getLevel(), $nbt);
+		Tile::createTile(Tile::COMPARATOR, $this->getLevel(), Tile::createNBT($this));
 		return true;
 	}
 

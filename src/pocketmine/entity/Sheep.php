@@ -2,50 +2,36 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\item\Item as ItemItem;
+use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class Sheep extends Animal implements Colorable{
-	const NETWORK_ID = 13;
+	const NETWORK_ID = self::SHEEP;
 	public $lenght = 1.484;
 	public $width = 0.719;
 	public $height = 1.406;
 	protected $exp_min = 1;
 	protected $exp_max = 3;
-	protected $maxHealth = 8;
+
 
 	public function initEntity(){
+		$this->setMaxHealth(8);
 		parent::initEntity();
 
 		if (!isset($this->namedtag->Color) || $this->getVariant() > 15){
 			$this->setVariant(mt_rand(0, 15));
 		}
-		$this->setDataProperty(16, self::DATA_TYPE_BYTE, $this->getVariant());
+		$this->setVariant($this->namedtag->Color);
 	}
 
 	public function getName(): string{
 		return "Sheep";
 	}
 
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
-
 	public function setVariant($value){
 		$this->namedtag->Color = new IntTag("Color", $value);
-		$this->setDataProperty(16, self::DATA_TYPE_BYTE, $value);
+		$this->setDataProperty(self::DATA_COLOR, self::DATA_TYPE_INT, $value);
 	}
 
 	public function getVariant(){
@@ -53,12 +39,12 @@ class Sheep extends Animal implements Colorable{
 	}
 
 	public function getDrops(): array{
-		return [ItemItem::get(ItemItem::WOOL, $this->getVariant(), 1)];
+		return [ItemFactory::get(ItemIds::WOOL, $this->getVariant(), 1)];//TODO wool, mutton
 	}
 
 	public function sheer(){
-		for ($i = 0; $i <= mt_rand(0, 2); $i++){
-			$this->getLevel()->dropItem($this, new ItemItem(ItemItem::WOOL, $this->getVariant()));//TODO: check amount
-		}
+		if ($this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_SHEARED)) return;
+		$this->getLevel()->dropItem($this, ItemFactory::get(ItemIds::WOOL, $this->getVariant(), mt_rand(0, 2)));//TODO: check amount
+		$this->setDataFlag(self::DATA_FLAGS, self::DATA_FLAG_SHEARED, true);
 	}
 }

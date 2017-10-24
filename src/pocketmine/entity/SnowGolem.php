@@ -3,11 +3,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class SnowGolem extends Animal{
-	const NETWORK_ID = 21;
+class SnowGolem extends Animal{//animal?
+	const NETWORK_ID = self::SNOW_GOLEM;
 
 	public $height = 1.875;
 	public $width = 1.281;
@@ -15,9 +13,9 @@ class SnowGolem extends Animal{
 
 	protected $exp_min = 0;
 	protected $exp_max = 0;
-	protected $maxHealth = 4;
 
 	public function initEntity(){
+		$this->setMaxHealth(4);
 		parent::initEntity();
 	}
 
@@ -25,23 +23,9 @@ class SnowGolem extends Animal{
 		return "Snow Golem";
 	}
 
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
-
 	public function getDrops(): array{
 		return [
-			ItemItem::get(ItemItem::SNOWBALL, 0, mt_rand(0, 15))
+			ItemItem::get(ItemItem::SNOWBALL, 0, mt_rand(0, 15))//TODO check
 		];
 	}
 

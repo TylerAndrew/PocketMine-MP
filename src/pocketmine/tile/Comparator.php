@@ -28,11 +28,11 @@ use pocketmine\nbt\tag\IntTag;
 class Comparator extends Spawnable{
 
 	public function __construct(Level $level, CompoundTag $nbt){
-		$nbt->OutputSignal = new IntTag("OutputSignal", (int) 0);
+		$nbt->OutputSignal = new IntTag("OutputSignal", (int)0);
 		parent::__construct($level, $nbt);
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt){
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
 		$nbt->OutputSignal = $this->namedtag->OutputSignal;
 		//TODO: isMovable
 	}

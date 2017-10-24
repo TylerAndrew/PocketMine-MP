@@ -30,7 +30,13 @@ class EndPortal extends Spawnable{
 		parent::__construct($level, $nbt);
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt){
-		//TODO: isMovable
+	/**
+	 * An extension to getSpawnCompound() for
+	 * further modifying the generic tile NBT.
+	 *
+	 * @param CompoundTag $nbt
+	 */
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
+		// TODO: Implement addAdditionalSpawnData() method.
 	}
 }

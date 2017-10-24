@@ -2,11 +2,11 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
+use pocketmine\nbt\tag\IntTag;
 use pocketmine\Player;
 
 class ExperienceOrb extends Entity{
-	const NETWORK_ID = 69;
+	const NETWORK_ID = self::XP_ORB;
 
 	public $width = 0.1;
 	public $length = 0.1;
@@ -21,9 +21,11 @@ class ExperienceOrb extends Entity{
 
 	public function initEntity(){
 		parent::initEntity();
-		if (isset($this->namedtag->Experience)){
-			$this->experience = $this->namedtag["Experience"];
-		} else $this->close();
+		if (!isset($this->namedtag->Experience)){
+			$this->close();
+		} else{
+			$this->setExperience($this->namedtag["Experience"]);
+		}
 	}
 
 	public function FetchNearbyPlayer($DistanceRange){
@@ -38,20 +40,15 @@ class ExperienceOrb extends Entity{
 		return $Target;
 	}
 
-	public function onUpdate(int $currentTick): bool{
+	public function entityBaseTick(int $tickDiff = 1): bool{
 		if ($this->closed){
 			return false;
 		}
 
-		$tickDiff = $currentTick - $this->lastUpdate;
-
-		$this->lastUpdate = $currentTick;
-
 		$this->timings->startTiming();
 
-		$hasUpdate = $this->entityBaseTick($tickDiff);
+		$hasUpdate = parent::entityBaseTick($tickDiff);
 
-		$this->age++;
 		if ($this->age > 7000){
 			$this->timings->stopTiming();
 			$this->close();
@@ -110,17 +107,8 @@ class ExperienceOrb extends Entity{
 		return $this->experience;
 	}
 
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
+	public function saveNBT(){
+		parent::saveNBT();
+		$this->namedtag->Experience = new IntTag("Experience", $this->experience);
 	}
 }

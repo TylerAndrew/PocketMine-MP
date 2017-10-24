@@ -23,34 +23,18 @@ namespace pocketmine\tile;
 
 use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\StringTag;
 
-class EnderChest extends Spawnable implements Nameable{
+class EnderChest extends Spawnable{
 
 	public function __construct(Level $level, CompoundTag $nbt){
 		parent::__construct($level, $nbt);
 	}
 
-	public function getName() : string {
-		return isset($this->namedtag->CustomName) ? $this->namedtag->CustomName->getValue() : "Ender Chest";
-	}
-
-	public function hasName() : bool {
-		return isset($this->namedtag->CustomName);
-	}
-
-	public function setName(string $str){
-		if($str === ""){
-			unset($this->namedtag->CustomName);
-			return;
-		}
-
-		$this->namedtag->CustomName = new StringTag("CustomName", $str);
-	}
-
-	public function addAdditionalSpawnData(CompoundTag $nbt){
-		if ($this->hasName()){
-			$nbt->CustomName = $this->namedtag->CustomName;
-		}
-	}
+	/**
+	 * An extension to getSpawnCompound() for
+	 * further modifying the generic tile NBT.
+	 *
+	 * @param CompoundTag $nbt
+	 */
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{ }
 }

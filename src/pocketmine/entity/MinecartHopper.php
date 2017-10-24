@@ -2,60 +2,16 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityRegainHealthEvent;
+use pocketmine\inventory\Inventory;
+use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class MinecartHopper extends Snake{
+class MinecartHopper extends Minecart implements InventoryHolder{
 
-	const NETWORK_ID = 96;
-	protected $maxHealth = 4;
-
-	public function initEntity(){
-		parent::initEntity();
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
+	const NETWORK_ID = self::HOPPER_MINECART;
 
 	public function getName(){
 		return "Minecart Hopper";
-	}
-
-	public function onUpdate(int $currentTick): bool{
-		$hasUpdate = false;
-		if ($this->isAlive()){
-			$this->timings->startTiming();
-			/*
-			if($this->isLinked() && $this->getlinkedTarget() !== null){
-				$hasUpdate = true;
-				$newx = $this->getX() - $this->getlinkedTarget()->getX();
-				$newy = $this->getY() - $this->getlinkedTarget()->getY();
-				$newz = $this->getZ() - $this->getlinkedTarget()->getZ();
-				$this->move($newx, $newy, $newz);
-				$this->updateMovement();
-			}*/
-			if ($this->getHealth() < $this->getMaxHealth()){
-				$this->heal(new EntityRegainHealthEvent($this, 0.1, EntityRegainHealthEvent::CAUSE_CUSTOM));
-				$hasUpdate = true;
-			}
-
-			$this->timings->stopTiming();
-
-		}
-		return $hasUpdate;
 	}
 
 	public function getDrops(): array{
@@ -63,4 +19,13 @@ class MinecartHopper extends Snake{
 	}
 
 	//TODO: Open inventory, add inventory, drop inventory contents
+
+	/**
+	 * Get the object related inventory
+	 *
+	 * @return Inventory
+	 */
+	public function getInventory(){
+		return null;//TODO hopper inventory
+	}
 }

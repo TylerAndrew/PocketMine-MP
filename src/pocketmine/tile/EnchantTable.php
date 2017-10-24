@@ -34,18 +34,18 @@ class EnchantTable extends Spawnable implements Nameable{
 	/**
 	 * @return string
 	 */
-	public function getDefaultName() : string{
+	public function getDefaultName(): string{
 		return "Enchanting Table";
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt) : void{
-		if($this->hasName()){
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
+		if ($this->hasName()){
 			$nbt->setTag($this->namedtag->getTag("CustomName"));
 		}
 	}
 
-	protected static function createAdditionalNBT(CompoundTag $nbt, Vector3 $pos, ?int $face = null, ?Item $item = null, ?Player $player = null) : void{
-		if($item !== null and $item->hasCustomName()){
+	protected static function createAdditionalNBT(CompoundTag $nbt, Vector3 $pos, ?int $face = null, ?Item $item = null, ?Player $player = null): void{
+		if ($item !== null and $item->hasCustomName()){
 			$nbt->setString("CustomName", $item->getCustomName());
 		}
 	}

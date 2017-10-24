@@ -31,11 +31,10 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\Server;
 
-class Beacon extends Spawnable implements Nameable, InventoryHolder{
+class Beacon extends Spawnable implements InventoryHolder{
 	/**
 	 * @var BeaconInventory
 	 */
@@ -53,35 +52,14 @@ class Beacon extends Spawnable implements Nameable, InventoryHolder{
 		$this->scheduleUpdate();
 	}
 
-	public function saveNBT(){
+	public function saveNBT(): void{
 		parent::saveNBT();
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt){
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
 		$nbt->primary = $this->namedtag->primary;
 		$nbt->secondary = $this->namedtag->secondary;
-
-		if ($this->hasName()){
-			$nbt->CustomName = $this->namedtag->CustomName;
-		}
 		//TODO: isMovable
-	}
-
-	public function hasName(): bool{
-		return isset($this->namedtag->CustomName);
-	}
-
-	public function getName(): string{
-		return $this->hasName() ? $this->namedtag->CustomName->getValue() : "Beacon";
-	}
-
-	public function setName(string $str){
-		if ($str === ""){
-			unset($this->namedtag->CustomName);
-			return;
-		}
-
-		$this->namedtag->CustomName = new StringTag("CustomName", $str);
 	}
 
 	public function updateCompoundTag(CompoundTag $nbt, Player $player): bool{

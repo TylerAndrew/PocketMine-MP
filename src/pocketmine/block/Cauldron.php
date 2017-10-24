@@ -67,15 +67,7 @@ class Cauldron extends Solid{
 	}
 
 	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
-		$nbt = new CompoundTag("", [
-			new StringTag("id", Tile::CAULDRON),
-			new IntTag("x", $block->x),
-			new IntTag("y", $block->y),
-			new IntTag("z", $block->z),
-			new ShortTag("PotionId", -1),
-			new ShortTag("PotionType", 1),
-			new ByteTag("SplashPotion", 0),
-		]);
+		$nbt = Tile::createNBT($this);
 
 		if ($item->hasCustomBlockData()){
 			foreach ($item->getCustomBlockData() as $key => $v){

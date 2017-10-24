@@ -33,7 +33,7 @@ class BrewingInventory extends ContainerInventory{
 		return $this->getItem(0);
 	}
 
-	public function onSlotChange(int $index, Item $before, bool $send){
+	public function onSlotChange(int $index, Item $before, bool $send):void{
 		parent::onSlotChange($index, $before, $send);
 		$this->getHolder()->scheduleUpdate();
 		$this->getHolder()->updateSurface();

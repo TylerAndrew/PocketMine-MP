@@ -2,12 +2,12 @@
 
 namespace pocketmine\entity;
 
+use pocketmine\entity\projectile\Projectile;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\level\particle\GenericParticle;
 use pocketmine\level\particle\Particle;
 use pocketmine\level\sound\GenericSound;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 
@@ -44,27 +44,9 @@ class ThrownEnderPearl extends Projectile{
 				$this->getLevel()->addParticle(new GenericParticle($ev->getTo(), Particle::TYPE_PORTAL));
 			}
 		}
-		if ($this->age > 1200 || $this->isCollided){
-			$this->close();
-			$hasUpdate = true;
-		}
 
 		$this->timings->stopTiming();
 
 		return $hasUpdate;
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 }

@@ -36,7 +36,7 @@ class PistonArm extends Spawnable{
 		parent::__construct($level, $nbt);
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt){
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
 		//TODO extended or not extended
 		$nbt->AttachedBlocks = new CompoundTag("AttachedBlocks", []);
 		$nbt->BreakBlocks = new CompoundTag("BreakBlocks", []);

@@ -2,16 +2,14 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\level\Level;
+use pocketmine\entity\projectile\Throwable;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class ThrownExpBottle extends Projectile{
+class ThrownExpBottle extends Throwable{
 	const NETWORK_ID = 68;
 
 	public $width = 0.25;
@@ -20,10 +18,6 @@ class ThrownExpBottle extends Projectile{
 
 	protected $gravity = 0.1;
 	protected $drag = 0.05;
-
-	public function __construct(Level $level, CompoundTag $nbt, Entity $shootingEntity = null){
-		parent::__construct($level, $nbt, $shootingEntity);
-	}
 
 	public function getName(){
 		return "Thrown Exp Bottle";
@@ -36,13 +30,7 @@ class ThrownExpBottle extends Projectile{
 
 		$this->timings->startTiming();
 
-		$hasUpdate = parent::onUpdate($currentTick);
-
-		if ($this->age > 1200 or $this->isCollided){
-			$this->kill();
-			$this->close();
-			$hasUpdate = true;
-		}
+		$hasUpdate = parent::entityBaseTick();
 
 		if ($this->onGround){
 			$this->kill();
@@ -71,19 +59,5 @@ class ThrownExpBottle extends Projectile{
 		$this->timings->stopTiming();
 
 		return $hasUpdate;
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 }

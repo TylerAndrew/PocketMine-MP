@@ -2,6 +2,7 @@
 
 namespace pocketmine\entity;
 
+use pocketmine\entity\projectile\Throwable;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\item\Potion;
 use pocketmine\level\Level;
@@ -12,11 +13,9 @@ use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class LingeringPotion extends Projectile{
-	const NETWORK_ID = 101;
+class LingeringPotion extends Throwable{
+	const NETWORK_ID = self::LINGERING_POTION;
 	const DATA_POTION_ID = 16;//TODO: update this
 	public $width = 0.25;
 	public $length = 0.25;
@@ -80,33 +79,4 @@ class LingeringPotion extends Projectile{
 		parent::kill();
 	}
 
-	public function onUpdate(int $currentTick): bool{
-		if ($this->closed){
-			return false;
-		}
-		$this->timings->startTiming();
-		$hasUpdate = parent::onUpdate($currentTick);
-		$this->age++;
-		if ($this->age > 1200 or $this->isCollided){
-			$this->kill();
-			$this->close();
-			$hasUpdate = true;
-		}
-		$this->timings->stopTiming();
-		return $hasUpdate;
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
 }

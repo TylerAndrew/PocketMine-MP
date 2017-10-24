@@ -33,7 +33,7 @@ class MovingBlock extends Spawnable{
 		parent::__construct($level, $nbt);
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt){
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
 		$nbt->movingBlockData = new ByteTag("movingBlockData", (bool)0);
 		$nbt->movingBlockId = new ByteTag("movingBlockId", (bool)0);
 		$nbt->pistonPosX = new IntTag("pistonPosX", (int)$this->x);

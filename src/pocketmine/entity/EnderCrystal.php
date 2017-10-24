@@ -4,18 +4,13 @@ namespace pocketmine\entity;
 
 use pocketmine\event\entity\ExplosionPrimeEvent;
 use pocketmine\level\Explosion;
-use pocketmine\level\Level;
-use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class EnderCrystal extends Living implements Explosive{
-	const NETWORK_ID = 71;
+	const NETWORK_ID = self::ENDER_CRYSTAL;
 
-	public $height = 1;
-	public $width = 1;
-	public $length = 1;//TODO: Size
+	public $height = 0.98;
+	public $width = 0.98;
+	public $length = 0.98;
 
 	public function initEntity(){
 		$this->setMaxHealth(1);
@@ -24,20 +19,6 @@ class EnderCrystal extends Living implements Explosive{
 
 	public function getName(): string{
 		return "Ender Crystal";
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	public function kill(){
@@ -50,7 +31,7 @@ class EnderCrystal extends Living implements Explosive{
 		}
 	}
 
-	protected function applyGravity(){}
+	protected function applyGravity(){ }
 
 	public function explode(){
 		$this->server->getPluginManager()->callEvent($ev = new ExplosionPrimeEvent($this, 6));

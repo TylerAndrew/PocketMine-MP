@@ -6,11 +6,9 @@ use pocketmine\block\Block;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\level\particle\DestroyBlockParticle;
-use pocketmine\network\mcpe\protocol\AddPaintingPacket;
-use pocketmine\Player;
 
 class Painting extends Hanging{
-	const NETWORK_ID = 83;
+	const NETWORK_ID = self::PAINTING;
 
 	const MOTIVES = [
 		// Motive Width Height
@@ -43,9 +41,10 @@ class Painting extends Hanging{
 	];
 
 	private $motive;
-	protected $maxHealth = 1;
+
 
 	public function initEntity(){
+		$this->setMaxHealth(1);
 		parent::initEntity();
 
 		if (isset($this->namedtag->Motive)){
@@ -53,6 +52,10 @@ class Painting extends Hanging{
 		} else{
 			$this->close();
 		}
+	}
+
+	public function getName(): string{
+		return "Painting";
 	}
 
 	public function getMotive(){
@@ -70,17 +73,6 @@ class Painting extends Hanging{
 		//Nothing to update, paintings cannot move.
 	}
 
-	public function spawnTo(Player $player){
-		$pk = new AddPaintingPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->x = (int)$this->x;
-		$pk->y = (int)$this->y;
-		$pk->z = (int)$this->z;
-		$pk->direction = $this->getDirection();
-		$pk->title = $this->motive;
-		$player->dataPacket($pk);
-		parent::spawnTo($player);
-	}
 
 	public function getDrops(): array{
 		return [ItemItem::get(ItemItem::PAINTING, 0, 1)];

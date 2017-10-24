@@ -64,22 +64,8 @@ class Piston extends Transparent{
 		$faces = [0 => 0, 1 => 1, 2 => 5, 3 => 3, 4 => 4, 5 => 2];
 		$this->meta = $faces[$f];
 		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = new CompoundTag("", [
-			new StringTag("id", Tile::PISTON),
-			new IntTag("x", (int)$this->x),
-			new IntTag("y", (int)$this->y),
-			new IntTag("z", (int)$this->z),
-			new ByteTag("isMovable", (bool)true),
-			new ByteTag("Sticky", (bool)false),
-			new ByteTag("State", 0),
-			new FloatTag("Progress", 0.0),
-			new ByteTag("NewState", 0),
-			new FloatTag("LastProgress", 0.0),
-			new CompoundTag("BreakBlocks", []),
-			new CompoundTag("AttachedBlocks", [])
-		]);
 
-		Tile::createTile(Tile::PISTON, $this->getLevel(), $nbt);
+		Tile::createTile(Tile::PISTON, $this->getLevel(), Tile::createNBT($this));
 
 		return true;
 	}

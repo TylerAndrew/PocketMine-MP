@@ -4,11 +4,9 @@ namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class Slime extends Living{
-	const NETWORK_ID = 37;
+class Slime extends Monster{
+	const NETWORK_ID = self::SLIME;
 	const DATA_SIZE = 16;
 
 	public $height = 2;
@@ -17,31 +15,19 @@ class Slime extends Living{
 
 	protected $exp_min = 1;
 	protected $exp_max = 1;//TODO: Size
-	protected $maxHealth = 16;
+
 
 	public function initEntity(){
+		$this->setMaxHealth(1);
 		parent::initEntity();
 		if (!isset($this->namedtag->Size)){
 			$this->setSize(mt_rand(0, 3));
 		}
+		$this->setSize($this->getSize());
 	}
 
 	public function getName(): string{
 		return "Slime";
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	public function getDrops(): array{
@@ -52,7 +38,7 @@ class Slime extends Living{
 
 	public function setSize($value){
 		$this->namedtag->Size = new IntTag("Size", $value);
-		$this->setDataProperty(self::DATA_SIZE, self::DATA_TYPE_BYTE, $value);
+		$this->setDataProperty(self::DATA_SIZE, self::DATA_TYPE_INT, $value);
 	}
 
 	public function getSize(){

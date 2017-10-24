@@ -3,11 +3,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class Ozelot extends Animal implements Tameable{
-	const NETWORK_ID = 22;
+class Ocelot extends Animal implements Tameable{
+	const NETWORK_ID = self::OCELOT;
 
 	const TYPE_NORMAL = 0;
 	const TYPE_BLACK = 1;
@@ -20,37 +18,24 @@ class Ozelot extends Animal implements Tameable{
 
 	protected $exp_min = 1;
 	protected $exp_max = 3;
-	protected $maxHealth = 10;
 
 	public static $range = 10;
 	public static $speed = 0.8;
 	public static $jump = 1;
 	public static $mindist = 10;
 
+
 	public function initEntity(){
+		$this->setMaxHealth(10);
 		parent::initEntity();
 		if (!isset($this->namedtag->Type) || $this->getVariant() > 3){
 			$this->setVariant(self::TYPE_NORMAL);
 		}
-		$this->setDataProperty(16, self::DATA_TYPE_BYTE, $this->getVariant());
+		$this->setVariant($this->namedtag->Type);
 	}
 
 	public function getName(): string{
 		return "Ocelot";
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	public function getDrops(): array{

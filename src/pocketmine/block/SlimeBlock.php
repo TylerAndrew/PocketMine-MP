@@ -51,7 +51,7 @@ class SlimeBlock extends Transparent{ //Partial (does not block light, mob spawn
 		return false; //todo check
 	}
 
-	public function onEntityCollide(Entity $entity){
+	public function onEntityCollide(Entity $entity): void{
 		if (!$entity->isSneaking()){
 			$entity->resetFallDistance();
 			$entity->onGround = true;
@@ -61,13 +61,13 @@ class SlimeBlock extends Transparent{ //Partial (does not block light, mob spawn
 	/**
 	 * @return AxisAlignedBB
 	 */
-	protected function recalculateBoundingBox(){ //Temporary fix for fall damage
+	protected function recalculateBoundingBox():?AxisAlignedBB{ //Temporary fix for fall damage
 		return new AxisAlignedBB(
 			$this->x,
 			$this->y,
 			$this->z,
 			$this->x + 1,
-			$this->y + 0.99,
+			$this->y + 1.5,
 			$this->z + 1
 		);
 	}

@@ -5,11 +5,10 @@ namespace pocketmine\entity;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
-class Stray extends Monster implements ProjectileSource{
-	const NETWORK_ID = 46;
+class Stray extends Skeleton{
+	const NETWORK_ID = self::STRAY;
 
 	public $height = 2;
 	public $width = 0.781;
@@ -17,29 +16,14 @@ class Stray extends Monster implements ProjectileSource{
 
 	protected $exp_min = 5;
 	protected $exp_max = 5;
-	protected $maxHealth = 20;
 
 	public function initEntity(){
+		$this->setMaxHealth(20);
 		parent::initEntity();
 	}
 
 	public function getName(): string{
 		return "Stray";
-	}
-
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	public function getDrops(): array{

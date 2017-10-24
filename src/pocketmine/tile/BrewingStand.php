@@ -29,11 +29,10 @@ use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\ShortTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\ContainerSetDataPacket;
 use pocketmine\Server;
 
-class BrewingStand extends Spawnable implements InventoryHolder, Container, Nameable{
+class BrewingStand extends Spawnable implements InventoryHolder, Container{
 	const MAX_BREW_TIME = 400;
 	/** @var BrewingInventory */
 	protected $inventory;
@@ -61,54 +60,37 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 		parent::__construct($level, $nbt);
 		$this->inventory = new BrewingInventory($this);
 
-		if(!isset($this->namedtag->Items) or !($this->namedtag->Items instanceof ListTag)){
+		if (!isset($this->namedtag->Items) or !($this->namedtag->Items instanceof ListTag)){
 			$this->namedtag->Items = new ListTag("Items", []);
 			$this->namedtag->Items->setTagType(NBT::TAG_Compound);
 		}
 
-		for($i = 0; $i < $this->getSize(); ++$i){
+		for ($i = 0; $i < $this->getSize(); ++$i){
 			$this->inventory->setItem($i, $this->getItem($i));
 		}
 
-		if(!isset($this->namedtag->CookTime)){
+		if (!isset($this->namedtag->CookTime)){
 			$this->namedtag->CookTime = new ShortTag("CookTime", 0);
 		}
 
-		if($this->namedtag["CookTime"] < self::MAX_BREW_TIME){
+		if ($this->namedtag["CookTime"] < self::MAX_BREW_TIME){
 			$this->scheduleUpdate();
 		}
 	}
 
-	public function getName() : string {
-		return $this->hasName() ? $this->namedtag->CustomName->getValue() : "Brewing Stand";
-	}
-
-	public function hasName() : bool {
-		return isset($this->namedtag->CustomName);
-	}
-
-	public function setName(string $str){
-		if($str === ""){
-			unset($this->namedtag->CustomName);
-			return;
-		}
-
-		$this->namedtag->CustomName = new StringTag("CustomName", $str);
-	}
-
-	public function close(){
-		if($this->closed === false){
-			foreach($this->getInventory()->getViewers() as $player){
+	public function close(): void{
+		if ($this->closed === false){
+			foreach ($this->getInventory()->getViewers() as $player){
 				$player->removeWindow($this->getInventory());
 			}
 			parent::close();
 		}
 	}
 
-	public function saveNBT(){
+	public function saveNBT(): void{
 		$this->namedtag->Items = new ListTag("Items", []);
 		$this->namedtag->Items->setTagType(NBT::TAG_Compound);
-		for($index = 0; $index < $this->getSize(); ++$index){
+		for ($index = 0; $index < $this->getSize(); ++$index){
 			$this->setItem($index, $this->inventory->getItem($index));
 		}
 	}
@@ -126,8 +108,8 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	 * @return int
 	 */
 	protected function getSlotIndex($index){
-		foreach($this->namedtag->Items as $i => $slot){
-			if($slot["Slot"] === $index){
+		foreach ($this->namedtag->Items as $i => $slot){
+			if ($slot["Slot"] === $index){
 				return $i;
 			}
 		}
@@ -144,9 +126,9 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	 */
 	public function getItem(int $index): Item{
 		$i = $this->getSlotIndex($index);
-		if($i < 0){
+		if ($i < 0){
 			return Item::get(Item::AIR, 0, 0);
-		}else{
+		} else{
 			return Item::nbtDeserialize($this->namedtag->Items[$i]);
 		}
 	}
@@ -154,7 +136,7 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	/**
 	 * This method should not be used by plugins, use the Inventory
 	 *
-	 * @param int  $index
+	 * @param int $index
 	 * @param Item $item
 	 *
 	 * @return bool
@@ -164,18 +146,18 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 
 		$d = $item->nbtSerialize($index);
 
-		if($item->getId() === Item::AIR or $item->getCount() <= 0){
-			if($i >= 0){
+		if ($item->getId() === Item::AIR or $item->getCount() <= 0){
+			if ($i >= 0){
 				unset($this->namedtag->Items[$i]);
 			}
-		}elseif($i < 0){
-			for($i = 0; $i <= $this->getSize(); ++$i){
-				if(!isset($this->namedtag->Items[$i])){
+		} elseif ($i < 0){
+			for ($i = 0; $i <= $this->getSize(); ++$i){
+				if (!isset($this->namedtag->Items[$i])){
 					break;
 				}
 			}
 			$this->namedtag->Items[$i] = $d;
-		}else{
+		} else{
 			$this->namedtag->Items[$i] = $d;
 		}
 
@@ -186,12 +168,19 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	 * @return BrewingInventory
 	 */
 	public function getInventory(){
+		return $this->getRealInventory();
+	}
+
+	/**
+	 * @return BrewingInventory
+	 */
+	public function getRealInventory(){
 		return $this->inventory;
 	}
 
 	public function checkIngredient(Item $item){
-		if(isset(self::$ingredients[$item->getId()])){
-			if(self::$ingredients[$item->getId()] === $item->getDamage()){
+		if (isset(self::$ingredients[$item->getId()])){
+			if (self::$ingredients[$item->getId()] === $item->getDamage()){
 				return true;
 			}
 		}
@@ -201,14 +190,14 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 	public function updateSurface(){
 		$this->saveNBT();
 		$this->spawnToAll();
-		if($this->chunk){
+		if ($this->chunk){
 			$this->chunk->setChanged();
 			$this->level->clearChunkCache($this->chunk->getX(), $this->chunk->getZ());
 		}
 	}
 
 	public function onUpdate(): bool{
-		if($this->closed === true){
+		if ($this->closed === true){
 			return false;
 		}
 
@@ -219,42 +208,42 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 		$ingredient = $this->inventory->getIngredient();
 		$canBrew = false;
 
-		for($i = 1; $i <= 3; $i++){
-			if($this->inventory->getItem($i)->getId() === Item::POTION or
+		for ($i = 1; $i <= 3; $i++){
+			if ($this->inventory->getItem($i)->getId() === Item::POTION or
 				$this->inventory->getItem($i)->getId() === Item::SPLASH_POTION
 			){
 				$canBrew = true;
 			}
 		}
 
-		if($ingredient->getId() !== Item::AIR and $ingredient->getCount() > 0){
-			if($canBrew){
-				if(!$this->checkIngredient($ingredient)){
+		if ($ingredient->getId() !== Item::AIR and $ingredient->getCount() > 0){
+			if ($canBrew){
+				if (!$this->checkIngredient($ingredient)){
 					$canBrew = false;
 				}
 			}
 
-			if($canBrew){
-				for($i = 1; $i <= 3; $i++){
+			if ($canBrew){
+				for ($i = 1; $i <= 3; $i++){
 					$potion = $this->inventory->getItem($i);
 					$recipe = Server::getInstance()->getCraftingManager()->matchBrewingRecipe($ingredient, $potion);
-					if($recipe !== null){
+					if ($recipe !== null){
 						$canBrew = true;
 						break;
 					}
 					$canBrew = false;
 				}
 			}
-		}else{
+		} else{
 			$canBrew = false;
 		}
 
-		if($canBrew){
+		if ($canBrew){
 			$this->namedtag->CookTime = new ShortTag("CookTime", $this->namedtag["CookTime"] - 1);
 
-			foreach($this->getInventory()->getViewers() as $player){
+			foreach ($this->getInventory()->getViewers() as $player){
 				$windowId = $player->getWindowId($this->getInventory());
-				if($windowId > 0){
+				if ($windowId > 0){
 					$pk = new ContainerSetDataPacket();
 					$pk->windowId = $windowId;
 					$pk->property = 0; //Brew
@@ -263,27 +252,27 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 				}
 			}
 
-			if($this->namedtag["CookTime"] <= 0){
+			if ($this->namedtag["CookTime"] <= 0){
 				$this->namedtag->CookTime = new ShortTag("CookTime", self::MAX_BREW_TIME);
-				for($i = 1; $i <= 3; $i++){
+				for ($i = 1; $i <= 3; $i++){
 					$potion = $this->inventory->getItem($i);
 					$recipe = Server::getInstance()->getCraftingManager()->matchBrewingRecipe($ingredient, $potion);
-					if($recipe != null and $potion->getId() !== Item::AIR){
+					if ($recipe != null and $potion->getId() !== Item::AIR){
 						$this->inventory->setItem($i, $recipe->getResult());
 					}
 				}
 
 				$ingredient->count--;
-				if($ingredient->getCount() <= 0) $ingredient = Item::get(Item::AIR);
+				if ($ingredient->getCount() <= 0) $ingredient = Item::get(Item::AIR);
 				$this->inventory->setIngredient($ingredient);
 			}
 
 			$ret = true;
-		}else{
+		} else{
 			$this->namedtag->CookTime = new ShortTag("CookTime", self::MAX_BREW_TIME);
-			foreach($this->getInventory()->getViewers() as $player){
+			foreach ($this->getInventory()->getViewers() as $player){
 				$windowId = $player->getWindowId($this->getInventory());
-				if($windowId > 0){
+				if ($windowId > 0){
 					$pk = new ContainerSetDataPacket();
 					$pk->windowId = $windowId;
 					$pk->property = 0; //Brew
@@ -292,20 +281,15 @@ class BrewingStand extends Spawnable implements InventoryHolder, Container, Name
 				}
 			}
 		}
-		$this->lastUpdate = microtime(true);
 
 		$this->timings->stopTiming();
 
 		return $ret;
 	}
 
-	public function addAdditionalSpawnData(CompoundTag $nbt){
+	public function addAdditionalSpawnData(CompoundTag $nbt): void{
 		$nbt->CookTime = $this->namedtag->CookTime;
 		$nbt->Items = $this->namedtag->Items;
-
-		if($this->hasName()){
-			$nbt->CustomName = $this->namedtag->CustomName;
-		}
 		//TODO: isMovable
 	}
 }

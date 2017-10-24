@@ -22,7 +22,7 @@
 namespace pocketmine\item;
 
 use pocketmine\entity\Entity;
-use pocketmine\entity\Projectile;
+use pocketmine\entity\projectile\Projectile;
 use pocketmine\event\entity\ProjectileLaunchEvent;
 use pocketmine\level\sound\LaunchSound;
 use pocketmine\math\Vector3;
@@ -101,40 +101,27 @@ class SplashPotion extends ProjectileItem{
 		return 1.1;
 	}
 
-	public function onClickAir(Player $player, Vector3 $directionVector) : bool{
-		$nbt = new CompoundTag("", [
-			new ListTag("Pos", [
-				new DoubleTag("", $player->x),
-				new DoubleTag("", $player->y + $player->getEyeHeight()),
-				new DoubleTag("", $player->z)
-			]),
-			new ListTag("Motion", [
-				new DoubleTag("", $directionVector->x),
-				new DoubleTag("", $directionVector->y),
-				new DoubleTag("", $directionVector->z)
-			]),
-			new ListTag("Rotation", [
-				new FloatTag("", $player->yaw),
-				new FloatTag("", $player->pitch)
-			]),
-			new ShortTag("PotionId", $this->getDamage()),
-		]);
+	public function onClickAir(Player $player, Vector3 $directionVector) : bool{//TODO optimise
+		$nbt = Entity::createBaseNBT($player->add(0, $player->getEyeHeight(), 0), $directionVector, $player->yaw, $player->pitch);
+		$nbt->PotionId = new ShortTag("PotionId", $this->getDamage());
 
-		$snowball = Entity::createEntity($this->getProjectileEntityType(), $player->getLevel(), $nbt, $player);
-		$snowball->setMotion($snowball->getMotion()->multiply($this->getThrowForce()));
+		$projectile = Entity::createEntity($this->getProjectileEntityType(), $player->getLevel(), $nbt, $player);
+		if($projectile !== null){
+			$projectile->setMotion($projectile->getMotion()->multiply($this->getThrowForce()));
+		}
 
 		$this->count--;
 
-		if($snowball instanceof Projectile){
-			$player->getServer()->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($snowball));
+		if($projectile instanceof Projectile){
+			$player->getServer()->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($projectile));
 			if($projectileEv->isCancelled()){
-				$snowball->kill();
+				$projectile->kill();
 			}else{
-				$snowball->spawnToAll();
+				$projectile->spawnToAll();
 				$player->getLevel()->addSound(new LaunchSound($player), $player->getViewers());
 			}
 		}else{
-			$snowball->spawnToAll();
+			$projectile->spawnToAll();
 		}
 
 		return true;

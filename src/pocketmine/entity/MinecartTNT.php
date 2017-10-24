@@ -3,11 +3,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class MinecartTNT extends Snake{
-	const NETWORK_ID = 97;
+class MinecartTNT extends Minecart{
+	const NETWORK_ID = self::TNT_MINECART;
 	public $height = 0.9;
 	public $width = 1.1;
 	protected $maxHealth = 4;
@@ -17,24 +15,6 @@ class MinecartTNT extends Snake{
 	public $moveSpeed = 0.4;
 	public $isFreeMoving = false;
 	public $isLinked = false;
-
-	public function initEntity(){
-		parent::initEntity();
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
 
 	public function getName(){
 		return "Minecart TNT";

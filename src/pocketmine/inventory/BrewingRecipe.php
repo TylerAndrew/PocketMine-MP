@@ -68,7 +68,7 @@ class BrewingRecipe implements Recipe{
 		return clone $this->output;
 	}
 
-	public function registerToCraftingManager(){
+	public function registerToCraftingManager(CraftingManager $manager):void{
 		Server::getInstance()->getCraftingManager()->registerBrewingRecipe($this);
 	}
 }

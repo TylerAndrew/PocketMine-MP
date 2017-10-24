@@ -3,12 +3,10 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class Minecart extends Vehicle{
 
-	const NETWORK_ID = 84;
+	const NETWORK_ID = self::MINECART;
 
 	public $height = 0.9;
 	public $width = 1.1;
@@ -25,26 +23,15 @@ class Minecart extends Vehicle{
 	public $oldPosition = null;
 
 	public function initEntity(){
+		$this->setMaxHealth(4);
 		parent::initEntity();
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	public function getName(){
 		return "Minecart";
-	}/*
+	}
+
+	/*
 
     public function onUpdate($currentTick){
         if($this->closed !== false){

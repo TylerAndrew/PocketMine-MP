@@ -25,7 +25,7 @@ use pocketmine\math\Vector3;
 use pocketmine\scheduler\Task;
 use pocketmine\Server;
 
-class BeaconDelayedCheckTask extends Task {
+class BeaconDelayedCheckTask extends Task{
 	/**
 	 * @var Vector3 $pos
 	 */
@@ -35,7 +35,7 @@ class BeaconDelayedCheckTask extends Task {
 	 */
 	private $levelId;
 
-	public function __construct(Vector3 $pos, $levelId) {
+	public function __construct(Vector3 $pos, $levelId){
 		$this->pos = $pos;
 		$this->levelId = $levelId;
 	}
@@ -47,13 +47,13 @@ class BeaconDelayedCheckTask extends Task {
 	 *
 	 * @return void
 	 */
-	public function onRun(int $currentTick) {
+	public function onRun(int $currentTick){
 		$level = Server::getInstance()->getLevel($this->levelId);
 		if (!Server::getInstance()->isLevelLoaded($level->getName()) || !$level->isChunkLoaded($this->pos->x >> 4, $this->pos->z >> 4)) return;
 		//Stop server from ticking it when chunk unloaded
 		$tile = $level->getTile($this->pos);
 		/** @var Beacon $tile */
-		if ($tile instanceof Beacon) {
+		if ($tile instanceof Beacon){
 			$tile->scheduleUpdate();
 		}
 	}

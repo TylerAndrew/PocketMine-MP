@@ -3,33 +3,19 @@
 namespace pocketmine\entity;
 
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
 use pocketmine\Player;
 
 class LeashKnot extends Entity{
-	const NETWORK_ID = 88;
+	const NETWORK_ID = self::LEASH_KNOT;
 
 	public $width = 0.1;
 	public $length = 0.1;//TODO
 	public $height = 0.1;
-	protected $maxHealth = 1;
 
+	//TODO leash lines
 	public function initEntity(){
+		$this->setMaxHealth(1);
 		parent::initEntity();
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	public function numberofAnimalsAttached(){ }

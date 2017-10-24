@@ -66,7 +66,7 @@ class EnderChest extends Transparent{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	protected function recalculateBoundingBox(){
+	protected function recalculateBoundingBox():?AxisAlignedBB{
 		return new AxisAlignedBB(
 			$this->x + 0.0625,
 			$this->y,
@@ -90,13 +90,7 @@ class EnderChest extends Transparent{
 
 
 		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = new CompoundTag("", [
-			new StringTag("id", Tile::ENDER_CHEST),
-			new IntTag("x", $this->x),
-			new IntTag("y", $this->y),
-			new IntTag("z", $this->z)
-		]);
-
+		$nbt = Tile::createNBT($this);
 		if ($item->hasCustomName()){
 			$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
 		}
@@ -118,13 +112,7 @@ class EnderChest extends Transparent{
 			if ($t instanceof TileEnderChest){
 				$chest = $t;
 			} else{
-				$nbt = new CompoundTag("", [
-					new StringTag("id", Tile::ENDER_CHEST),
-					new IntTag("x", $this->x),
-					new IntTag("y", $this->y),
-					new IntTag("z", $this->z)
-				]);
-				$chest = Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), $nbt);
+				$chest = Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), Tile::createNBT($this));
 			}
 
 			if ($chest instanceof TileEnderChest){

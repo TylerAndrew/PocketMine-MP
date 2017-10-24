@@ -4,11 +4,9 @@ namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class MagmaCube extends Living{
-	const NETWORK_ID = 42;
+	const NETWORK_ID = self::MAGMA_CUBE;
 	const DATA_SIZE = 16;
 
 	public $width = 2;
@@ -17,9 +15,10 @@ class MagmaCube extends Living{
 
 	protected $exp_min = 1;
 	protected $exp_max = 1; //TODO: Size
-	protected $maxHealth = 1; //TODO Size
+
 
 	public function initEntity(){
+		$this->setMaxHealth(1);
 		parent::initEntity();
 		if (!isset($this->namedtag->Size)){
 			$this->setSize(mt_rand(0, 3));
@@ -28,20 +27,6 @@ class MagmaCube extends Living{
 
 	public function getName(): string{
 		return "Magma Cube";
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	//TODO: Stop lava/fire damage

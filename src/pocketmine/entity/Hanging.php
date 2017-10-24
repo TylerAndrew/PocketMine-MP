@@ -2,5 +2,5 @@
 
 namespace pocketmine\entity;
 
-abstract class Hanging extends Snake implements Attachable{
+abstract class Hanging extends Living implements Attachable{
 }

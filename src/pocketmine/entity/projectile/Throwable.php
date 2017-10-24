@@ -31,14 +31,14 @@ abstract class Throwable extends Projectile{
 	protected $gravity = 0.03;
 	protected $drag = 0.01;
 
-	public function entityBaseTick(int $tickDiff = 1) : bool{
-		if($this->closed){
+	public function entityBaseTick(int $tickDiff = 1): bool{
+		if ($this->closed){
 			return false;
 		}
 
 		$hasUpdate = parent::entityBaseTick($tickDiff);
 
-		if($this->age > 1200 or $this->isCollided){
+		if ($this->age > 1200 or $this->isCollided){
 			//TODO: hit particles
 			$this->kill();
 			$hasUpdate = true;

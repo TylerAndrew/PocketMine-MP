@@ -4,11 +4,9 @@ namespace pocketmine\entity;
 
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class Guardian extends WaterAnimal implements Ageable{
-	const NETWORK_ID = 49;
+	const NETWORK_ID = self::GUARDIAN;
 
 	public $width = 0.75;
 	public $length = 0.75;
@@ -16,28 +14,14 @@ class Guardian extends WaterAnimal implements Ageable{
 
 	protected $exp_min = 10;
 	protected $exp_max = 10;
-	protected $maxHealth = 30;
 
 	public function initEntity(){
+		$this->setMaxHealth(30);
 		parent::initEntity();
 	}
 
 	public function getName(): string{
 		return "Guardian";
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 
 	public function getDrops(): array{

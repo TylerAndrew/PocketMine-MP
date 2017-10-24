@@ -3,12 +3,9 @@
 namespace pocketmine\entity;
 
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class SkeletonHorse extends Animal /*implements Rideable*/
-{
-	const NETWORK_ID = 26;
+class SkeletonHorse extends Horse{
+	const NETWORK_ID = self::SKELETON_HORSE;
 
 	public $width = 0.75;
 	public $height = 1.562;
@@ -16,32 +13,14 @@ class SkeletonHorse extends Animal /*implements Rideable*/
 
 	protected $exp_min = 1;
 	protected $exp_max = 3;//TODO
-	protected $maxHealth = 10;//TODO
 
 	public function initEntity(){
+		$this->setMaxHealth(parent::getMaxHealth());
 		parent::initEntity();
 	}
 
 	public function getName(): string{
 		return "Skeleton Horse";
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
-
-	public function isBaby(): bool{
-		return $this->getDataFlag(self::DATA_FLAGS, self::DATA_FLAG_BABY);
 	}
 
 	public function getDrops(): array{

@@ -5,11 +5,9 @@ namespace pocketmine\entity;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\item\Item as ItemItem;
 use pocketmine\nbt\tag\IntTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class Rabbit extends Animal{
-	const NETWORK_ID = 18;
+	const NETWORK_ID = self::RABBIT;
 
 	const TYPE_BROWN = 0;
 	const TYPE_BLACK = 1;
@@ -24,38 +22,25 @@ class Rabbit extends Animal{
 
 	protected $exp_min = 1;
 	protected $exp_max = 3;
-	protected $maxHealth = 3;
+
 
 	public function initEntity(){
+		$this->setMaxHealth(3);
 		parent::initEntity();
 
 		if (!isset($this->namedtag->Type) || $this->getVariant() > 5){
 			$this->setVariant(mt_rand(0, 5));
 		}
-		$this->setDataProperty(18, self::DATA_TYPE_BYTE, $this->getVariant());
+		$this->setVariant($this->namedtag->Type);
 	}
 
 	public function getName(): string{
 		return "Rabbit";
 	}
 
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
-
 	public function setVariant($type){
 		$this->namedtag->Type = new IntTag("Type", $type);
-		$this->setDataProperty(18, self::DATA_TYPE_BYTE, $type);
+		$this->setDataProperty(self::DATA_VARIANT, self::DATA_TYPE_INT, $type);
 	}
 
 	public function getVariant(){

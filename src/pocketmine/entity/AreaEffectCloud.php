@@ -9,11 +9,9 @@ use pocketmine\math\AxisAlignedBB;
 use pocketmine\nbt\tag\FloatTag;
 use pocketmine\nbt\tag\IntTag;
 use pocketmine\nbt\tag\ShortTag;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
 class AreaEffectCloud extends Entity{
-	const NETWORK_ID = 95;
+	const NETWORK_ID = self::AREA_EFFECT_CLOUD;
 
 	public $width = 5;
 	public $length = 5;
@@ -114,7 +112,6 @@ class AreaEffectCloud extends Entity{
 			}
 			/** @var Effect $effect */
 			$effect = $effects[0]; //Todo multiple effects
-			#$this->setDataProperty(self::DATA_POTION_COLOR, self::DATA_TYPE_INT, ($effect->getColor()[0] << 16) + ($effect->getColor()[1] << 8) + $effect->getColor()[2]);
 			$this->setDataProperty(self::DATA_POTION_COLOR, self::DATA_TYPE_INT, ((255 & 0xff) << 24) | (($effect->getColor()[0] & 0xff) << 16) | (($effect->getColor()[1] & 0xff) << 8) | ($effect->getColor()[2] & 0xff));
 			$this->Radius += $this->RadiusPerTick;
 			$this->setDataProperty(self::DATA_BOUNDING_BOX_WIDTH, self::DATA_TYPE_FLOAT, $this->Radius * 2);
@@ -152,18 +149,4 @@ class AreaEffectCloud extends Entity{
 	}
 
 	protected function applyGravity(){ }
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
 }

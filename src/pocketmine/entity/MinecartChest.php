@@ -2,60 +2,17 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\event\entity\EntityRegainHealthEvent;
+use pocketmine\inventory\ChestInventory;
+use pocketmine\inventory\Inventory;
+use pocketmine\inventory\InventoryHolder;
 use pocketmine\item\Item as ItemItem;
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
 
-class MinecartChest extends Snake{
+class MinecartChest extends Minecart implements InventoryHolder{
 
-	const NETWORK_ID = 98;
-	protected $maxHealth = 4;
-
-	public function initEntity(){
-		parent::initEntity();
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
-	}
+	const NETWORK_ID = self::CHEST_MINECART;
 
 	public function getName(){
 		return "Minecart Chest";
-	}
-
-	public function onUpdate(int $currentTick): bool{
-		$hasUpdate = false;
-		if ($this->isAlive()){
-			$this->timings->startTiming();
-			/*
-			if($this->isLinked() && $this->getlinkedTarget() !== null){
-				$hasUpdate = true;
-				$newx = $this->getX() - $this->getlinkedTarget()->getX();
-				$newy = $this->getY() - $this->getlinkedTarget()->getY();
-				$newz = $this->getZ() - $this->getlinkedTarget()->getZ();
-				$this->move($newx, $newy, $newz);
-				$this->updateMovement();
-			}*/
-			if ($this->getHealth() < $this->getMaxHealth()){
-				$this->heal(new EntityRegainHealthEvent($this, 0.1, EntityRegainHealthEvent::CAUSE_CUSTOM));
-				$hasUpdate = true;
-			}
-
-			$this->timings->stopTiming();
-
-		}
-		return $hasUpdate;
 	}
 
 	public function getDrops(): array{
@@ -63,4 +20,13 @@ class MinecartChest extends Snake{
 	}
 
 	//TODO: Open inventory, add inventory, drop inventory contents
+
+	/**
+	 * Get the object related inventory
+	 *
+	 * @return Inventory
+	 */
+	public function getInventory(){
+		return new ChestInventory(null);
+	}
 }

@@ -2,39 +2,24 @@
 
 namespace pocketmine\entity;
 
-use pocketmine\network\mcpe\protocol\AddEntityPacket;
-use pocketmine\Player;
+use pocketmine\entity\projectile\ProjectileSource;
 
-class EnderDragon extends Monster implements ProjectileSource{
-	const NETWORK_ID = 53;
+class EnderDragon extends Boss implements ProjectileSource{
+	const NETWORK_ID = self::ENDER_DRAGON;
 
 	public $height = 2;
 	public $width = 3;
-	public $lenght = 1;//TODO: check
+	public $lenght = 1;//TODO
 
 	protected $exp_min = 12500;
 	protected $exp_max = 12500;
-	protected $maxHealth = 200;
 
 	public function initEntity(){
+		$this->setMaxHealth(200);
 		parent::initEntity();
 	}
 
 	public function getName(): string{
 		return "Ender Dragon";
-	}
-
-	public function spawnTo(Player $player){
-		$pk = new AddEntityPacket();
-		$pk->entityRuntimeId = $this->getId();
-		$pk->type = self::NETWORK_ID;
-		$pk->position = $this->asVector3();
-		$pk->motion = $this->getMotion();
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
-		$pk->metadata = $this->dataProperties;
-		$player->dataPacket($pk);
-
-		parent::spawnTo($player);
 	}
 }
