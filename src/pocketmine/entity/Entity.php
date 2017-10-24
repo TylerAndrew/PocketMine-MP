@@ -216,84 +216,27 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	public static $entityCount = 1;
 	/** @var Entity[] */
 	private static $knownEntities = [];
-	/** @var string[] */
-	private static $shortNames = [];
+	/** @var string[][] */
+	private static $saveNames = [];
 
 	/**
 	 * Called on server startup to register default entity types.
 	 */
 	public static function init() : void{
-		Entity::registerEntity(AreaEffectCloud::class);
-		Entity::registerEntity(Arrow::class);
-		Entity::registerEntity(Bat::class);
-		Entity::registerEntity(Blaze::class);
-		Entity::registerEntity(Boat::class);
-		Entity::registerEntity(CaveSpider::class);
-		Entity::registerEntity(Chicken::class);
-		Entity::registerEntity(Cow::class);
-		Entity::registerEntity(Creeper::class);
-		Entity::registerEntity(Donkey::class);
-		Entity::registerEntity(DragonFireball::class);
-		Entity::registerEntity(Egg::class);
-		Entity::registerEntity(ElderGuardian::class);
-		Entity::registerEntity(EnderCrystal::class);
-		Entity::registerEntity(EnderDragon::class);
-		Entity::registerEntity(Enderman::class);
-		Entity::registerEntity(Endermite::class);
-		Entity::registerEntity(EnderSignal::class);
-		Entity::registerEntity(ExperienceOrb::class);
-		Entity::registerEntity(FallingSand::class);
-		Entity::registerEntity(FishingHook::class);
-		Entity::registerEntity(Ghast::class);
-		Entity::registerEntity(Guardian::class);
-		Entity::registerEntity(Horse::class);
-		Entity::registerEntity(Husk::class);
-		Entity::registerEntity(IronGolem::class);
-		Entity::registerEntity(Item::class);
-		Entity::registerEntity(LargeFireball::class);
-		Entity::registerEntity(LeashKnot::class);
-		Entity::registerEntity(Lightning::class);
-		Entity::registerEntity(LingeringPotion::class);
-		Entity::registerEntity(MagmaCube::class);
-		Entity::registerEntity(Minecart::class);
-		Entity::registerEntity(MinecartChest::class);
-		Entity::registerEntity(MinecartHopper::class);
-		Entity::registerEntity(MinecartTNT::class);
-		Entity::registerEntity(Mooshroom::class);
-		Entity::registerEntity(Mule::class);
-		Entity::registerEntity(Ozelot::class);
-	    Entity::registerEntity(Painting::class);
-		Entity::registerEntity(Pig::class);
-		Entity::registerEntity(PigZombie::class);
-		Entity::registerEntity(PolarBear::class);
-		Entity::registerEntity(PrimedTNT::class);
-		Entity::registerEntity(Rabbit::class);
-		Entity::registerEntity(Sheep::class);
-		Entity::registerEntity(Shulker::class);
-		Entity::registerEntity(ShulkerBullet::class);
-		Entity::registerEntity(Silverfish::class);
-		Entity::registerEntity(Skeleton::class);
-		Entity::registerEntity(SkeletonHorse::class);
-		Entity::registerEntity(Slime::class);
-		Entity::registerEntity(SmallFireball::class);
-		Entity::registerEntity(Snowball::class);
-		Entity::registerEntity(SnowGolem::class);
-		Entity::registerEntity(Spider::class);
-		Entity::registerEntity(Squid::class);
-		Entity::registerEntity(Stray::class);
-		Entity::registerEntity(ThrownEgg::class);
-		Entity::registerEntity(ThrownEnderPearl::class);
-		Entity::registerEntity(ThrownExpBottle::class);
-		Entity::registerEntity(ThrownPotion::class);
-		Entity::registerEntity(Villager::class);
-		Entity::registerEntity(Witch::class);
-		Entity::registerEntity(Wither::class);
-		Entity::registerEntity(WitherSkeleton::class);
-		Entity::registerEntity(WitherSkull::class);
-		Entity::registerEntity(Wolf::class);
-		Entity::registerEntity(Zombie::class);
-		Entity::registerEntity(ZombieHorse::class);
-		Entity::registerEntity(ZombieVillager::class);
+		//define legacy save IDs first - use them for saving for maximum compatibility with Minecraft PC
+		//TODO: index them by version to allow proper multi-save compatibility
+		//TODO re-add entities
+
+		Entity::registerEntity(Arrow::class, false, ['Arrow', 'minecraft:arrow']);
+		Entity::registerEntity(Egg::class, false, ['Egg', 'minecraft:egg']);
+		Entity::registerEntity(FallingSand::class, false, ['FallingSand', 'minecraft:falling_block']);
+		Entity::registerEntity(Item::class, false, ['Item', 'minecraft:item']);
+		Entity::registerEntity(PrimedTNT::class, false, ['PrimedTnt', 'PrimedTNT', 'minecraft:tnt']);
+		Entity::registerEntity(Snowball::class, false, ['Snowball', 'minecraft:snowball']);
+		Entity::registerEntity(Squid::class, false, ['Squid', 'minecraft:squid']);
+		Entity::registerEntity(Villager::class, false, ['Villager',	'minecraft:villager']);
+		Entity::registerEntity(Zombie::class, false, ['Zombie',	'minecraft:zombie']);
+
 		Entity::registerEntity(Human::class, true);
 	}
 
@@ -321,12 +264,16 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	/**
 	 * Registers an entity type into the index.
 	 *
-	 * @param string $className Class that extends Entity
-	 * @param bool   $force Force registration even if the entity does not have a valid network ID
+	 * @param string   $className Class that extends Entity
+	 * @param bool     $force Force registration even if the entity does not have a valid network ID
+	 * @param string[] $saveNames An array of save names which this entity might be saved under. Defaults to the short name of the class itself if empty.
+	 *
+	 * NOTE: The first save name in the $saveNames array will be used when saving the entity to disk. The reflection
+	 * name of the class will be appended to the end and only used if no other save names are specified.
 	 *
 	 * @return bool
 	 */
-	public static function registerEntity(string $className, bool $force = false) : bool{
+	public static function registerEntity(string $className, bool $force = false, array $saveNames = []) : bool{
 		assert(is_a($className, Entity::class, true));
 
 		/** @var Entity $className */
@@ -339,8 +286,17 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 				return false;
 			}
 
-			self::$knownEntities[$class->getShortName()] = $className;
-			self::$shortNames[$className] = $class->getShortName();
+			$shortName = $class->getShortName();
+			if(!in_array($shortName, $saveNames, true)){
+				$saveNames[] = $class->getShortName();
+			}
+
+			foreach($saveNames as $name){
+				self::$knownEntities[$name] = $className;
+			}
+
+			self::$saveNames[$className] = $saveNames;
+
 			return true;
 		}
 
@@ -577,6 +533,9 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 			$this->namedtag->Fire = new ShortTag("Fire", 0);
 		}
 		$this->fireTicks = (int) $this->namedtag["Fire"];
+		if($this->isOnFire()){
+			$this->setGenericFlag(self::DATA_FLAG_ONFIRE);
+		}
 
 		if(!isset($this->namedtag->Air)){
 			$this->namedtag->Air = new ShortTag("Air", 300);
@@ -860,12 +819,14 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	 * @return string
 	 */
 	public function getSaveId(){
-		return self::$shortNames[static::class];
+		reset(self::$saveNames[static::class]);
+		return current(self::$saveNames[static::class]);
 	}
 
 	public function saveNBT(){
 		if(!($this instanceof Player)){
 			$this->namedtag->id = new StringTag("id", $this->getSaveId());
+
 			if($this->getNameTag() !== ""){
 				$this->namedtag->CustomName = new StringTag("CustomName", $this->getNameTag());
 				$this->namedtag->CustomNameVisible = new ByteTag("CustomNameVisible", $this->isNameTagVisible() ? 1 : 0);
