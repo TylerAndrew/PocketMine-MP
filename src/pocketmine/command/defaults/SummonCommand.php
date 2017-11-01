@@ -25,6 +25,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\entity\Entity;
 use pocketmine\event\TranslationContainer;
 use pocketmine\level\Level;
+use pocketmine\level\Position;
 use pocketmine\nbt\JsonNBTParser;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\CompoundTag;
@@ -124,22 +125,7 @@ class SummonCommand extends VanillaCommand {
 		$entity = null;
 		$type = $args[0];
 		$level = ($sender instanceof Player) ? $sender->getLevel() : $sender->getServer()->getDefaultLevel();
-		$nbt = new CompoundTag("", [
-			new ListTag("Pos", [
-				new DoubleTag("", $x),
-				new DoubleTag("", $y),
-				new DoubleTag("", $z)
-			]),
-			new ListTag("Motion", [
-				new DoubleTag("", 0),
-				new DoubleTag("", 0),
-				new DoubleTag("", 0)
-			]),
-			new ListTag("Rotation", [
-				new FloatTag("", lcg_value() * 360),
-				new FloatTag("", 0)
-			]),
-		]);
+		$nbt = Entity::createBaseNBT(new Position($x, $y, $z, $level));
 		if (count($args) == 5 and $args[4]{0} == "{") {//Tags are found
 			$nbtExtra = JsonNBTParser::parseJSON($args[4]);
 			$nbt = NBT::combineCompoundTags($nbt, $nbtExtra, true);
