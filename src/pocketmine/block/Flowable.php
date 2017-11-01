@@ -43,7 +43,7 @@ abstract class Flowable extends Transparent{
 		return null;
 	}
 
-	public function getBoundingBox():AxisAlignedBB{
+	public function getBoundingBox(): ?AxisAlignedBB{
 		return null;
 	}
 }
