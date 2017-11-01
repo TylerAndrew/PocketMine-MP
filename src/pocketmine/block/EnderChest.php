@@ -106,7 +106,7 @@ class EnderChest extends Transparent{
 				Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), TileEnderChest::createNBT($this));
 			}
 
-			$player->addWindow(new EnderChestInventory($this, $player));
+			$player->addWindow(new EnderChestInventory($this));
 		}
 
 		return true;
