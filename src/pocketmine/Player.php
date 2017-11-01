@@ -763,6 +763,15 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	}
 
 	/**
+	 * {@inheritdoc}
+	 *
+	 * If null is given, will additionally send the skin to the player itself as well as its viewers.
+	 */
+	public function sendSkin(array $targets = null) : void{
+		parent::sendSkin($targets ?? $this->server->getOnlinePlayers());
+	}
+
+	/**
 	 * Gets the player IP address
 	 *
 	 * @return string
@@ -1378,8 +1387,8 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	protected function checkGroundState(float $movX, float $movY, float $movZ, float $dx, float $dy, float $dz){
 		if(!$this->onGround or $movY != 0){
 			$bb = clone $this->boundingBox;
-			$bb->minY = $this->y - 0.1;
-			$bb->maxY = $this->y + 0.1;
+			$bb->minY = $this->y - 0.2;
+			$bb->maxY = $this->y + 0.2;
 
 			if(count($this->level->getCollisionBlocks($bb, true)) > 0){
 				$this->onGround = true;
@@ -1988,24 +1997,14 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			return true;
 		}
 
-		/* Mojang, some stupid reason, send every single model for every single skin in the selected skin-pack.
-		 * Not only that, they are pretty-printed. This decode/encode is to get rid of the pretty-print, which cuts down
-		 * significantly on the amount of wasted bytes.
-		 * TODO: find out what model crap can be safely dropped from the packet (unless it gets fixed first)
-		 */
-
-		$geometryJsonEncoded = base64_decode($packet->clientData["SkinGeometry"] ?? "");
-		if($geometryJsonEncoded !== ""){
-			$geometryJsonEncoded = json_encode(json_decode($geometryJsonEncoded));
-		}
-
 		$skin = new Skin(
 			$packet->clientData["SkinId"],
 			base64_decode($packet->clientData["SkinData"] ?? ""),
 			base64_decode($packet->clientData["CapeData"] ?? ""),
 			$packet->clientData["SkinGeometryName"],
-			$geometryJsonEncoded
+			base64_decode($packet->clientData["SkinGeometry"] ?? "")
 		);
+		$skin->debloatGeometryData();
 
 		if(!$skin->isValid()){
 			$this->close("", "disconnectionScreen.invalidSkin");
@@ -2361,7 +2360,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 							$item = $this->inventory->getItemInHand();
 						}
 
-						$ev = new PlayerInteractEvent($this, $item, $directionVector, $face, PlayerInteractEvent::RIGHT_CLICK_AIR);
+						$ev = new PlayerInteractEvent($this, $item, null, $directionVector, $face, PlayerInteractEvent::RIGHT_CLICK_AIR);
 
 						$this->server->getPluginManager()->callEvent($ev);
 
@@ -2404,7 +2403,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 						}
 
 						$cancelled = false;
-						if($target instanceof Player and $this->server->getConfigBoolean("pvp", true) === false){
+						if($target instanceof Player and $this->server->getConfigBool("pvp", true) === false){
 							$cancelled = true;
 						}
 
@@ -2419,7 +2418,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 						}elseif($target instanceof Player){
 							if(($target->getGamemode() & 0x01) > 0){
 								return true;
-							}elseif($this->server->getConfigBoolean("pvp") !== true){
+							}elseif($this->server->getConfigBool("pvp") !== true){
 								$cancelled = true;
 							}
 
@@ -2624,7 +2623,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 					break;
 				}
 				$target = $this->level->getBlock($pos);
-				$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $target, $packet->face, $target->getId() === 0 ? PlayerInteractEvent::LEFT_CLICK_AIR : PlayerInteractEvent::LEFT_CLICK_BLOCK);
+				$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $target, null, $packet->face, $target->getId() === 0 ? PlayerInteractEvent::LEFT_CLICK_AIR : PlayerInteractEvent::LEFT_CLICK_BLOCK);
 				$this->getServer()->getPluginManager()->callEvent($ev);
 				if($ev->isCancelled()){
 					$this->inventory->sendHeldItem($this);
@@ -2911,9 +2910,9 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			return true;
 		}
 
-		$tile = $this->level->getTile($this->temporalVector->setComponents($packet->x, $packet->y, $packet->z));
+		$tile = $this->level->getTileAt($packet->x, $packet->y, $packet->z);
 		if($tile instanceof ItemFrame){
-			$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $tile->getBlock(), 5 - $tile->getBlock()->getDamage(), PlayerInteractEvent::LEFT_CLICK_BLOCK);
+			$ev = new PlayerInteractEvent($this, $this->inventory->getItemInHand(), $tile->getBlock(), null, 5 - $tile->getBlock()->getDamage(), PlayerInteractEvent::LEFT_CLICK_BLOCK);
 			$this->server->getPluginManager()->callEvent($ev);
 
 			if($this->isSpectator()){
