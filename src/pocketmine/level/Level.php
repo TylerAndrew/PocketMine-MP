@@ -72,6 +72,7 @@ use pocketmine\nbt\tag\ListTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
+use pocketmine\network\mcpe\protocol\GameRulesChangedPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\SetDifficultyPacket;
@@ -2833,6 +2834,50 @@ class Level implements ChunkManager, Metadatable{
 
 		$pk = new SetDifficultyPacket();
 		$pk->difficulty = $this->getDifficulty();
+		$this->server->broadcastPacket($targets, $pk);
+	}
+
+	/**
+	 * @param string $gamerule
+	 * @return GameRule|null
+	 */
+	public function getGameRule(string $gamerule){
+		return $this->provider->getGameRule($gamerule);
+	}
+
+	/**
+	 * @return GameRule[]
+	 */
+	public function getGameRules() : array {
+		return $this->provider->getGameRules();
+	}
+
+	/**
+	 * @param GameRule $gamerule
+	 */
+	public function setGameRule(GameRule $gamerule) {
+		$this->provider->setGameRule($gamerule);
+		$this->sendGameRules();
+	}
+
+	/**
+	 * @param array $gamerules
+	 */
+	public function setGameRules(array $gamerules){
+		$this->provider->setGameRules($gamerules);
+		$this->sendGameRules();
+	}
+
+	/**
+	 * @param Player[] ...$targets
+	 */
+	public function sendGameRules(Player ...$targets){
+		if(count($targets) === 0){
+			$targets = $this->getPlayers();
+		}
+
+		$pk = new GameRulesChangedPacket();
+		$pk->gameRules = $this->getGameRules();
 		$this->server->broadcastPacket($targets, $pk);
 	}
 

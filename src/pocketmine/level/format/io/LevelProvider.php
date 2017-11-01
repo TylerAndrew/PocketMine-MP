@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace pocketmine\level\format\io;
 
 use pocketmine\level\format\Chunk;
+use pocketmine\level\GameRule;
 use pocketmine\level\Level;
 use pocketmine\math\Vector3;
 use pocketmine\scheduler\AsyncTask;
@@ -217,6 +218,27 @@ interface LevelProvider{
 	 * @param int $difficulty
 	 */
 	public function setDifficulty(int $difficulty);
+
+	/**
+	 * @param string $gamerule
+	 * @return GameRule|null
+	 */
+	public function getGameRule(string $gamerule);
+
+	/**
+	 * @return GameRule[]
+	 */
+	public function getGameRules() : array;
+
+	/**
+	 * @param GameRule $gamerule
+	 */
+	public function setGameRule(GameRule $gamerule);
+
+	/**
+	 * @param GameRule[] $gamerules
+	 */
+	public function setGameRules(array $gamerules);
 
 	/**
 	 * @return Chunk[]

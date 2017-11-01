@@ -28,6 +28,7 @@ use pocketmine\level\format\io\BaseLevelProvider;
 use pocketmine\level\format\io\ChunkUtils;
 use pocketmine\level\format\io\exception\UnsupportedChunkFormatException;
 use pocketmine\level\format\SubChunk;
+use pocketmine\level\GameRule;
 use pocketmine\level\generator\Flat;
 use pocketmine\level\generator\Generator;
 use pocketmine\level\Level;
@@ -182,7 +183,7 @@ class LevelDB extends BaseLevelProvider{
 			new ByteTag("eduLevel", 0),
 			new ByteTag("falldamage", 1),
 			new ByteTag("firedamage", 1),
-			new ByteTag("hasBeenLoadedInCreative", 1), //badly named, this actually determines whether achievements can be earned in this world...
+			new ByteTag("hasBeenLoadedInCreative", 1), //badly named, this actually determines whether achievements can be earned in this world... (And default gamerules for tile drops)
 			new ByteTag("immutableWorld", 0),
 			new FloatTag("lightningLevel", 0.0),
 			new IntTag("lightningTime", 0),
@@ -193,7 +194,7 @@ class LevelDB extends BaseLevelProvider{
 			new ByteTag("texturePacksRequired", 0), //TODO
 
 			//Additional PocketMine-MP fields
-			new CompoundTag("GameRules", []),
+			new CompoundTag("GameRules", $options["gamerules"]??[]),
 			new ByteTag("hardcore", ($options["hardcore"] ?? false) === true ? 1 : 0),
 			new StringTag("generatorName", Generator::getGeneratorName($generator)),
 			new StringTag("generatorOptions", $options["preset"] ?? "")
@@ -630,5 +631,53 @@ class LevelDB extends BaseLevelProvider{
 		$this->unloadChunks();
 		$this->db->close();
 		$this->level = null;
+	}
+
+	/**
+	 * @param string $gamerule
+	 * @return GameRule|null
+	 */
+	public function getGameRule(string $gamerule){
+		var_dump($this->getGameRules());
+		$i = -1;
+		foreach ($this->getGameRules() as $index => $gameRule){
+			if($gameRule->getName() === $gamerule){
+				$i = $index;
+				break;
+			}
+		}
+		if($i >= 0){
+			return $this->getGameRules()[$i];
+		}
+		return null;
+	}
+
+	/**
+	 * @return GameRule[]
+	 */
+	public function getGameRules(): array{
+		return (array) $this->levelData["GameRules"];
+	}
+
+	/**
+	 * @param GameRule $gamerule
+	 */
+	public function setGameRule(GameRule $gamerule){
+		var_dump($this->getGameRule($gamerule->getName()));
+		if(!is_null($oldgamerule = $this->getGameRule($gamerule->getName()))){
+			$oldgamerule->setType($gamerule->getType());
+			$oldgamerule->setValue($gamerule->getValue());
+			$this->setGameRules($this->getGameRules());
+		}
+		var_dump($this->getGameRules());
+	}
+
+	/**
+	 * @param GameRule[] $gamerules
+	 */
+	public function setGameRules(array $gamerules){
+		// TODO: Implement setGameRules() method.
+		$this->levelData["GameRules"] = array_map(function (GameRule $gameRule){ return $gameRule->nbtSerialize();}, $gamerules);
+		var_dump($this->getGameRules());
 	}
 }

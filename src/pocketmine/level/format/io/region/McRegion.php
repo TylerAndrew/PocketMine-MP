@@ -28,6 +28,7 @@ use pocketmine\level\format\ChunkException;
 use pocketmine\level\format\io\BaseLevelProvider;
 use pocketmine\level\format\io\ChunkUtils;
 use pocketmine\level\format\SubChunk;
+use pocketmine\level\GameRule;
 use pocketmine\level\generator\Generator;
 use pocketmine\level\Level;
 use pocketmine\nbt\NBT;
@@ -475,5 +476,36 @@ class McRegion extends BaseLevelProvider{
 			unset($this->regions[$index]);
 		}
 		$this->level = null;
+	}
+
+	/**
+	 * @param string $gamerule
+	 * @return GameRule|null
+	 */
+	public function getGameRule(string $gamerule){
+		// TODO: Implement getGameRule() method.
+		return null;
+	}
+
+	/**
+	 * @return GameRule[]
+	 */
+	public function getGameRules(): array{
+		// TODO: Implement getGameRules() method.
+		return [];
+	}
+
+	/**
+	 * @param GameRule $gamerule
+	 */
+	public function setGameRule(GameRule $gamerule){
+		// TODO: Implement setGameRule() method.
+	}
+
+	/**
+	 * @param GameRule[] $gamerules
+	 */
+	public function setGameRules(array $gamerules){
+		// TODO: Implement setGameRules() method.
 	}
 }

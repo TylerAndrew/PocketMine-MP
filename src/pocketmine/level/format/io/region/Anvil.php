@@ -27,6 +27,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\level\format\ChunkException;
 use pocketmine\level\format\io\ChunkUtils;
 use pocketmine\level\format\SubChunk;
+use pocketmine\level\GameRule;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\{
 	ByteArrayTag, ByteTag, CompoundTag, IntArrayTag, IntTag, ListTag, LongTag
@@ -160,5 +161,4 @@ class Anvil extends McRegion{
 		//TODO: add world height options
 		return 256;
 	}
-
 }

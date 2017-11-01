@@ -28,6 +28,7 @@ namespace pocketmine\network\mcpe\protocol;
 use pocketmine\entity\Attribute;
 use pocketmine\entity\Entity;
 use pocketmine\item\ItemFactory;
+use pocketmine\level\GameRule;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\EntityLink;
@@ -460,7 +461,6 @@ abstract class DataPacket extends BinaryStream{
 
 	/**
 	 * Reads gamerules
-	 * TODO: implement this properly
 	 *
 	 * @return array
 	 */
@@ -483,7 +483,7 @@ abstract class DataPacket extends BinaryStream{
 					break;
 			}
 
-			$rules[$name] = [$type, $value];
+			array_merge($rules, (array) new GameRule($name, $type, $value));
 		}
 
 		return $rules;
@@ -491,7 +491,6 @@ abstract class DataPacket extends BinaryStream{
 
 	/**
 	 * Writes a gamerule array
-	 * TODO: implement this properly
 	 *
 	 * @param array $rules
 	 */

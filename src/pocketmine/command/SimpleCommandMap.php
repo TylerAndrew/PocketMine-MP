@@ -33,6 +33,7 @@ use pocketmine\command\defaults\DumpMemoryCommand;
 use pocketmine\command\defaults\EffectCommand;
 use pocketmine\command\defaults\EnchantCommand;
 use pocketmine\command\defaults\GamemodeCommand;
+use pocketmine\command\defaults\GameRuleCommand;
 use pocketmine\command\defaults\GarbageCollectorCommand;
 use pocketmine\command\defaults\GiveCommand;
 use pocketmine\command\defaults\HelpCommand;
@@ -96,6 +97,7 @@ class SimpleCommandMap implements CommandMap{
 			new EffectCommand("effect"),
 			new EnchantCommand("enchant"),
 			new GamemodeCommand("gamemode"),
+			new GameRuleCommand("gamerule"),
 			new GiveCommand("give"),
 			new HelpCommand("help"),
 			new KickCommand("kick"),
