@@ -90,12 +90,7 @@ class EnderChest extends Transparent{
 
 
 		$this->getLevel()->setBlock($block, $this, true, true);
-		$nbt = Tile::createNBT($this);
-		if ($item->hasCustomName()){
-			$nbt->CustomName = new StringTag("CustomName", $item->getCustomName());
-		}
-
-		Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), $nbt);
+		Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), TileEnderChest::createNBT($this, $face, $item, $player));
 
 		return true;
 	}
@@ -107,17 +102,11 @@ class EnderChest extends Transparent{
 				return true;
 			}
 
-			$t = $this->getLevel()->getTile($this);
-			$chest = null;
-			if ($t instanceof TileEnderChest){
-				$chest = $t;
-			} else{
-				$chest = Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), Tile::createNBT($this));
+			if (!$this->getLevel()->getTile($this) instanceof TileEnderChest){
+				Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), TileEnderChest::createNBT($this));
 			}
 
-			if ($chest instanceof TileEnderChest){
-				$player->addWindow(new EnderChestInventory($this));
-			}
+			$player->addWindow(new EnderChestInventory($this));
 		}
 
 		return true;

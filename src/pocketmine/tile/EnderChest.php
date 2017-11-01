@@ -37,4 +37,11 @@ class EnderChest extends Spawnable{
 	 * @param CompoundTag $nbt
 	 */
 	public function addAdditionalSpawnData(CompoundTag $nbt): void{ }
+
+	/**
+	 * @return string
+	 */
+	public function getDefaultName() : string{
+		return "EnderChest";
+	}
 }
