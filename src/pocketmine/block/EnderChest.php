@@ -116,7 +116,7 @@ class EnderChest extends Transparent{
 			}
 
 			if ($chest instanceof TileEnderChest){
-				$player->addWindow(new EnderChestInventory($this, $player));
+				$player->addWindow(new EnderChestInventory($this));
 			}
 		}
 
