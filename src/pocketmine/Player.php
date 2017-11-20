@@ -297,14 +297,6 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	/** @var int|null */
 	protected $lineHeight = null;
 
-	/** @var int */
-	protected $formIdCounter = 0;
-	/** @var int|null */
-	protected $sentFormId = null;
-	/** @var Form|null */
-	protected $sentForm = null;
-	/** @var Form[] */
-	protected $formQueue = [];
 	/** @var string */
 	protected $locale = "en_US";
 
@@ -313,6 +305,15 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	 * Last measurement of player's latency in milliseconds.
 	 */
 	protected $lastPingMeasure = 1;
+
+	/** @var int */
+	protected $formIdCounter = 0;
+	/** @var int|null */
+	protected $sentFormId = null;
+	/** @var Form|null */
+	protected $sentForm = null;
+	/** @var Form[] */
+	protected $formQueue = [];
 
 	/**
 	 * @return TranslationContainer|string
@@ -3336,24 +3337,23 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			return false;
 		}
 
+		$form = null;
+
 		try{
 			$form = $this->sentForm->handleResponse($this, $responseData);
-			if($form !== null){
-				$this->sendFormRequestPacket($form);
-				return true;
-			}
 		}catch(\Throwable $e){
 			$this->server->getLogger()->logException($e);
-			return true;
-		}finally{
-			$this->sentFormId = null;
-			$this->sentForm = null;
 		}
 
-		if(count($this->formQueue) > 0){
+		if($form === null){
 			$form = array_shift($this->formQueue);
+		}
 
+		if($form !== null){
 			$this->sendFormRequestPacket($form);
+		}else{
+			$this->sentFormId = null;
+			$this->sentForm = null;
 		}
 
 		return true;
