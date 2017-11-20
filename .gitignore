@@ -27,17 +27,13 @@ Desktop.ini
 
 # Sphinx-doc
 /docs/build/
-<<<<<<< HEAD
-!/docs/requirements.txt
-=======
 !/docs/requirements.txt
 
 # Composer
 vendor/*
-<<<<<<< HEAD
->>>>>>> master
-=======
 
 # Travis files
 test_data/*
->>>>>>> master
+
+# Doxygen
+Documentation/*
