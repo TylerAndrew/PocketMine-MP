@@ -74,8 +74,8 @@ class Bow extends Tool{
 
 			$entity = $ev->getProjectile(); //This might have been changed by plugins
 
-			if ($ev->isCancelled()){
-				$entity->kill();
+			if($ev->isCancelled()){
+				$entity->flagForDespawn();
 				$player->getInventory()->sendContents($player);
 			} else{
 				$entity->setMotion($entity->getMotion()->multiply($ev->getForce()));
@@ -86,9 +86,9 @@ class Bow extends Tool{
 
 				if ($entity instanceof Projectile){
 					$player->getServer()->getPluginManager()->callEvent($projectileEv = new ProjectileLaunchEvent($entity));
-					if ($projectileEv->isCancelled()){
-						$ev->getProjectile()->kill();
-					} else{
+					if($projectileEv->isCancelled()){
+						$ev->getProjectile()->flagForDespawn();
+					}else{
 						$ev->getProjectile()->spawnToAll();
 						$player->level->addSound(new LaunchSound($player), $player->getViewers());
 					}
