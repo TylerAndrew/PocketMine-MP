@@ -115,8 +115,8 @@ use pocketmine\utils\VersionString;
  * The class that manages everything
  */
 class Server{
-	const BROADCAST_CHANNEL_ADMINISTRATIVE = "pocketmine.broadcast.admin";
-	const BROADCAST_CHANNEL_USERS = "pocketmine.broadcast.user";
+	public const BROADCAST_CHANNEL_ADMINISTRATIVE = "pocketmine.broadcast.admin";
+	public const BROADCAST_CHANNEL_USERS = "pocketmine.broadcast.user";
 
 	/** @var Server */
 	private static $instance = null;
@@ -774,6 +774,7 @@ class Server{
 			//new IntTag("SpawnZ", (int) $spawn->z),
 			//new ByteTag("SpawnForced", 1), //TODO
 			new ListTag("Inventory", [], NBT::TAG_Compound),
+			new ListTag("EnderChestInventory", [], NBT::TAG_Compound),
 			new CompoundTag("Achievements", []),
 			new IntTag("playerGameType", $this->getGamemode()),
 			new ListTag("Motion", [

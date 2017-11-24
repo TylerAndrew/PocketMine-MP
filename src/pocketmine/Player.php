@@ -81,6 +81,7 @@ use pocketmine\inventory\transaction\CraftingTransaction;
 use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
 use pocketmine\item\WritableBook;
 use pocketmine\item\WrittenBook;
 use pocketmine\level\ChunkLoader;
@@ -96,15 +97,12 @@ use pocketmine\metadata\MetadataValue;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\LongTag;
-use pocketmine\nbt\tag\ShortTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\network\mcpe\PlayerNetworkSessionAdapter;
 use pocketmine\network\mcpe\protocol\AdventureSettingsPacket;
 use pocketmine\network\mcpe\protocol\AnimatePacket;
+use pocketmine\network\mcpe\protocol\AvailableCommandsPacket;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\network\mcpe\protocol\BlockEntityDataPacket;
 use pocketmine\network\mcpe\protocol\BlockPickRequestPacket;
@@ -123,7 +121,6 @@ use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\PlayerActionPacket;
-use pocketmine\network\mcpe\protocol\PlayerHotbarPacket;
 use pocketmine\network\mcpe\protocol\PlayStatusPacket;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
@@ -140,6 +137,9 @@ use pocketmine\network\mcpe\protocol\SetTitlePacket;
 use pocketmine\network\mcpe\protocol\StartGamePacket;
 use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\network\mcpe\protocol\TransferPacket;
+use pocketmine\network\mcpe\protocol\types\CommandData;
+use pocketmine\network\mcpe\protocol\types\CommandEnum;
+use pocketmine\network\mcpe\protocol\types\CommandParameter;
 use pocketmine\network\mcpe\protocol\types\ContainerIds;
 use pocketmine\network\mcpe\protocol\types\DimensionIds;
 use pocketmine\network\mcpe\protocol\types\PlayerPermissions;
@@ -164,11 +164,11 @@ use pocketmine\utils\UUID;
  */
 class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
-	const SURVIVAL = 0;
-	const CREATIVE = 1;
-	const ADVENTURE = 2;
-	const SPECTATOR = 3;
-	const VIEW = Player::SPECTATOR;
+	public const SURVIVAL = 0;
+	public const CREATIVE = 1;
+	public const ADVENTURE = 2;
+	public const SPECTATOR = 3;
+	public const VIEW = Player::SPECTATOR;
 
 	/**
 	 * Checks a supplied username and checks it is valid.
@@ -653,20 +653,36 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 	public function sendCommandData(){
 		//TODO: this needs fixing
-		/*
-		$data = [];
-		foreach($this->server->getCommandMap()->getCommands() as $command){
-			if(count($cmdData = $command->generateCustomCommandData($this)) > 0){
-				$data[$command->getName()]["versions"][0] = $cmdData;
+
+		$pk = new AvailableCommandsPacket();
+		foreach($this->server->getCommandMap()->getCommands() as $name => $command){
+			if(isset($pk->commandData[$command->getName()]) or $command->getName() === "help"){
+				continue;
 			}
+
+			$data = new CommandData();
+			$data->commandName = $command->getName();
+			$data->commandDescription = $this->server->getLanguage()->translateString($command->getDescription());
+			$data->flags = 0;
+			$data->permission = 0;
+
+			$parameter = new CommandParameter();
+			$parameter->paramName = "args";
+			$parameter->paramType = AvailableCommandsPacket::ARG_FLAG_VALID | AvailableCommandsPacket::ARG_TYPE_RAWTEXT;
+			$parameter->isOptional = true;
+			$data->overloads[0][0] = $parameter;
+
+			$aliases = $command->getAliases();
+			if(!empty($aliases)){
+				$data->aliases = new CommandEnum();
+				$data->aliases->enumName = ucfirst($command->getName()) . "Aliases";
+				$data->aliases->enumValues = $aliases;
+			}
+
+			$pk->commandData[$command->getName()] = $data;
 		}
 
-		if(count($data) > 0){
-			//TODO: structure checking
-			$pk = new AvailableCommandsPacket();
-			$pk->commands = json_encode($data);
-			$this->dataPacket($pk);
-		}*/
+		$this->dataPacket($pk);
 
 	}
 
@@ -1638,10 +1654,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		$this->sendAttributes();
 
 		if(!$this->isAlive() and $this->spawned){
-			$this->deadTicks += $tickDiff;
-			if($this->deadTicks >= $this->maxDeadTicks){
-				$this->despawnFromAll();
-			}
+			$this->onDeathUpdate($tickDiff);
 			return true;
 		}
 
@@ -2473,7 +2486,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 								}
 
 								return true;
-							}elseif($this->inventory->getItemInHand()->getId() === Item::BUCKET and $this->inventory->getItemInHand()->getDamage() === 1){ //Milk!
+							}elseif($this->inventory->getItemInHand()->getId() === ItemIds::BUCKET and $this->inventory->getItemInHand()->getDamage() === 1){ //Milk!
 								$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $this->inventory->getItemInHand()));
 								if($ev->isCancelled()){
 									$this->inventory->sendContents($this);
@@ -2485,7 +2498,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 									$slot = $this->inventory->getItemInHand();
 									--$slot->count;
 									$this->inventory->setItemInHand($slot);
-									$this->inventory->addItem(ItemFactory::get(Item::BUCKET, 0, 1));
+									$this->inventory->addItem(ItemFactory::get(ItemIds::BUCKET, 0, 1));
 								}
 
 								$this->removeAllEffects();
@@ -2947,7 +2960,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	public function handleBookEdit(BookEditPacket $packet) : bool{
 		/** @var WritableBook $oldBook */
 		$oldBook = $this->inventory->getItem($packet->inventorySlot - 9);
-		if($oldBook->getId() !== Item::WRITABLE_BOOK){
+		if($oldBook->getId() !== ItemIds::WRITABLE_BOOK){
 			return false;
 		}
 
@@ -2973,7 +2986,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				break;
 			case BookEditPacket::TYPE_SIGN_BOOK:
 				/** @var WrittenBook $newBook */
-				$newBook = Item::get(Item::WRITTEN_BOOK, 0, 1, $newBook->getNamedTag());
+				$newBook = ItemFactory::get(ItemIds::WRITTEN_BOOK, 0, 1, $newBook->getNamedTag());
 				$newBook->setAuthor($packet->author);
 				$newBook->setTitle($packet->title);
 				$newBook->setGeneration(WrittenBook::GENERATION_ORIGINAL);
@@ -3589,6 +3602,14 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		}
 	}
 
+	protected function onDeathUpdate(int $tickDiff) : bool{
+		if(parent::onDeathUpdate($tickDiff)){
+			$this->despawnFromAll(); //non-player entities rely on close() to do this for them
+		}
+
+		return false; //never flag players for despawn
+	}
+
 	public function attack(EntityDamageEvent $source){
 		if(!$this->isAlive()){
 			return;
@@ -3602,7 +3623,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$source->setCancelled();
 		}elseif($this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL){
 			$source->setCancelled();
-		}elseif(!$this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL && ($this->isGliding() || $this->getInventory()->getItem($this->getInventory()->getSize() + 1)->getId() === Item::ELYTRA)){/*due to lag it could happen that you first close the Elytra and then take damage, so i add a slot check*/
+		}elseif(!$this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL && ($this->isGliding() || $this->getInventory()->getItem($this->getInventory()->getSize() + 1)->getId() === ItemIds::ELYTRA)){/*due to lag it could happen that you first close the Elytra and then take damage, so i add a slot check*/
 			$source->setDamage($damage = $this->getMotion()->distance($this->speed));//TODO: Check if this is correct. The faster, the more damage#Elytra
             print "Damage dealed is $damage".PHP_EOL;
 		}
@@ -3616,6 +3637,12 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 
 			$this->exhaust(0.3, PlayerExhaustEvent::CAUSE_DAMAGE);
 		}
+	}
+
+	public function getOffsetPosition(Vector3 $vector3) : Vector3{
+		$result = parent::getOffsetPosition($vector3);
+		$result->y += 0.001; //Hack for MCPE falling underground for no good reason (TODO: find out why it's doing this)
+		return $result;
 	}
 
 	public function sendPosition(Vector3 $pos, float $yaw = null, float $pitch = null, int $mode = MovePlayerPacket::MODE_NORMAL, array $targets = null){

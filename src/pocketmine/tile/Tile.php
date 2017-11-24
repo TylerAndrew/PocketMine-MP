@@ -44,34 +44,34 @@ use pocketmine\Server;
 
 abstract class Tile extends Position{
 
-	const TAG_ID = "id";
-	const TAG_X = "x";
-	const TAG_Y = "y";
-	const TAG_Z = "z";
+	public const TAG_ID = "id";
+	public const TAG_X = "x";
+	public const TAG_Y = "y";
+	public const TAG_Z = "z";
 
-    const BEACON = "Beacon";
-    const BREWING_STAND = "BrewingStand";
-    const CAULDRON = "Cauldron";
-    const CHEST = "Chest";
-    const COMPARATOR = "Comparator";
-    const DAY_LIGHT_DETECTOR = "DLDetector";
-    const DISPENSER = "Dispenser";
-    const DROPPER = "Dropper";
-    const ENCHANT_TABLE = "EnchantTable";
-    const ENDER_CHEST = "EnderChest";
-    const END_PORTAL = "EndPortal";
-    const FURNACE = "Furnace";
-    const FLOWER_POT = "FlowerPot";
-    const HOPPER = "Hopper";
-    const ITEM_FRAME = "ItemFrame";
-    const MOB_SPAWNER = "MobSpawner";
-    const MOVING_BLOCK = "MovingBlock";
-    const NOTEBLOCK = "Music";
-    const PISTON = "PistonArm";
-    const SIGN = "Sign";
-    const SKULL = "Skull";
-	const BED = "Bed";
-	const BANNER = "Banner";
+    public const BEACON = "Beacon";
+    public const BREWING_STAND = "BrewingStand";
+    public const CAULDRON = "Cauldron";
+    public const CHEST = "Chest";
+    public const COMPARATOR = "Comparator";
+    public const DAY_LIGHT_DETECTOR = "DLDetector";
+    public const DISPENSER = "Dispenser";
+    public const DROPPER = "Dropper";
+    public const ENCHANT_TABLE = "EnchantTable";
+    public const ENDER_CHEST = "EnderChest";
+    public const END_PORTAL = "EndPortal";
+    public const FURNACE = "Furnace";
+    public const FLOWER_POT = "FlowerPot";
+    public const HOPPER = "Hopper";
+    public const ITEM_FRAME = "ItemFrame";
+    public const MOB_SPAWNER = "MobSpawner";
+    public const MOVING_BLOCK = "MovingBlock";
+    public const NOTEBLOCK = "Music";
+    public const PISTON = "PistonArm";
+    public const SIGN = "Sign";
+    public const SKULL = "Skull";
+	public const BED = "Bed";
+	public const BANNER = "Banner";
 
 	/** @var int */
 	public static $tileCount = 1;

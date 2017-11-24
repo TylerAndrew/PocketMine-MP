@@ -27,7 +27,7 @@ use pocketmine\item\Item as ItemItem;
 use pocketmine\item\ItemFactory;
 
 class Zombie extends Monster{
-	const NETWORK_ID = self::ZOMBIE;
+	public const NETWORK_ID = self::ZOMBIE;
 
 	public $width = 0.6;
 	public $height = 1.8;

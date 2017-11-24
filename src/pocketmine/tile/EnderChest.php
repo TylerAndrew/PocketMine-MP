@@ -19,29 +19,14 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\tile;
 
-use pocketmine\level\Level;
 use pocketmine\nbt\tag\CompoundTag;
 
 class EnderChest extends Spawnable{
+	public function addAdditionalSpawnData(CompoundTag $nbt) : void{
 
-	public function __construct(Level $level, CompoundTag $nbt){
-		parent::__construct($level, $nbt);
-	}
-
-	/**
-	 * An extension to getSpawnCompound() for
-	 * further modifying the generic tile NBT.
-	 *
-	 * @param CompoundTag $nbt
-	 */
-	public function addAdditionalSpawnData(CompoundTag $nbt): void{ }
-
-	/**
-	 * @return string
-	 */
-	public function getDefaultName() : string{
-		return "EnderChest";
 	}
 }

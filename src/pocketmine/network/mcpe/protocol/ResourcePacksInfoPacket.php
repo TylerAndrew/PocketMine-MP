@@ -30,7 +30,7 @@ use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\resourcepacks\ResourcePack;
 
 class ResourcePacksInfoPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::RESOURCE_PACKS_INFO_PACKET;
+	public const NETWORK_ID = ProtocolInfo::RESOURCE_PACKS_INFO_PACKET;
 
 	/** @var bool */
 	public $mustAccept = false; //if true, forces client to use selected resource packs

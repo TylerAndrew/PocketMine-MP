@@ -30,11 +30,6 @@ use pocketmine\item\Item;
 use pocketmine\item\Potion;
 use pocketmine\item\Tool;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\ByteTag;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\ShortTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 use pocketmine\Server;
@@ -200,7 +195,9 @@ class Cauldron extends Solid{
 					$this->getLevel()->setBlock($this, $this, true);
 					$newItem = clone $item;
 					/** @var Armor $newItem */
-					$newItem->clearCustomColor();
+					$newItem->clearNamedTag();//TODO proper fix, this also removes enchantments
+					if($item->hasCustomName())
+						$newItem->setCustomName($item->getCustomName());
 					$player->getInventory()->setItemInHand($newItem);
 					$ev = new LevelEventPacket();
 					$color = $item->getCustomColor();

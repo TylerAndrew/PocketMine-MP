@@ -23,44 +23,35 @@ declare(strict_types=1);
 
 namespace pocketmine\item;
 
-use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\IntTag;
+use pocketmine\utils\Binary;
 use pocketmine\utils\Color;
 
 abstract class Armor extends Item{
 
-	public function getMaxStackSize(): int{
+	public const TAG_CUSTOM_COLOR = "customColor"; //TAG_Int
+
+	public function getMaxStackSize() : int{
 		return 1;
 	}
 
-	public function setCustomColor(Color $color){
-		if (($hasTag = $this->hasCompoundTag())){
-			$tag = $this->getNamedTag();
-		} else{
-			$tag = new CompoundTag("", []);
-		}
-		$tag->customColor = new IntTag("customColor", $color->toRGB());
-		$this->setCompoundTag($tag);
-	}
-
 	/**
-	 * @return null|Color
+	 * Returns the dyed colour of this armour piece. This generally only applies to leather armour.
+	 * @return Color|null
 	 */
-	public function getCustomColor(){
-		if (!$this->hasCompoundTag()) return null;
-		$tag = $this->getNamedTag();
-		if (isset($tag->customColor)){
-			return Color::fromABGR($tag->customColor->getValue());
+	public function getCustomColor() : ?Color{
+		if($this->getNamedTag()->hasTag(self::TAG_CUSTOM_COLOR, IntTag::class)){
+			return Color::fromARGB(Binary::unsignInt($this->getNamedTag()->getInt(self::TAG_CUSTOM_COLOR)));
 		}
+
 		return null;
 	}
 
-	public function clearCustomColor(){
-		if (!$this->hasCompoundTag()) return;
-		$tag = $this->getNamedTag();
-		if (isset($tag->customColor)){
-			unset($tag->customColor);
-		}
-		$this->setCompoundTag($tag);
+	/**
+	 * Sets the dyed colour of this armour piece. This generally only applies to leather armour.
+	 * @param Color $color
+	 */
+	public function setCustomColor(Color $color) : void{
+		$this->setNamedTagEntry(new IntTag(self::TAG_CUSTOM_COLOR, Binary::signInt($color->toARGB())));
 	}
 }
