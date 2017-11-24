@@ -195,9 +195,7 @@ class Cauldron extends Solid{
 					$this->getLevel()->setBlock($this, $this, true);
 					$newItem = clone $item;
 					/** @var Armor $newItem */
-					$newItem->clearNamedTag();//TODO proper fix, this also removes enchantments
-					if($item->hasCustomName())
-						$newItem->setCustomName($item->getCustomName());
+					$newItem->removeNamedTagEntry(Armor::TAG_CUSTOM_COLOR);
 					$player->getInventory()->setItemInHand($newItem);
 					$ev = new LevelEventPacket();
 					$color = $item->getCustomColor();
