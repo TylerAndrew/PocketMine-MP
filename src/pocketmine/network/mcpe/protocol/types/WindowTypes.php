@@ -26,6 +26,7 @@ namespace pocketmine\network\mcpe\protocol\types;
 
 
 interface WindowTypes{
+
 	public const INVENTORY = -1;
 	public const CONTAINER = 0;
 	public const WORKBENCH = 1;

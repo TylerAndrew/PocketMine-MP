@@ -19,107 +19,96 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\block;
 
-use pocketmine\inventory\EnderChestInventory;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\Item;
+use pocketmine\item\ItemFactory;
 use pocketmine\item\Tool;
-use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\Player;
 use pocketmine\tile\EnderChest as TileEnderChest;
 use pocketmine\tile\Tile;
 
-class EnderChest extends Transparent{
+class EnderChest extends Chest{
 
 	protected $id = self::ENDER_CHEST;
 
-	public function __construct($meta = 0){
-		$this->meta = $meta;
-	}
-
-	public function canBeActivated(){
-		return true;
-	}
-
-	public function getHardness(): float{
+	public function getHardness() : float{
 		return 22.5;
 	}
 
-	public function getResistance(): float{
-		return 3000.0;
+	public function getBlastResistance() : float{
+		return 3000;
 	}
 
-	public function getLightLevel(): int{
+	public function getLightLevel() : int{
 		return 7;
 	}
 
-	public function getName(): string{
+	public function getName() : string{
 		return "Ender Chest";
 	}
 
-	public function getToolType(): int{
+	public function getToolType() : int{
 		return Tool::TYPE_PICKAXE;
 	}
 
-	protected function recalculateBoundingBox():?AxisAlignedBB{
-		return new AxisAlignedBB(
-			$this->x + 0.0625,
-			$this->y,
-			$this->z + 0.0625,
-			$this->x + 0.9375,
-			$this->y + 0.9475,
-			$this->z + 0.9375
-		);
-	}
-
-	public function place(Item $item, Block $block, Block $target, int $face, Vector3 $facePos, Player $player = null): bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		$faces = [
 			0 => 4,
 			1 => 2,
 			2 => 5,
-			3 => 3,
+			3 => 3
 		];
 
-		$chest = null;
 		$this->meta = $faces[$player instanceof Player ? $player->getDirection() : 0];
 
-
-		$this->getLevel()->setBlock($block, $this, true, true);
+		$this->getLevel()->setBlock($blockReplace, $this, true, true);
 		Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), TileEnderChest::createNBT($this, $face, $item, $player));
 
 		return true;
 	}
 
-	public function onActivate(Item $item, Player $player = null): bool{
-		if ($player instanceof Player){
-			$top = $this->getSide(1);
-			if ($top->isTransparent() !== true){
+	public function onBreak(Item $item, Player $player = null) : bool{
+		return Block::onBreak($item, $player);
+	}
+
+	public function onActivate(Item $item, Player $player = null) : bool{
+		if($player instanceof Player){
+
+			$t = $this->getLevel()->getTile($this);
+			$enderChest = null;
+			if($t instanceof TileEnderChest){
+				$enderChest = $t;
+			}else{
+				$enderChest = Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), TileEnderChest::createNBT($this));
+			}
+
+			if(!$this->getSide(Vector3::SIDE_UP)->isTransparent()){
 				return true;
 			}
 
-			if (!$this->getLevel()->getTile($this) instanceof TileEnderChest){
-				Tile::createTile(Tile::ENDER_CHEST, $this->getLevel(), TileEnderChest::createNBT($this));
-			}
-
-			$player->addWindow(new EnderChestInventory($this));
+			$player->getEnderChestInventory()->setHolderPosition($enderChest);
+			$player->addWindow($player->getEnderChestInventory());
 		}
 
 		return true;
 	}
 
-	public function getDrops(Item $item): array{
-		if ($item->hasEnchantments() && $item->getEnchantment(Enchantment::SILK_TOUCH) !== null){
-			return [
-				[$this->id, 0, 1],
-			];
+	public function getDrops(Item $item) : array{
+		if($item->isPickaxe() >= Tool::TIER_WOODEN){
+			if($item->hasEnchantments() && $item->getEnchantment(Enchantment::SILK_TOUCH))
+				return [ItemFactory::get($this->getId())];
+			return [ItemFactory::get(Item::OBSIDIAN, 0, 8)];
 		}
-		return [
-			[Item::OBSIDIAN, 0, 8],
-		];
+
+		return [];
+	}
+
+	public function getFuelTime() : int{
+		return 0;
 	}
 }

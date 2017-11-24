@@ -19,70 +19,51 @@
  *
 */
 
+declare(strict_types=1);
+
 namespace pocketmine\inventory;
 
 use pocketmine\entity\Human;
-use pocketmine\level\Level;
-use pocketmine\level\Position;
-use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\protocol\BlockEventPacket;
-use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\types\WindowTypes;
-use pocketmine\Player;
+use pocketmine\tile\EnderChest;
 
-class EnderChestInventory extends ContainerInventory{
-	public function __construct(Position $pos){
-		parent::__construct(new FakeBlockMenu($this, $pos));
+class EnderChestInventory extends ChestInventory{
+
+	/** @var FakeBlockMenu */
+	protected $holder;
+
+	public function __construct(Human $owner){
+		ContainerInventory::__construct(new FakeBlockMenu($this, $owner->getPosition()));
+	}
+
+	public function getNetworkType() : int{
+		return WindowTypes::CONTAINER;
+	}
+
+	public function getName() : string{
+		return "EnderChest";
+	}
+
+	public function getDefaultSize() : int{
+		return 27;
 	}
 
 	/**
-	 * @return Human|InventoryHolder
+	 * Set the holder's position to that of a tile
+	 *
+	 * @param EnderChest $enderChest
+	 */
+	public function setHolderPosition(EnderChest $enderChest){
+		$this->holder->setComponents($enderChest->getX(), $enderChest->getY(), $enderChest->getZ());
+		$this->holder->setLevel($enderChest->getLevel());
+	}
+
+	/**
+	 * This override is here for documentation and code completion purposes only.
+	 * @return FakeBlockMenu
 	 */
 	public function getHolder(){
 		return $this->holder;
 	}
 
-	public function onOpen(Player $who): void{
-		$this->setContents($who->getEnderChestInventory()->getContents());
-		parent::onOpen($who);
-
-		if (count($this->getViewers()) === 1 and ($level = $this->getHolder()->getLevel()) instanceof Level){
-			$this->broadcastBlockEventPacket($this->getHolder(), true);
-			$level->broadcastLevelSoundEvent($this->getHolder()->add(0.5, 0.5, 0.5), LevelSoundEventPacket::SOUND_CHEST_OPEN);
-		}
-	}
-
-	public function onClose(Player $who): void{
-		if (count($this->getViewers()) === 1 and ($level = $this->getHolder()->getLevel()) instanceof Level){
-			$this->broadcastBlockEventPacket($this->getHolder(), false);
-			$level->broadcastLevelSoundEvent($this->getHolder()->add(0.5, 0.5, 0.5), LevelSoundEventPacket::SOUND_CHEST_CLOSED);
-		}
-		parent::onClose($who);
-	}
-
-	protected function broadcastBlockEventPacket(Vector3 $vector, bool $isOpen): void{
-		$pk = new BlockEventPacket();
-		$pk->x = (int)$vector->x;
-		$pk->y = (int)$vector->y;
-		$pk->z = (int)$vector->z;
-		$pk->eventType = 1; //it's always 1 for a chest
-		$pk->eventData = $isOpen ? 1 : 0;
-		$this->getHolder()->getLevel()->addChunkPacket($this->getHolder()->getX() >> 4, $this->getHolder()->getZ() >> 4, $pk);
-	}
-
-	public function getName(): string{
-		return "Ender Chest";
-	}
-
-	/**
-	 * Returns the Minecraft PE inventory type used to show the inventory window to clients.
-	 * @return int
-	 */
-	public function getNetworkType(): int{
-		return WindowTypes::CONTAINER;
-	}
-
-	public function getDefaultSize(): int{
-		return 27;
-	}
 }

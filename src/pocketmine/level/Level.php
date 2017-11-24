@@ -145,6 +145,9 @@ class Level implements ChunkManager, Metadatable{
 	/** @var LevelProvider */
 	private $provider;
 
+	/** @var int */
+	private $worldHeight;
+
 	/** @var ChunkLoader[] */
 	private $loaders = [];
 	/** @var int[] */
@@ -335,6 +338,9 @@ class Level implements ChunkManager, Metadatable{
 		}else{
 			throw new LevelException("Provider is not a subclass of LevelProvider");
 		}
+
+		$this->worldHeight = $this->provider->getWorldHeight();
+
 		$this->server->getLogger()->info($this->server->getLanguage()->translateString("pocketmine.level.preparing", [$this->provider->getName()]));
 		$this->generator = Generator::getGenerator($this->provider->getGenerator());
 
@@ -1308,7 +1314,7 @@ class Level implements ChunkManager, Metadatable{
 	public function isInWorld(float $x, float $y, float $z) : bool{
 		return (
 			$x <= INT32_MAX and $x >= INT32_MIN and
-			$y < $this->getWorldHeight() and $y >= 0 and
+			$y < $this->worldHeight and $y >= 0 and
 			$z <= INT32_MAX and $z >= INT32_MIN
 		);
 	}
@@ -1735,7 +1741,7 @@ class Level implements ChunkManager, Metadatable{
 			$clickVector = new Vector3(0.0, 0.0, 0.0);
 		}
 
-		if($blockReplace->y >= $this->provider->getWorldHeight() or $blockReplace->y < 0){
+		if($blockReplace->y >= $this->worldHeight or $blockReplace->y < 0){
 			//TODO: build height limit messages for custom world heights and mcregion cap
 			return false;
 		}
@@ -2692,7 +2698,7 @@ class Level implements ChunkManager, Metadatable{
 			$spawn = $this->getSpawnLocation();
 		}
 		if($spawn instanceof Vector3){
-			$max = $this->provider->getWorldHeight();
+			$max = $this->worldHeight;
 			$v = $spawn->floor();
 			$chunk = $this->getChunk($v->x >> 4, $v->z >> 4, false);
 			$x = (int) $v->x;
@@ -2802,7 +2808,7 @@ class Level implements ChunkManager, Metadatable{
 	}
 
 	public function getWorldHeight() : int{
-		return $this->provider->getWorldHeight();
+		return $this->worldHeight;
 	}
 
 	/**

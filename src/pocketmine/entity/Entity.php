@@ -115,9 +115,9 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	public const DATA_FIREBALL_POWER_Y = 31;
 	public const DATA_FIREBALL_POWER_Z = 32;
 	/* 33 (unknown) */
-	const DATA_FISHING_HOOK_RELATIVE_X = 34; //float
-	const DATA_FISHING_HOOK_RELATIVE_Y = 35; //float
-	const DATA_FISHING_HOOK_RELATIVE_Z = 36; //float
+	public const DATA_FISHING_HOOK_RELATIVE_X = 34; //float
+	public const DATA_FISHING_HOOK_RELATIVE_Y = 35; //float
+	public const DATA_FISHING_HOOK_RELATIVE_Z = 36; //float
 	public const DATA_POTION_AUX_VALUE = 37; //short
 	public const DATA_LEAD_HOLDER_EID = 38; //long
 	public const DATA_SCALE = 39; //float
@@ -393,10 +393,6 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 	public $boundingBox;
 	/** @var bool */
 	public $onGround;
-	/** @var int */
-	public $deadTicks = 0;
-	/** @var int */
-	protected $maxDeadTicks = 0;
 	/** @var int */
 	protected $age = 0;
 
@@ -888,6 +884,16 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 		$this->scheduleUpdate();
 	}
 
+	/**
+	 * Called to tick entities while dead. Returns whether the entity should be flagged for despawn yet.
+	 *
+	 * @param int $tickDiff
+	 * @return bool
+	 */
+	protected function onDeathUpdate(int $tickDiff) : bool{
+		return true;
+	}
+
 	public function isAlive() : bool{
 		return $this->health > 0;
 	}
@@ -1277,13 +1283,10 @@ abstract class Entity extends Location implements Metadatable, EntityIds{
 		}
 
 		if(!$this->isAlive()){
-			$this->deadTicks += $tickDiff;
-			if($this->deadTicks >= $this->maxDeadTicks){
-				$this->despawnFromAll();
-				if(!$this->isPlayer){
-					$this->flagForDespawn();
-				}
+			if($this->onDeathUpdate($tickDiff)){
+				$this->flagForDespawn();
 			}
+
 			return true;
 		}
 

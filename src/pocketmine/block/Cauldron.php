@@ -196,7 +196,7 @@ class Cauldron extends Solid{
 					$this->getLevel()->setBlock($this, $this, true);
 					$newItem = clone $item;
 					/** @var Armor $newItem */
-					$newItem->clearNamedTag();
+					$newItem->removeNamedTagEntry(Armor::TAG_CUSTOM_COLOR);
 					if($item->hasCustomName())
 						$newItem->setCustomName($item->getCustomName());
 					$player->getInventory()->setItemInHand($newItem);

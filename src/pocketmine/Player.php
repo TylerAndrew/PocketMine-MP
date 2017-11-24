@@ -82,6 +82,7 @@ use pocketmine\inventory\transaction\CraftingTransaction;
 use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
+use pocketmine\item\ItemIds;
 use pocketmine\item\WritableBook;
 use pocketmine\item\WrittenBook;
 use pocketmine\level\ChunkLoader;
@@ -97,10 +98,6 @@ use pocketmine\metadata\MetadataValue;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteTag;
 use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\LongTag;
-use pocketmine\nbt\tag\ShortTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\nbt\tag\DoubleTag;
 use pocketmine\nbt\tag\ListTag;
 use pocketmine\network\mcpe\PlayerNetworkSessionAdapter;
@@ -126,7 +123,6 @@ use pocketmine\network\mcpe\protocol\MobEquipmentPacket;
 use pocketmine\network\mcpe\protocol\ModalFormRequestPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\PlayerActionPacket;
-use pocketmine\network\mcpe\protocol\PlayerHotbarPacket;
 use pocketmine\network\mcpe\protocol\PlayStatusPacket;
 use pocketmine\network\mcpe\protocol\ProtocolInfo;
 use pocketmine\network\mcpe\protocol\RequestChunkRadiusPacket;
@@ -1669,10 +1665,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		$this->sendAttributes();
 
 		if(!$this->isAlive() and $this->spawned){
-			$this->deadTicks += $tickDiff;
-			if($this->deadTicks >= $this->maxDeadTicks){
-				$this->despawnFromAll();
-			}
+			$this->onDeathUpdate($tickDiff);
 			return true;
 		}
 
@@ -2504,7 +2497,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 								}
 
 								return true;
-							}elseif($this->inventory->getItemInHand()->getId() === Item::BUCKET and $this->inventory->getItemInHand()->getDamage() === 1){ //Milk!
+							}elseif($this->inventory->getItemInHand()->getId() === ItemIds::BUCKET and $this->inventory->getItemInHand()->getDamage() === 1){ //Milk!
 								$this->server->getPluginManager()->callEvent($ev = new PlayerItemConsumeEvent($this, $this->inventory->getItemInHand()));
 								if($ev->isCancelled()){
 									$this->inventory->sendContents($this);
@@ -2516,7 +2509,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 									$slot = $this->inventory->getItemInHand();
 									--$slot->count;
 									$this->inventory->setItemInHand($slot);
-									$this->inventory->addItem(ItemFactory::get(Item::BUCKET, 0, 1));
+									$this->inventory->addItem(ItemFactory::get(ItemIds::BUCKET, 0, 1));
 								}
 
 								$this->removeAllEffects();
@@ -2978,7 +2971,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 	public function handleBookEdit(BookEditPacket $packet) : bool{
 		/** @var WritableBook $oldBook */
 		$oldBook = $this->inventory->getItem($packet->inventorySlot - 9);
-		if($oldBook->getId() !== Item::WRITABLE_BOOK){
+		if($oldBook->getId() !== ItemIds::WRITABLE_BOOK){
 			return false;
 		}
 
@@ -3004,7 +2997,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 				break;
 			case BookEditPacket::TYPE_SIGN_BOOK:
 				/** @var WrittenBook $newBook */
-				$newBook = Item::get(Item::WRITTEN_BOOK, 0, 1, $newBook->getNamedTag());
+				$newBook = ItemFactory::get(ItemIds::WRITTEN_BOOK, 0, 1, $newBook->getNamedTag());
 				$newBook->setAuthor($packet->author);
 				$newBook->setTitle($packet->title);
 				$newBook->setGeneration(WrittenBook::GENERATION_ORIGINAL);
@@ -3682,6 +3675,14 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 		}
 	}
 
+	protected function onDeathUpdate(int $tickDiff) : bool{
+		if(parent::onDeathUpdate($tickDiff)){
+			$this->despawnFromAll(); //non-player entities rely on close() to do this for them
+		}
+
+		return false; //never flag players for despawn
+	}
+
 	public function attack(EntityDamageEvent $source){
 		if(!$this->isAlive()){
 			return;
@@ -3695,7 +3696,7 @@ class Player extends Human implements CommandSender, ChunkLoader, IPlayer{
 			$source->setCancelled();
 		}elseif($this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL){
 			$source->setCancelled();
-		}elseif(!$this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL && ($this->isGliding() || $this->getInventory()->getItem($this->getInventory()->getSize() + 1)->getId() === Item::ELYTRA)){/*due to lag it could happen that you first close the Elytra and then take damage, so i add a slot check*/
+		}elseif(!$this->allowFlight and $source->getCause() === EntityDamageEvent::CAUSE_FALL && ($this->isGliding() || $this->getInventory()->getItem($this->getInventory()->getSize() + 1)->getId() === ItemIds::ELYTRA)){/*due to lag it could happen that you first close the Elytra and then take damage, so i add a slot check*/
 			$source->setDamage($damage = $this->getMotion()->distance($this->speed));//TODO: Check if this is correct. The faster, the more damage#Elytra
             print "Damage dealed is $damage".PHP_EOL;
 		}
