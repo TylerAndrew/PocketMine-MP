@@ -27,14 +27,10 @@ use pocketmine\event\player\PlayerBucketEmptyEvent;
 use pocketmine\event\player\PlayerBucketFillEvent;
 use pocketmine\item\Armor;
 use pocketmine\item\Item;
+use pocketmine\item\ItemIds;
 use pocketmine\item\Potion;
 use pocketmine\item\Tool;
 use pocketmine\math\Vector3;
-use pocketmine\nbt\tag\ByteTag;
-use pocketmine\nbt\tag\CompoundTag;
-use pocketmine\nbt\tag\IntTag;
-use pocketmine\nbt\tag\ShortTag;
-use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 use pocketmine\Server;
@@ -83,7 +79,7 @@ class Cauldron extends Solid{
 	public function getDrops(Item $item): array{
 		if ($item->isPickaxe() >= 1){
 			return [
-				[Item::CAULDRON, 0, 1]
+				[ItemIds::CAULDRON, 0, 1]
 			];
 		}
 		return [];
@@ -95,7 +91,7 @@ class Cauldron extends Solid{
 			return false;
 		}
 		switch ($item->getId()){
-			case Item::BUCKET:
+			case ItemIds::BUCKET:
 				if ($item->getDamage() === 0){//empty bucket
 					if (!$this->isFull() or $tile->hasCustomColor() or $tile->hasPotion()){
 						break;
@@ -200,7 +196,9 @@ class Cauldron extends Solid{
 					$this->getLevel()->setBlock($this, $this, true);
 					$newItem = clone $item;
 					/** @var Armor $newItem */
-					$newItem->clearCustomColor();
+					$newItem->clearNamedTag();
+					if($item->hasCustomName())
+						$newItem->setCustomName($item->getCustomName());
 					$player->getInventory()->setItemInHand($newItem);
 					$ev = new LevelEventPacket();
 					$color = $item->getCustomColor();

@@ -31,7 +31,7 @@ use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\resourcepacks\ResourcePack;
 
 class ResourcePackStackPacket extends DataPacket{
-	const NETWORK_ID = ProtocolInfo::RESOURCE_PACK_STACK_PACKET;
+	public const NETWORK_ID = ProtocolInfo::RESOURCE_PACK_STACK_PACKET;
 
 	/** @var bool */
 	public $mustAccept = false;
