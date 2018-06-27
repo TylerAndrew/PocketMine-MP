@@ -1,5 +1,3 @@
-![ClearSky](https://github.com/ClearSkyTeam/ClearSky/blob/master/images/CSbanner.png)
-
 # ClearSky - A fast Minecraft PE server software based on [PocketMine-MP](https://github.com/pmmp/PocketMine-MP)
 ClearSky is a fast Minecraft: Pocket Edition server software, finally back as a real FORK of [PocketMine-MP](https://github.com/pmmp/PocketMine-MP)
 ## Why should I use ClearSky?
@@ -7,10 +5,8 @@ ClearSky is a fast Minecraft: Pocket Edition server software, finally back as a 
 - It has most of the blocks, items and entities that pmmp doesn't have yet. See [Issue #2](https://github.com/ClearSkyTeam/PocketMine-MP/issues/2) for further information.
 - The projects we sometimes clone code from are [Genisys](https://github.com/iTXTech/Genisys), [Nukkit](https://github.com/Nukkit/Nukkit) and [IM](https://github.com/ImagicalCorp/ImagicalMine) (last one is dead). Everytime we take code from other projects we reference the commit in the commit title or description! We may also just cherry-pick the commit.
 
-### Remember: Please only use the cs-1.0 branch or a release in [releases](https://github.com/ClearSkyTeam/PocketMine-MP/releases) for production servers.
-
-**TravisCI Build Status** [![TravisCI](https://travis-ci.org/ClearSkyTeam/PocketMine-MP.svg?branch=cs-1.0)](https://travis-ci.org/ClearSkyTeam/PocketMine-MP "TravisCI Build Status")
-**CircleCI Build Status** [![Build Status](https://circleci.com/gh/ClearSkyTeam/PocketMine-MP/tree/cs-1.0.svg?style=shield)](https://circleci.com/gh/ClearSkyTeam/PocketMine-MP "CircleCI Build Status")
+**TravisCI Build Status** [[![Build Status](https://travis-ci.org/TylerAndrew/PocketMine-MP.svg?branch=cs-1.2)](https://travis-ci.org/TylerAndrew/PocketMine-MP)
+**CircleCI Build Status** [![Build Status](https://circleci.com/gh/TylerAndrew/PocketMine-MP/tree/cs-1.2.svg?style=shield)](https://circleci.com/gh/TylerAndrew/PocketMine-MP "CircleCI Build Status")
 
 ### Setup, help & support, FAQs
 Head over to the [documentation site](http://pmmp.readthedocs.org/).
@@ -36,7 +32,7 @@ There are a very wide range of already-written plugins available which you can u
 Yes, you can! Contributions are welcomed provided that they comply with our [Contributing Guidelines](CONTRIBUTING.md). Please ensure you read the relevant sections of the guidelines carefully before making a Pull Request or opening an Issue.
 
 ### Where can I get the latest .phar?
- - You can get the latest auto build phar here: [CSPhar-Direct](https://phar.wolvesfortress.de/circleci.php?branch=cs-1.0) (beta)
+ - You can get the latest auto build phar here: [CSPhar-Direct](https://phar.wolvesfortress.de/circleci.php?branch=cs-1.2) (beta)
  - You can get an overview of phar builds here: [CSPhar](https://phar.wolvesfortress.de) (beta)
  - You can get a Multicraft config demo here: [ClearSkyTeam/MulticraftConfig](https://github.com/ClearSkyTeam/MulticraftConfig).
 
