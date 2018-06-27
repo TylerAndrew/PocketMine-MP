@@ -5,7 +5,7 @@ ClearSky is a fast Minecraft: Pocket Edition server software, finally back as a 
 - It has most of the blocks, items and entities that pmmp doesn't have yet. See [Issue #2](https://github.com/ClearSkyTeam/PocketMine-MP/issues/2) for further information.
 - The projects we sometimes clone code from are [Genisys](https://github.com/iTXTech/Genisys), [Nukkit](https://github.com/Nukkit/Nukkit) and [IM](https://github.com/ImagicalCorp/ImagicalMine) (last one is dead). Everytime we take code from other projects we reference the commit in the commit title or description! We may also just cherry-pick the commit.
 
-**TravisCI Build Status** [[![Build Status](https://travis-ci.org/TylerAndrew/PocketMine-MP.svg?branch=cs-1.2)](https://travis-ci.org/TylerAndrew/PocketMine-MP)
+**TravisCI Build Status** [![Build Status](https://travis-ci.org/TylerAndrew/PocketMine-MP.svg?branch=cs-1.2)](https://travis-ci.org/TylerAndrew/PocketMine-MP)
 **CircleCI Build Status** [![Build Status](https://circleci.com/gh/TylerAndrew/PocketMine-MP/tree/cs-1.2.svg?style=shield)](https://circleci.com/gh/TylerAndrew/PocketMine-MP "CircleCI Build Status")
 
 ### Setup, help & support, FAQs
