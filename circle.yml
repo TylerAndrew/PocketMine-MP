@@ -1,28 +1,37 @@
-#Circle-CI
+# PHP CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-php/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/php:7.1.5-browsers
+      
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mysql:9.4
 
-#machine:
-#  php:
-#    version: 7.2.0
+    working_directory: ~/repo
 
-checkout:
- post:
-   - git clone https://github.com/ClearSkyTeam/CI-Test
-   - git submodule sync --recursive
-   - git submodule update --recursive --init
+    steps:
+      - checkout
 
-dependencies:
-  pre:
-    - rm /opt/circleci/php/$(phpenv global)/etc/conf.d/xdebug.ini
-    - wget -O PHP7.tar.gz https://jenkins.pmmp.io/job/PHP-7.2-Linux-x86_64/lastSuccessfulBuild/artifact/PHP_Linux-x86_64.tar.gz --no-check-certificate
-    - tar -xf PHP7.tar.gz
-  override:
-    - sed -i -e s/SELF-COMPILED/$CIRCLE_BUILD_NUM/g src/pocketmine/PocketMine.php;
-    - mkdir plugins
-    - bin/php7/bin/php bin/composer.phar install
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "composer.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
 
-test:
-  override:
-    - . ./CI-Test/Travis.sh $PHP_ENVIROMENT
-    - 'printf "#$CIRCLE_BUILD_NUM for branch \"$CIRCLE_BRANCH\"\nMore build information here: $CIRCLE_BUILD_URL\nChanges: $CIRCLE_COMPARE_URL" >> message.txt'
-    - 'curl -s -i -X POST -F chat_id="$CHAT_ID" -F document=@"$(find|grep PocketMine-MP)" -F caption="$(<message.txt)" -F disable_notification="true" https://api.telegram.org/bot$TG_API/sendDocument > /dev/null'
-    - cp -rv ./plugins/*.phar $CIRCLE_ARTIFACTS
+      - run: composer install -n --prefer-dist
+
+      - save_cache:
+          paths:
+            - ./vendor
+          key: v1-dependencies-{{ checksum "composer.json" }}
+        
+      # run tests!
+      - run: phpunit
